@@ -1,0 +1,152 @@
+grub-gfxboot (0.96-3) unstable; urgency=low
+
+  * compile against current sid (import ubuntu changes).
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 25 Jul 2005 15:42:13 +0200
+
+grub-gfxboot (0.96-2) unstable; urgency=low
+
+  * synch gfxboot patches with SuSE 9.3.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 16 Apr 2005 11:54:04 +0200
+
+grub-gfxboot (0.96-1) unstable; urgency=low
+
+  * new reiser4 patches.
+  * compile against new libaal/ reiser4progs (1.0.4).
+  * remove savedefault, wich conflicts with reiser4 and gfxboot patches.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed,  2 Mar 2005 17:44:00 +0100
+
+grub-gfxboot (0.96-0.1) unstable; urgency=low
+
+  * new upstream version.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed,  2 Mar 2005 16:18:31 +0100
+
+grub-gfxboot (0.95-7.0) unstable; urgency=low
+
+  * circumvent problems with faulty BIOS version for CD-ROM non emulation
+    booting.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed,  2 Mar 2005 01:05:00 +0100
+
+grub-gfxboot (0.95-6.8) unstable; urgency=low
+
+  * compile against libaal/ reiser4progs 1.0.3-2, import reiser4 patches
+    again.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 22 Jan 2005 11:09:56 +0100
+
+grub-gfxboot (0.95-6.7) unstable; urgency=low
+
+  * add patch for x86_64 compatibilty.
+  * disable reiser4 support.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 10 Jan 2005 23:44:34 +0100
+
+grub-gfxboot (0.95-6.6) unstable; urgency=low
+
+  * recompile for libaal-dev/ reiser4progs 1.0.3kanotix1. 
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 12 Dec 2004 15:17:32 +0100
+
+grub-gfxboot (0.95-6.5) unstable; urgency=low
+
+  * fix reiser4 support.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 25 Nov 2004 01:21:44 +0100
+
+grub-gfxboot (0.95-6.2) unstable; urgency=low
+
+  * recompile for new libaal-dev/ libreiser4-dev. 
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 21 Nov 2004 01:54:26 +0100
+
+grub-gfxboot (0.95-6.1) unstable; urgency=low
+
+  * add x64_84 compatibility.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat,  6 Nov 2004 15:39:34 +0100
+
+grub-gfxboot (0.95-6.0) unstable; urgency=low
+
+  * merge new reiser4 patches (2004-10-21).
+  * synch patch set with SuSE 9.2.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu,  4 Nov 2004 14:30:42 +0100
+
+grub-gfxboot (0.95-5.5) unstable; urgency=low
+
+  * minor changes. 
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat,  9 Oct 2004 23:01:10 +0200
+
+grub-gfxboot (0.95-5.4) unstable; urgency=low
+
+  * minor fixes. 
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat,  9 Oct 2004 22:28:41 +0200
+
+grub-gfxboot (0.95-5.3) unstable; urgency=low
+
+  * fixed build-deps.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat,  9 Oct 2004 19:23:21 +0200
+
+grub-gfxboot (0.95-5.2) unstable; urgency=low
+
+  * fixed dependencies.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat,  9 Oct 2004 18:34:08 +0200
+
+grub-gfxboot (0.95-5.1) unstable; urgency=low
+
+  * recompiled for libaal/ reiser4progs 1.0.2~pre1.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon,  4 Oct 2004 02:03:21 +0200
+
+grub-gfxboot (0.95-5.0) unstable; urgency=low
+
+  * switch to Namesys' grub release.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 19 Sep 2004 00:54:48 +0200
+
+grub-gfxboot (0.95-4.1) unstable; urgency=low
+
+  * recompiled for libaal/ reiser4progs/ libreiser4 1.0.1 compliance.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 25 Aug 2004 22:30:11 +0200
+
+grub-gfxboot (0.95-4) unstable; urgency=low
+
+  * added debian update-grub
+  * added debian grub-floppy
+  * added debian grub-reboot
+  * prepared for complete debian grub replacement
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 19 Aug 2004 15:02:16 +0200
+
+grub-gfxboot (0.95-3) unstable; urgency=low
+
+  * optimized for maximum debian compatibility 
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 18 Aug 2004 23:42:18 +0200
+
+grub-gfxboot (0.95-2) unstable; urgency=low
+
+  * updated reiser4 support
+  * several build improvements
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 13 Aug 2004 10:22:07 +0000
+
+grub-gfxboot (0.95-1) unstable; urgency=low
+
+  * fixed patching
+  * added reiser4 support
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 12 Aug 2004 13:12:42 +0000
+
+grub-gfxboot (0.95) unstable; urgency=low
+  * added gfxboot patches
+
