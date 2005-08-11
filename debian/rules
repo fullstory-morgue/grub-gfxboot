@@ -73,9 +73,6 @@ endif
 
 ifeq ($(DEB_BUILD_GNU_CPU),x86_64)
   LDFLAGS=-static
-  CC=gcc-3.4
-else
-  CC=gcc-3.3
 endif
 
 patch: patch-stamp
