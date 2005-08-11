@@ -8,3 +8,4 @@ grub-splashscreen-v5_v6
 reiser-unpack.diff
 grub-0.96-stackptr.diff
 grub-0.96-protexec.diff
+2gb_limit.diff
