@@ -13,8 +13,8 @@ diff -Nurd grub-0.95+cvs20040624/stage2/char_io.c grub-0.95+cvs20040624-mrvn/sta
 +memcheck (unsigned long addr, unsigned long len)
  {
  #ifdef GRUB_UTIL
--  static int start_addr (void)
-+  static unsigned long start_addr (void)
+-  int start_addr (void)
++  unsigned long start_addr (void)
      {
        int ret;
  # if defined(HAVE_START_SYMBOL)
@@ -22,8 +22,8 @@ diff -Nurd grub-0.95+cvs20040624/stage2/char_io.c grub-0.95+cvs20040624-mrvn/sta
        return ret;
      }
  
--  static int end_addr (void)
-+  static unsigned long end_addr (void)
+-  int end_addr (void)
++  unsigned long end_addr (void)
      {
        int ret;
  # if defined(HAVE_END_SYMBOL)
