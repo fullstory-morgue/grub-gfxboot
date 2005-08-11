@@ -1,5 +1,5 @@
---- stage2/asm.S
-+++ stage2/asm.S
+--- grub-0.96.orig/stage2/asm.S
++++ grub-0.96/stage2/asm.S
 @@ -1654,15 +1654,22 @@
  	pushw	%ds
  
@@ -26,8 +26,8 @@
  	movl	$0,%ebx
  	adcl	$0,%ebx
  
---- stage2/shared.h
-+++ stage2/shared.h
+--- grub-0.96.orig/stage2/shared.h
++++ grub-0.96/stage2/shared.h
 @@ -391,6 +391,8 @@
  #define gfx_ofs_args_list		0x64
  #define gfx_ofs_args_entry_len		0x68
@@ -46,8 +46,8 @@
  } __attribute__ ((packed)) gfx_data_t;
  
  extern gfx_data_t *graphics_data;
---- stage2/stage2.c
-+++ stage2/stage2.c
+--- grub-0.96.orig/stage2/stage2.c
++++ grub-0.96/stage2/stage2.c
 @@ -762,6 +762,7 @@
  
  

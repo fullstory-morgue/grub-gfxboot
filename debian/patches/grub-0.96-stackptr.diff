@@ -1,5 +1,5 @@
---- stage2/stage2.c
-+++ stage2/stage2.c
+--- grub-0.96.orig/stage2/stage2.c
++++ grub-0.96/stage2/stage2.c
 @@ -865,6 +865,14 @@
    return code_start;
  }

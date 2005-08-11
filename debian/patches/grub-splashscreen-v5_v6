@@ -1,5 +1,5 @@
---- stage2/shared.h
-+++ stage2/shared.h
+--- grub-0.96.orig/stage2/shared.h
++++ grub-0.96/stage2/shared.h
 @@ -382,17 +382,17 @@
  #define gfx_ofs_code_seg		0x10
  #define gfx_ofs_jmp_table		0x14
@@ -38,8 +38,8 @@
    char *cmdline;		/* command line returned by gfx_input() */
    unsigned cmdline_len;		/* length of the above */
    char *menu_list;		/* list of menu entries, each of fixed length (menu_entry_len) */
---- stage2/stage2.c
-+++ stage2/stage2.c
+--- grub-0.96.orig/stage2/stage2.c
++++ grub-0.96/stage2/stage2.c
 @@ -826,7 +826,7 @@
  {
    if(
