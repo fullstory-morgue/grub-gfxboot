@@ -1,6 +1,6 @@
---- a/stage2/asm.S
-+++ b/stage2/asm.S
-@@ -1692,15 +1692,22 @@
+--- stage2/asm.S
++++ stage2/asm.S
+@@ -1654,15 +1654,22 @@
  	pushw	%ds
  
  	movw	%dx,%ds
@@ -26,9 +26,9 @@
  	movl	$0,%ebx
  	adcl	$0,%ebx
  
---- a/stage2/shared.h
-+++ b/stage2/shared.h
-@@ -382,6 +382,8 @@
+--- stage2/shared.h
++++ stage2/shared.h
+@@ -391,6 +391,8 @@
  #define gfx_ofs_args_list		0x64
  #define gfx_ofs_args_entry_len		0x68
  #define gfx_ofs_timeout			0x6c
@@ -37,7 +37,7 @@
  
  
  #ifndef ASM_FILE
-@@ -624,6 +626,8 @@
+@@ -635,6 +637,8 @@
    char *args_list;		/* same structure as menu_list, menu_entries entries */
    unsigned args_entry_len;	/* one entry */
    unsigned timeout;		/* in seconds (0: no timeout) */
@@ -46,9 +46,9 @@
  } __attribute__ ((packed)) gfx_data_t;
  
  extern gfx_data_t *graphics_data;
---- a/stage2/stage2.c
-+++ b/stage2/stage2.c
-@@ -759,6 +759,7 @@
+--- stage2/stage2.c
++++ stage2/stage2.c
+@@ -762,6 +762,7 @@
  
  
  
@@ -56,7 +56,7 @@
  /* for debugging */
  static void hexdump(unsigned char *buf, unsigned len)
  {
-@@ -791,7 +792,7 @@
+@@ -794,7 +795,7 @@
      printf("%s\n", s);
    }
  }
@@ -65,7 +65,7 @@
  
  /*
   * Go through config entry and find kernel args, if any.
-@@ -816,6 +817,53 @@
+@@ -819,6 +820,53 @@
  
  
  /*
@@ -119,7 +119,7 @@
   * Leave that much space on the heap. Everything else goes to the graphics
   * functions.
   *
-@@ -834,7 +882,7 @@
+@@ -837,7 +885,7 @@
  	  char *heap, int entryno)
  {
    unsigned char *buf;
@@ -128,7 +128,7 @@
    char *s, *t, *cfg, *new_config;
    char *saved_heap;
    int i, j, max_len;
-@@ -866,6 +914,8 @@
+@@ -869,6 +917,8 @@
      gfx_ofs_check(args_list);
      gfx_ofs_check(args_entry_len);
      gfx_ofs_check(timeout);
@@ -137,7 +137,7 @@
      #undef gfx_ofs_check
    }
  
-@@ -905,7 +955,7 @@
+@@ -908,7 +958,7 @@
  
    memset(gfx_data->menu_list, 0, gfx_data->menu_entry_len * gfx_data->menu_entries);
  
@@ -146,7 +146,7 @@
      strcpy(gfx_data->menu_list + i * gfx_data->menu_entry_len, get_entry(menu_entries, i, 0));
    }
  
-@@ -927,7 +977,7 @@
+@@ -930,7 +980,7 @@
  
    memset(gfx_data->args_list, 0, gfx_data->args_entry_len * gfx_data->menu_entries);
  
@@ -155,7 +155,7 @@
      strcpy(gfx_data->args_list + i* gfx_data->args_entry_len, get_kernel_args(get_entry(config_entries, i, 1)));
    }
  
-@@ -980,38 +1030,54 @@
+@@ -983,38 +1033,54 @@
    }
  
    /* besides the file, we need some working memory, too */
@@ -223,7 +223,7 @@
      gfx_data->jmp_table[i] = (gfx_data->code_seg << 16) + ((unsigned short *) code_start)[i];
    }
  
-@@ -1033,7 +1099,13 @@
+@@ -1036,7 +1102,13 @@
  
    /* switch to graphics mode */
  

@@ -1,3 +1,9 @@
+grub-gfxboot (0.96-4) unstable; urgency=low
+
+  * incorporate changes from OpenSuSE 10 beta1.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 11 Aug 2005 13:56:21 +0200
+
 grub-gfxboot (0.96-3) unstable; urgency=low
 
   * compile against current sid (import ubuntu changes).

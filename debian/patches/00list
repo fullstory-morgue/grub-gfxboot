@@ -2,5 +2,9 @@ grub-0.96-noemul.diff
 #grub-0.96-reiser4-20040130.diff
 grub-splashscreen-v4
 force-LBA-off.diff
+gcc4-diff
 grub-splashscreen-v4_v5
 grub-splashscreen-v5_v6
+reiser-unpack.diff
+grub-0.96-stackptr.diff
+grub-0.96-protexec.diff

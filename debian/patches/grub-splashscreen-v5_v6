@@ -1,6 +1,6 @@
---- a/stage2/shared.h
-+++ b/stage2/shared.h
-@@ -380,17 +380,17 @@
+--- stage2/shared.h
++++ stage2/shared.h
+@@ -382,17 +382,17 @@
  #define gfx_ofs_code_seg		0x10
  #define gfx_ofs_jmp_table		0x14
  #define gfx_ofs_sys_cfg			0x44
@@ -29,7 +29,7 @@
  
  
  #ifndef ASM_FILE
-@@ -623,7 +623,7 @@
+@@ -627,7 +627,7 @@
    unsigned mem_start, mem_cur, mem_max;
    unsigned code_seg;		/* code segment of binary graphics code */
    unsigned jmp_table[12];	/* link to graphics functions */
@@ -38,9 +38,9 @@
    char *cmdline;		/* command line returned by gfx_input() */
    unsigned cmdline_len;		/* length of the above */
    char *menu_list;		/* list of menu entries, each of fixed length (menu_entry_len) */
---- a/stage2/stage2.c
-+++ b/stage2/stage2.c
-@@ -823,7 +823,7 @@
+--- stage2/stage2.c
++++ stage2/stage2.c
+@@ -826,7 +826,7 @@
  {
    if(
      *(unsigned *) buf == 0x0b2d97f00 &&		/* magic id */
