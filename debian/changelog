@@ -4,8 +4,9 @@ grub-gfxboot (0.96-5) unstable; urgency=low
     - patches/2gb_limit.diff: New. Fix problem with systems with more than
       2 GB memory (notably, x86_64-based systems). Thanks Goswin Brederlow.
   * fix changelog corruption.
+  * numerous minor tweaks.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 11 Aug 2005 14:28:51 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 11 Aug 2005 14:43:06 +0200
 
 grub-gfxboot (0.96-4) unstable; urgency=low
 
