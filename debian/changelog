@@ -1115,4 +1115,3 @@ grub (0.4-1) unstable; urgency=low
 
  -- Steve Dunham <dunham@debian.org>  Wed, 19 Nov 1997 23:42:47 -0500
 
-  vim:ai:et:sts=4:sw=4:tw=78:
