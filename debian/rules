@@ -72,7 +72,10 @@ filesystems=e2fs ffs ufs2
 endif
 
 ifeq ($(DEB_BUILD_GNU_CPU),x86_64)
+  CC=gcc-3.4
   LDFLAGS=-static
+else
+  CC=gcc-3.3
 endif
 
 patch: patch-stamp

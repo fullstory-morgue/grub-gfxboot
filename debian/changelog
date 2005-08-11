@@ -1,8 +1,9 @@
-grub-gfxboot (0.96-7) UNRELEASED; urgency=low
+grub-gfxboot (0.96-7) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * revert to gcc-3.3/ gcc-3.4, because of serious grub-install regressions
+    on approximately 40% of all tested systems.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 11 Aug 2005 14:59:21 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 11 Aug 2005 17:43:12 +0200
 
 grub-gfxboot (0.96-6) unstable; urgency=low
 
