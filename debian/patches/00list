@@ -9,3 +9,4 @@ reiser-unpack.diff
 grub-0.96-stackptr.diff
 grub-0.96-protexec.diff
 2gb_limit.diff
+grub-0.96-grub-install.diff

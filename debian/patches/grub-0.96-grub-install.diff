@@ -1,0 +1,13 @@
+diff -Nrup grub-gfxboot-0.96.orig/util/grub-install.in grub-gfxboot-0.96/util/grub-install.in
+--- grub-gfxboot-0.96.orig/util/grub-install.in	2004-07-24 20:57:31.000000000 +0200
++++ grub-gfxboot-0.96/util/grub-install.in	2005-10-24 20:55:49.503789750 +0200
+@@ -106,7 +106,8 @@ convert () {
+ 				  -e 's%.*/fd[0-9]*$%%' \
+ 				  -e 's%.*/floppy/[0-9]*$%%' \
+ 				  -e 's%.*/\(disc\|part\([0-9]*\)\)$%\2%' \
+-				  -e 's%.*c[0-7]d[0-9]*p%%'`
++				  -e 's%.*c[0-7]d[0-9]*p%%' \
++				  -e 's%.*/c[0-7]d[0-9]p*\([0-9]*\)$%\1%'`
+ 	;;
+     gnu*)
+ 	tmp_disk=`echo "$1" | sed 's%\([sh]d[0-9]*\).*%\1%'`
