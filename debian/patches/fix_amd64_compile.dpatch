@@ -1,0 +1,18 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## fix_amd64_compile.diff by Stefan Lippers-Hollmann <s.l-h@gmx.de>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description
+
+@DPATCH@
+--- grub-0.97-bkp/configure.ac	2005-11-05 16:53:00.419491832 -0200
++++ grub-0.97/configure.ac	2005-11-05 16:53:13.777461112 -0200
+@@ -47,7 +47,7 @@
+ fi
+ 
+ if test "x$host_cpu" = xx86_64; then
+-  CFLAGS="-m32 $CFLAGS"
++  CFLAGS="-m64 $CFLAGS"
+ fi
+ 
+ #

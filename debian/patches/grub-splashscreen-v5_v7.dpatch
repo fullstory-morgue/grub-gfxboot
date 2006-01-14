@@ -1,0 +1,60 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## grub-splashscreen-v5_v7 by Stefan Lippers-Hollmann <s.l-h@gmx.de>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description
+
+@DPATCH@
+diff -Nurp grub-0.97.orig/stage2/shared.h grub-0.97/stage2/shared.h
+--- grub-0.97.orig/stage2/shared.h
++++ grub-0.97/stage2/shared.h
+@@ -382,17 +382,17 @@
+ #define gfx_ofs_code_seg		0x10
+ #define gfx_ofs_jmp_table		0x14
+ #define gfx_ofs_sys_cfg			0x44
+-#define gfx_ofs_cmdline			0x4c
+-#define gfx_ofs_cmdline_len		0x50
+-#define gfx_ofs_menu_list		0x54
+-#define gfx_ofs_menu_default_entry	0x58
+-#define gfx_ofs_menu_entries		0x5c
+-#define gfx_ofs_menu_entry_len		0x60
+-#define gfx_ofs_args_list		0x64
+-#define gfx_ofs_args_entry_len		0x68
+-#define gfx_ofs_timeout			0x6c
+-#define gfx_ofs_mem_file		0x70
+-#define gfx_ofs_mem_align		0x74
++#define gfx_ofs_cmdline			0x64
++#define gfx_ofs_cmdline_len		0x68
++#define gfx_ofs_menu_list		0x6c
++#define gfx_ofs_menu_default_entry	0x70
++#define gfx_ofs_menu_entries		0x74
++#define gfx_ofs_menu_entry_len		0x78
++#define gfx_ofs_args_list		0x7c
++#define gfx_ofs_args_entry_len		0x80
++#define gfx_ofs_timeout			0x84
++#define gfx_ofs_mem_file		0x88
++#define gfx_ofs_mem_align		0x8c
+ 
+ 
+ #ifndef ASM_FILE
+@@ -627,7 +627,7 @@
+   unsigned mem_start, mem_cur, mem_max;
+   unsigned code_seg;		/* code segment of binary graphics code */
+   unsigned jmp_table[12];	/* link to graphics functions */
+-  unsigned char sys_cfg[8];	/* sys_cfg[0]: identifies boot loader (grub == 2) */
++  unsigned char sys_cfg[32];	/* sys_cfg[0]: identifies boot loader (grub == 2) */
+   char *cmdline;		/* command line returned by gfx_input() */
+   unsigned cmdline_len;		/* length of the above */
+   char *menu_list;		/* list of menu entries, each of fixed length (menu_entry_len) */
+diff -Nurp grub-0.97.orig/stage2/stage2.c grub-0.97/stage2/stage2.c
+--- grub-0.97.orig/stage2/stage2.c
++++ grub-0.97/stage2/stage2.c
+@@ -826,7 +826,7 @@
+ {
+   if(
+     *(unsigned *) buf == 0x0b2d97f00 &&		/* magic id */
+-    buf[4] == 5					/* version 5 */
++    (buf[4] >= 5 && buf[4] <= 7)		/* version 5 - 7 */
+   ) {
+     return *(unsigned *) (buf + 8);
+   }

@@ -1,0 +1,250 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## grub-splashscreen-v4_v5 by Stefan Lippers-Hollmann <s.l-h@gmx.de>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description
+
+@DPATCH@
+diff -Nurp grub-0.96.orig/stage2/asm.S grub-0.96/stage2/asm.S
+--- grub-0.96.orig/stage2/asm.S
++++ grub-0.96/stage2/asm.S
+@@ -1654,15 +1654,22 @@
+ 	pushw	%ds
+ 
+ 	movw	%dx,%ds
+-	shll	$4,%edx
+ 	leal	gfx_ofs_sys_cfg(%di),%esi
+-	movl	gfx_ofs_mem_start(%di),%eax
++	movl	gfx_ofs_mem_file(%di),%eax
+ 	movl	gfx_ofs_mem_cur(%di),%ebx
+ 	movl	gfx_ofs_mem_max(%di),%ecx
+ 	movw	%ds,%dx
+ 
+-	lcall	*gfx_ofs_jmp_table + 4 * 0 (%di)
++	/* basically just a lcall, but we need %edi */
++	pushw	%cs
++	pushw	$gfx_init_50
++	pushl	gfx_ofs_jmp_table + 4 * 0 (%di)
++
++	movl	gfx_ofs_mem_align(%di),%edi
++
++	lret
+ 
++gfx_init_50:
+ 	movl	$0,%ebx
+ 	adcl	$0,%ebx
+ 
+diff -Nurp grub-0.96.orig/stage2/shared.h grub-0.96/stage2/shared.h
+--- grub-0.96.orig/stage2/shared.h
++++ grub-0.96/stage2/shared.h
+@@ -391,6 +391,8 @@
+ #define gfx_ofs_args_list		0x64
+ #define gfx_ofs_args_entry_len		0x68
+ #define gfx_ofs_timeout			0x6c
++#define gfx_ofs_mem_file		0x70
++#define gfx_ofs_mem_align		0x74
+ 
+ 
+ #ifndef ASM_FILE
+@@ -635,6 +637,8 @@
+   char *args_list;		/* same structure as menu_list, menu_entries entries */
+   unsigned args_entry_len;	/* one entry */
+   unsigned timeout;		/* in seconds (0: no timeout) */
++  unsigned mem_file;		/* aligned gfx file start */
++  unsigned mem_align;		/* aligned cpio file start */
+ } __attribute__ ((packed)) gfx_data_t;
+ 
+ extern gfx_data_t *graphics_data;
+diff -Nurp grub-0.96.orig/stage2/stage2.c grub-0.96/stage2/stage2.c
+--- grub-0.96.orig/stage2/stage2.c
++++ grub-0.96/stage2/stage2.c
+@@ -762,6 +762,7 @@
+ 
+ 
+ 
++#if 0
+ /* for debugging */
+ static void hexdump(unsigned char *buf, unsigned len)
+ {
+@@ -794,7 +795,7 @@
+     printf("%s\n", s);
+   }
+ }
+-
++#endif
+ 
+ /*
+  * Go through config entry and find kernel args, if any.
+@@ -819,6 +820,53 @@
+ 
+ 
+ /*
++ * Check header and return code start offset.
++ */
++static unsigned magic_ok(unsigned char *buf)
++{
++  if(
++    *(unsigned *) buf == 0x0b2d97f00 &&		/* magic id */
++    buf[4] == 5					/* version 5 */
++  ) {
++    return *(unsigned *) (buf + 8);
++  }
++
++  return 0;
++}
++
++
++/*
++ * Search cpio archive for gfx file.
++ */
++static unsigned find_file(unsigned char *buf, unsigned len, unsigned *gfx_file_start)
++{
++  unsigned i, fname_len, flen, code_start = 0;
++
++  *gfx_file_start = 0;
++
++  for(i = 0; i < len;) {
++    if((len - i) >= 0x1a && (buf[i] + (buf[i + 1] << 8)) == 0x71c7) {
++      fname_len = *(unsigned short *) (buf + i + 20);
++      flen = *(unsigned short *) (buf + i + 24) + (*(unsigned short *) (buf + i + 22) << 16);
++      i += 26 + fname_len;
++      i = ((i + 1) & ~1);
++      if((code_start = magic_ok(buf + i))) {
++        *gfx_file_start = i;
++        return code_start;
++      }
++      i += flen;
++      i = ((i + 1) & ~1);
++    }
++    else {
++      break;
++    }
++  }
++
++  return code_start;
++}
++
++
++/*
+  * Leave that much space on the heap. Everything else goes to the graphics
+  * functions.
+  *
+@@ -837,7 +885,7 @@
+ 	  char *heap, int entryno)
+ {
+   unsigned char *buf;
+-  unsigned buf_size, code_start;
++  unsigned u, buf_size, code_start, file_start;
+   char *s, *t, *cfg, *new_config;
+   char *saved_heap;
+   int i, j, max_len;
+@@ -869,6 +917,8 @@
+     gfx_ofs_check(args_list);
+     gfx_ofs_check(args_entry_len);
+     gfx_ofs_check(timeout);
++    gfx_ofs_check(mem_file);
++    gfx_ofs_check(mem_align);
+     #undef gfx_ofs_check
+   }
+ 
+@@ -908,7 +958,7 @@
+ 
+   memset(gfx_data->menu_list, 0, gfx_data->menu_entry_len * gfx_data->menu_entries);
+ 
+-  for(i = 0; i < gfx_data->menu_entries; i++) {
++  for(i = 0; i < (int) gfx_data->menu_entries; i++) {
+     strcpy(gfx_data->menu_list + i * gfx_data->menu_entry_len, get_entry(menu_entries, i, 0));
+   }
+ 
+@@ -930,7 +980,7 @@
+ 
+   memset(gfx_data->args_list, 0, gfx_data->args_entry_len * gfx_data->menu_entries);
+ 
+-  for(i = 0; i < gfx_data->menu_entries; i++) {
++  for(i = 0; i < (int) gfx_data->menu_entries; i++) {
+     strcpy(gfx_data->args_list + i* gfx_data->args_entry_len, get_kernel_args(get_entry(config_entries, i, 1)));
+   }
+ 
+@@ -983,38 +1033,54 @@
+   }
+ 
+   /* besides the file, we need some working memory, too */
+-  if(i + MIN_GFX_FREE >= buf_size) {
++  if(i + MIN_GFX_FREE + 0x0f >= (int) buf_size) {
+     printf("file \"%s\" too large, press a key to continue...\n", graphics_file);
+     getkey();
+     return;
+   }
+ 
+-  gfx_data->mem_cur = gfx_data->mem_start + ((i + 3) & ~3);	/* align it */
++  gfx_data->mem_cur = gfx_data->mem_start + ((i + 0x0f + 3) & ~3);	/* align it */
+ 
+-  // printf("image: %d bytes (%d bytes left)\n", i, gfx_data->mem_max - gfx_data->mem_cur);
+-  // getkey();
++#if 0
++  printf("image: %d bytes (%d bytes left)\n", i, gfx_data->mem_max - gfx_data->mem_cur);
++  getkey();
++#endif
+ 
+-  if(
+-    *(unsigned *) buf != 0x0b2d97f00 ||		/* magic id */
+-    buf[4] != 4 ||				/* version 4 */
+-    !(code_start = *(unsigned *) (buf + 8)) ||
+-    (code_start & 0xf)				/* check alignment */
+-  ) {
++
++  /* locate file inside cpio archive */
++  if(!(code_start = find_file(buf, i, &file_start))) {
+     printf("\"%s\" has wrong format, press a key to continue...\n", graphics_file);
+     getkey();
+     return;
+   }
+ 
+ 
++  /* align it */
++  u = (-(code_start + gfx_data->mem_start + file_start)) & 0x0f;
++  gfx_data->mem_align = gfx_data->mem_start + u;
++  gfx_data->mem_file = gfx_data->mem_align + file_start;
++  if(u) {
++    memcpy((void *) gfx_data->mem_align, (void *) gfx_data->mem_start, i);
++  }
++
+   /* init interface to graphics functions */
+ 
+-  code_start += gfx_data->mem_start;
++  code_start += gfx_data->mem_file;
++
++#if 0
++  printf("code_start: 0x%x, file_start: 0x%x, mem_align = 0x%x, mem_file = 0x%x\n",
++    code_start, file_start, gfx_data->mem_align, gfx_data->mem_file
++  );
++  getkey();
++#endif
+ 
+   gfx_data->code_seg = code_start >> 4;
+ 
+-  // printf("code start = 0x%x, code_seg = 0x%x\n", code_start, gfx_data->code_seg);
++#if 0
++  printf("code start = 0x%x, code_seg = 0x%x\n", code_start, gfx_data->code_seg);
++#endif
+ 
+-  for(i = 0; i < sizeof gfx_data->jmp_table / sizeof *gfx_data->jmp_table; i++) {
++  for(i = 0; (unsigned) i < sizeof gfx_data->jmp_table / sizeof *gfx_data->jmp_table; i++) {
+     gfx_data->jmp_table[i] = (gfx_data->code_seg << 16) + ((unsigned short *) code_start)[i];
+   }
+ 
+@@ -1036,7 +1102,13 @@
+ 
+   /* switch to graphics mode */
+ 
+-  if(gfx_init(gfx_data)) return;
++  if(gfx_init(gfx_data)) {
++#if 0
++    printf("gfx_init failed\n");
++    getkey();
++#endif
++    return;
++  }
+ 
+   gfx_setup_menu(gfx_data);
+ 
