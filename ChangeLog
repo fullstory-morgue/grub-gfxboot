@@ -1,3 +1,95 @@
+2005-05-08  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* configure.ac (AC_INIT): Upgraded to 0.97.
+
+	* compile: Copied from Automake 1.9.4.
+	* config.guess: Likewise.
+	* config.sub: Likewise.
+	* depcomp: Likewise.
+	* install-sh: Likewise.
+	* missing: Likewise.
+	* mkinstalldirs: Likewise.
+	* mdate-sh: Likewise.
+	* docs/texinfo.tex: Likewise.
+
+2005-05-08  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* stage2/fsys_xfs.c (next_dentry): Use arrays of arrays instead of
+	arrays of pointers for USUAL, to avoid read-only strings. Reported
+	by Sven Wegener <swegener@gentoo.org>.
+
+2005-03-28  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* lib/device.c (get_drive_geometry): Use ST.ST_SIZE instead of
+	ST.ST_BLOCKS to get the total number of sectors, because st_blocks
+	is not the same if it is a sparse file.
+
+2005-03-19  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* stage2/stage2.c (cmain): Initialize DEFAULT_FILE to an empty
+	string. Reported by NATORI Shin <natori@adm.s.u-tokyo.ac.jp>.
+
+2005-03-15  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* stage2/fsys_fat.c (fat_mount): Ignore the 3rd bit of a media
+	descriptor, because some BIOSes overwrite this value, according
+	to the storage mode (e.g. USB Floppy or USB HDD).
+
+2005-02-16  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* grub/asmstub.c (grub_stage2): Remove the attribute `volatile'
+	from doit. I hope this change is safe for all compilers.
+
+2005-02-15  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* stage2/builtins.c (install_func): If DEST_DRIVE is a hard
+	disk, enable the workaround in Stage 1 by replacing the jmp
+	with double nop's.
+
+	* stage1/stage1.h (STAGE1_BOOT_DRIVE_CHECK): New macro.
+	(STAGE1_BOOT_DRIVE_MASK): Removed.
+
+	* stage1/stage1.S (boot_drive_check): New label. This implements
+	a different workaround for buggy BIOSes which don't pass boot
+	drive correctly. This is effective for BIOSes which pass a value
+	without the seventh bit (0x80).
+	(boot_drive_mask): Removed.
+
+2005-02-03  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* grub/asmstub.c (console_current_color): Make it global as
+	declared.
+	(grub_stage2): Tweak the declaration and the definition of the
+	nested function doit.
+
+2005-02-02  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* stage2/smp-imps.h (imps_any_new_apics): Removed.
+	(imps_enabled): Likewise.
+	(imps_lapic_addr): Likewise.
+	(imps_num_cpus): Likewise.
+	(imps_cpu_apic_map): Likewise.
+	(imps_apic_cpu_map): Likewise.
+
+	* stage2/Makefile.am (libgrub_a_CFLAGS): Remove
+	-fwritable-strings. Not required for the grub shell actually.
+
+	* grub/Makefile.am (AM_CFLAGS): Likewise.
+
+2005-02-01  Yoshinori K. Okuji  <okuji@enbug.org>
+
+	* grub/asmstub.c (grub_stage2): Use auto instead of static for
+	nested functions.
+
+	* stage2/char_io.c (memcheck) [GRUB_UTIL]: Likewise.
+
+	* stage2/builtins.c (blocklist_func): Likewise.
+	(color_func): Likewise.
+	(install_func): Likewise.
+	(setkey_func): Likewise.
+
+	* lib/device.c (read_device_map): Likewise.
+
 2005-01-30  Yoshinori K. Okuji  <okuji@enbug.org>
 
         * configure.ac (AC_INIT): Upgraded to 0.96.

@@ -1,4 +1,4 @@
-This is ../../docs/grub.info, produced by makeinfo version 4.7 from
+This is ../../docs/grub.info, produced by makeinfo version 4.8 from
 ../../docs/grub.texi.
 
 INFO-DIR-SECTION Kernel
@@ -39,7 +39,7 @@ GRUB manual
 This is the documentation of GNU GRUB, the GRand Unified Bootloader, a
 flexible and powerful boot loader program for PCs.
 
-   This edition documents version 0.96.
+   This edition documents version 0.97.
 
 * Menu:
 
@@ -3689,20 +3689,20 @@ Appendix A How to obtain and build GRUB
 
    GRUB is available from the GNU alpha archive site
 `ftp://alpha.gnu.org/gnu/grub' or any of its mirrors. The file will be
-named grub-version.tar.gz. The current version is 0.96, so the file you
+named grub-version.tar.gz. The current version is 0.97, so the file you
 should grab is:
 
-   `ftp://alpha.gnu.org/gnu/grub/grub-0.96.tar.gz'
+   `ftp://alpha.gnu.org/gnu/grub/grub-0.97.tar.gz'
 
    To unbundle GRUB use the instruction:
 
-     zcat grub-0.96.tar.gz | tar xvf -
+     zcat grub-0.97.tar.gz | tar xvf -
 
-   which will create a directory called `grub-0.96' with all the
+   which will create a directory called `grub-0.97' with all the
 sources. You can look at the file `INSTALL' for detailed instructions
 on how to build and install GRUB, but you should be able to just do:
 
-     cd grub-0.96
+     cd grub-0.97
      ./configure
      make install
 
