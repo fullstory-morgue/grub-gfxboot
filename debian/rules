@@ -139,7 +139,6 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-arch-stamp build-indep-stamp configure-stamp config.log
-	rm -f docs/grub.info docs/multiboot.info
 
 	# Add here commands to clean up after the build process.
 	-$(MAKE) distclean
