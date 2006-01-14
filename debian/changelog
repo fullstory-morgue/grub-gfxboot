@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-4) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 14 Jan 2006 01:55:33 +0100
+
 grub-gfxboot (0.97-3) unstable; urgency=low
 
   * re- add forgotten no- emulation patch needed for broken BIOS versions.
