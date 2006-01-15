@@ -44,7 +44,7 @@ GRUB_VERSION=0.97
 GRUB_DISK_IMAGE=grub-${GRUB_VERSION}-$(DEB_BUILD_GNU_CPU)-pc
 
 ifeq ($(DEB_BUILD_GNU_SYSTEM),linux-gnu)
-filesystems=e2fs jfs minix reiserfs xfs fat
+filesystems=e2fs jfs minix reiserfs xfs fat iso9660
 endif
 ifeq ($(DEB_BUILD_GNU_SYSTEM),gnu)
 filesystems=e2fs ffs minix

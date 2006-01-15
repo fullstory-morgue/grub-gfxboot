@@ -1,8 +1,9 @@
-grub-gfxboot (0.97-4) UNRELEASED; urgency=low
+grub-gfxboot (0.97-4) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * re- add iso9660_stage1_5, which is better for CD boot than
+    stage2_eltorito.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 14 Jan 2006 01:55:33 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 15 Jan 2006 01:42:01 +0100
 
 grub-gfxboot (0.97-3) unstable; urgency=low
 
