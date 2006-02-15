@@ -1,3 +1,28 @@
+grub-gfxboot (0.97-5) unstable; urgency=high
+
+  [ Urgency set to HIGH since it broke LVM installations ]
+  
+  * add changes from grub 0.97-5 by Otavio Salvador <otavio@debian.org>:
+    - Applied patch from David Golombek <daveg@permabit.com> to handle
+      DEB_BUILD_GNU_SYSTEM definition while building in sarge.
+      (closes: #351822, #350168)
+    - Fix device handling allowing LVM installation. (closes: #352654).
+  * add changes from grub 0.97-4 by Otavio Salvador <otavio@debian.org> and
+    Kristian Edlund
+    - Solved problems in update-grub so running the script will sort
+      the kernels the same way using dash or bash. (closes: #346544)
+    - Applied patch provided by Ole Janssen <ole.janssen@o2online.de>
+      to fix a problem when /boot is on an extra partion (closes: #346596)
+    - Fixed the problem with multiple splashimage lines, if there is a
+      splashimage outside the autoupdated part of the file. (closes: #341538,
+      #318706, #345208, #283308, #345346)
+    - Corrected the README.Debian to contain the right path if /boot
+      is on another partion. (closes: #281051)
+    - Don't convert /dev/mapper to new kernel 2.6 device scheme.
+      (closes: #347482).
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 16 Feb 2006 00:38:30 +0100
+
 grub-gfxboot (0.97-4) unstable; urgency=low
 
   * re- add iso9660_stage1_5, which is better for CD boot than

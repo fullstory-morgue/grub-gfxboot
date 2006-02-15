@@ -39,6 +39,9 @@ DEB_BUILD_GNU_SYSTEM  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_SYSTEM)
 ifeq ($(DEB_HOST_GNU_SYSTEM), linux)
 DEB_HOST_GNU_SYSTEM=linux-gnu
 endif
+ifeq ($(DEB_BUILD_GNU_SYSTEM), linux)
+DEB_BUILD_GNU_SYSTEM=linux-gnu
+endif
 
 GRUB_VERSION=0.97
 GRUB_DISK_IMAGE=grub-${GRUB_VERSION}-$(DEB_BUILD_GNU_CPU)-pc

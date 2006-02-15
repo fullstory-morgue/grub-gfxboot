@@ -39,7 +39,7 @@ after installing the package:
 
 3) edit /boot/grub/menu.lst
    or if /boot is a separate partition
-   edit /boot/boot/menu.lst
+   edit /boot/boot/grub/menu.lst
 
    and change groot, and kopt to whatever settings you need.
    modify anything else in the menu.lst you want,

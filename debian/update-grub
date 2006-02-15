@@ -104,7 +104,12 @@ find_root_device ()
 # I.e. /dev/ida/c0d0p2 -> /dev/ida!c0d0p2
 convert_kernel26 ()
 {
-    echo "$1" | sed 's%^\(/dev/[^/]*\)/\(.*\)%\1!\2%'
+    # skip /dev/mapper/ from conversion
+    if ! echo "$1" | grep -q "^/dev/mapper/"; then
+	echo "$1" | sed 's%^\(/dev/[^/]*\)/\(.*\)%\1!\2%'
+    else
+	echo "$1"
+    fi
 }
 
 # Usage: convert_raid1 os_device
@@ -482,10 +487,15 @@ CompareVersions()
 		else
 			set -- $v2; v2comp=$1; shift; v2=$*
 		fi
+		
+		set +e
+		result=`expr $v1comp - $v2comp` 
+		result=`expr substr $result 1 2`
+		set -e
 
-		if   [ $v1comp -gt $v2comp ]; then result=1
-		elif [ $v1comp -lt $v2comp ]; then result=-1
-		fi
+		if   [ $result -gt 0 ]; then result=1
+		elif [ $result -lt 0 ]; then result=-1	
+		fi	
 	done
 
 	# finally return the result
@@ -742,7 +752,11 @@ echo >> $buffer
 echo -n "Searching for splash image ... " >&2
 current_splash=`grep '^splashimage=' ${grub_dir}/menu.lst || true`
 splashimage_path="splashimage=${grub_root_device}${grub_dir##${boot_device:+/boot}}/splash.xpm.gz"
-if [ -f "${grub_dir}/splash.xpm.gz" ]  && [ "$current_splash" = "" ]; then
+if [ `sed -e "/^$start/,/^$end/d" $grub_dir/menu.lst | grep -c '^splashimage='` != "0" ] ; then
+       #checks for splashscreen defined outside the autoupdated part
+       echo "Found splashscreen: $(grep '^splashimage=' ${grub_dir}/menu.lst)" >&2
+       echo >&2  
+elif [ -f "${grub_dir}/splash.xpm.gz" ]  && [ "$current_splash" = "" ]; then
        echo "found: /boot/grub/splash.xpm.gz" >&2
        echo "$splashimage_path" >> $buffer
        echo >> $buffer
@@ -751,7 +765,7 @@ elif [ -f "${grub_dir}/splash.xpm.gz" ]  && [ "$current_splash" = "$splashimage_
        echo "$splashimage_path" >> $buffer
        echo >> $buffer
 elif [ "$current_splash" != "" ] && [ "$current_splash" != "$splashimage_path" ]; then
-       echo "found but preserving previous setting: $(grep '^splashimage=' /boot/grub/menu.lst)" >&2
+       echo "found but preserving previous setting: $(grep '^splashimage=' ${grub_dir}/menu.lst)" >&2
        echo "$current_splash" >> $buffer
        echo >> $buffer
 else
