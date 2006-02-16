@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-6) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 16 Feb 2006 10:59:40 +0100
+
 grub-gfxboot (0.97-5) unstable; urgency=high
 
   [ Urgency set to HIGH since it broke LVM installations ]
