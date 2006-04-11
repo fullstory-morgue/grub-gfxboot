@@ -104,12 +104,14 @@ find_root_device ()
 # I.e. /dev/ida/c0d0p2 -> /dev/ida!c0d0p2
 convert_kernel26 ()
 {
-    # skip /dev/mapper/ from conversion
-    if ! echo "$1" | grep -q "^/dev/mapper/"; then
-	echo "$1" | sed 's%^\(/dev/[^/]*\)/\(.*\)%\1!\2%'
-    else
-	echo "$1"
-    fi
+    case "$1" in
+	/dev/rd/*|/dev/ida/*)
+            echo "$1" | sed 's%^\(/dev/[^/]*\)/\(.*\)%\1!\2%'
+	    ;;
+	*)
+	    echo "$1"
+	    ;;
+    esac
 }
 
 # Usage: convert_raid1 os_device
@@ -292,6 +294,9 @@ kopt="root=$root_device ro"
 # Title
 title="Debian GNU/Linux"
 
+# should update-grub remember the default entry
+updatedefaultentry="false"
+
 # Drive(in GRUB terms) where the kernel is located. Overridden by the
 # kopt statement in menufile.
 # if we don't have a device.map then we can't use the convert function.
@@ -460,8 +465,8 @@ CompareVersions()
         v2=$(echo $v2 | sed -e 's!^\(.*-\([0-9]\+\.\)\{2\}[0-9]\+\)\( .*\)!\1.0 \3!g')
           
 	# Then split the version number and remove any '.' 's or dashes
-	v1=$(echo $v1 | sed -e 's![-\.]\+! !g' -e 's![\.\-]!!g')
-	v2=$(echo $v2 | sed -e 's![-\.]\+! !g' -e 's![\.\-]!!g')
+	v1=$(echo $v1 | sed -e 's![-\.]\+! !g' -e 's!\([0-9]\)\([A-Za-z]\)!\1 \2!')
+	v2=$(echo $v2 | sed -e 's![-\.]\+! !g' -e 's!\([0-9]\)\([A-Za-z]\)!\1 \2!')
 
 	# we weight different kernel suffixes here
 	# ac   = 50
@@ -671,6 +676,11 @@ howmany=$(GetMenuOpt "howmany" "$howmany")
 # Extract the memtest86 value
 memtest86=$(GetMenuOpt "memtest86" "$memtest86")
 
+ 
+# Extract the updatedefaultentry option
+updatedefaultentry=$(GetMenuOpt "updatedefaultentry" "$updatedefaultentry")
+
+
 # Generate the menu options we want to insert
 buffer=$(tempfile)
 echo $start >> $buffer
@@ -746,6 +756,11 @@ echo "##      memtest86=false" >> $buffer
 echo "# memtest86=$memtest86" >> $buffer
 echo >> $buffer
 
+echo "## should update-grub adjust the value of the default booted system" >> $buffer
+echo "## can be true or false" >> $buffer
+echo "# updatedefaultentry=$updatedefaultentry" >> $buffer
+echo >> $buffer
+
 echo "## ## End Default Options ##" >> $buffer
 echo >> $buffer
 
@@ -771,6 +786,7 @@ elif [ "$current_splash" != "" ] && [ "$current_splash" != "$splashimage_path" ]
 else
        echo "none found, skipping ..." >&2
 fi
+
 
 sortedKernels=""
 for kern in $(/bin/ls -1vr /boot | grep -v "dpkg-*" | grep "^vmlinuz-") ; do
@@ -803,6 +819,27 @@ fi
 kernel_dir=/boot
 if [ -n "$boot_device" ] ; then
 	kernel_dir=
+fi
+
+#Finding the value the default line
+use_grub_set_default="false"
+if test "$updatedefaultentry" = "true" ; then
+	defaultEntryNumber=$(sed -ne 's/^[[:blank:]]*default[[:blank:]]*\(.*\).*/\1/p' $menu)
+
+	if [ "$defaultEntryNumber" = "saved" ] ; then
+	    defaultEntryNumber=$(sed 'q' "$grub_dir/default")
+	    use_grub_set_default="true"	   
+	fi
+	
+	if test -n "$defaultEntryNumber"; then	
+		defaultEntryNumberPlusOne=$(expr $defaultEntryNumber \+ 1);
+		defaultEntry=$(grep "^[[:blank:]]*title" $menu | sed -ne "${defaultEntryNumberPlusOne}p" | sed -ne ";s/^[[:blank:]]*title[[:blank:]]*//p")
+		defaultEntry=$(echo $defaultEntry | sed -e "s/[[:blank:]]*$//") # don't trust trailing blanks	
+	else
+		notChangeDefault="yes"
+	fi
+else
+		notChangeDefault="yes"
 fi
 
 ## heres where we start writing out the kernel entries
@@ -889,17 +926,52 @@ echo $end >> $buffer
 echo -n "Updating $menu ... " >&2
 # Insert the new options into the menu
 if ! grep -q "^$start" $menu ; then
-	cat $buffer >> $menu
-	rm -f $buffer
+    cat $buffer >> $menu
+    rm -f $buffer
 else
-	umask 077
-	sed -e "/^$start/,/^$end/{
+    umask 077
+    sed -e "/^$start/,/^$end/{
 	/^$start/r $buffer
 	d
 	}
 	" $menu > $menu.new
-	cat $menu.new > $menu
-	rm -f $buffer $menu.new
+    cat $menu.new > $menu
+    rm -f $buffer $menu.new
 fi
+
+# Function to update the default value
+set_default_value() {
+    if [ "$use_grub_set_default" = "true" ] ; then
+	grub-set-default $1
+    else
+	value="$1"
+	newmenu=$(tempfile)
+	sed -e "s/^[[:blank:]]*default[[:blank:]]*[[:digit:]]*\(.*\)/default         ${value}\1/;b" $menu > $newmenu
+	cat $newmenu > $menu
+	rm -f $newmenu
+	unset newmenu
+    fi
+}
+
+#Updating the default number
+if test -z "$notChangeDefault"; then
+	newDefaultNumberPlusOne=$(grep "^[[:blank:]]*title[[:blank:]]*" $menu | grep -n "${defaultEntry}" | cut -f1 -d ":" | sed -ne "1p")
+	if test -z "$newDefaultNumberPlusOne"; then
+		echo "Previous default entry removed, resetting to 0">&2
+		set_default_value "0"
+	elif test -z "$defaultEntry"; then
+		echo "Value of default value matches no entry, resetting to 0" >&2
+		set_default_value "0"
+	else
+		if test "$newDefaultNumberPlusOne" = "1"; then
+			newDefaultNumber="0"
+		else
+			newDefaultNumber=$(expr $newDefaultNumberPlusOne - 1)
+		fi
+		echo "Updating the default booting kernel">&2
+		set_default_value "$newDefaultNumber"
+	fi
+fi
+
 echo "done" >&2
 echo >&2

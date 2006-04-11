@@ -58,6 +58,14 @@ This options controls what is used for the alternative boot options, multiple al
 # altoptions=(recovery option) single
 .br
 The description is placed in '()' and the kernel command line options follow that.
+.br
+# updatedefault=true
+.bar
+# updatedefault=false
+
+This option controls if grub should update the default entry to keep
+booting the same kernel even if a new one is installed.
+
 
 The \fBupdate\-grub\fR script can be ran automagically from the \fI/etc/kernel\-img.conf\fR file by adding the following lines:
 

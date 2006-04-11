@@ -1,8 +1,35 @@
-grub-gfxboot (0.97-6) UNRELEASED; urgency=low
+grub-gfxboot (0.97-6) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * add changes from grub 0.97-7.1 by Frederik Schüler <fs@debian.org>:
+    - Non-Maintainer Upload.
+    - Fix obsolete build dependency on ia32-libs-dev on amd64: use
+      libc6-dev-i386 instead. Thanks to Andreas Jochens for the patch.
+      (Closes: #360028)
+  * add changes from grub 0.97-7 by Otavio Salvador <otavio@debian.org>,
+    incorporating changes from Kristian Edlund and Leandro Dorileo:
+    - Added the feature of letting update-grub update the default entry when
+      a new kernel is installed. Done partly by applying a patch from Thomas
+      Braun <thomas@akwgegner.de> (closes: #233966, #276477, #330083)
+    - Applied a patch from Vince Busam <vbusam@google.com> sort suffixes on
+      the kernel more detailed. (closes: #355790)
+    - Changed grub-reboot to handle /boot in other partition.
+      (closes: #360041)
+  * add changes from grub 0.97-6 by Otavio Salvador <otavio@debian.org> and
+    Leandro Dorileo:
+    - Applied patch from Colin Watson <cjwatson@debian.org> to fix segfaults
+      in hardware that has NX bit available (amd64, for example).
+      (closes: #293722)
+    - Remove comment from grub-reboot since we'll have savedefault --once
+      back :-D
+    - Applied patch from Frans Pop <aragorn@tiscali.nl> to invert
+      convert_kernel26 logic. (closes: #353725)
+    - Change build-dependencie for amd64. (closes: #357287, #357286)
+    - Reimplementation of savedefault --once. Now it reads and writes to
+      /boot/grub/default.
+      (closes: #254475, #341106, #341995, #353691, #355870, #342590)
+  * safedefault and gfxboot don't play together, so revert these changes.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 16 Feb 2006 10:59:40 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Apr 2006 23:04:44 +0200
 
 grub-gfxboot (0.97-5) unstable; urgency=high
 

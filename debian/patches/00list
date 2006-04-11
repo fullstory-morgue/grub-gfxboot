@@ -1,4 +1,3 @@
-#savedefault.dpatch
 menu.lst_gnu-hurd.dpatch
 raid.dpatch
 raid_cciss.dpatch
@@ -10,6 +9,8 @@ initrd_max_address.dpatch
 grub-install_addsyncs.dpatch
 geometry-26kernel.dpatch
 print_func.dpatch
+mprotect.dpatch
+#savedefault.dpatch
 
 # We aren't building amd64 binaries, see #244498
 #fix_amd64_compile.dpatch

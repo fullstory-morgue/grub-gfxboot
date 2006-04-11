@@ -1,13 +1,5 @@
 #!/bin/sh -e
 
-echo <<EOF
-This cannot run! Support removed from last release.
-
-Unfortunately, when GRUB was update to 0.97 version, the available
-patch to add support to this utility to run wasn't update.
-EOF
-exit 1
-
 NAME=grub-reboot
 VERSION=0.01
 
@@ -32,8 +24,43 @@ if test "`whoami`" != "root" ; then
   exit
 fi
 
+abort() {
+       message=$@
+
+       echo >&2
+       echo -e "$message" >&2
+       echo >&2
+       exit 1
+}
+
+find_grub_dir ()
+{
+	echo  -n "Searching for GRUB installation directory ... " >&2
+
+	for d in $grub_dirs ; do
+		if [ -d "$d" ] ; then
+			grub_dir="$d"
+			break
+		fi
+	done
+	
+	if [ -z "$grub_dir" ] ; then
+		abort "No GRUB directory found.\n###"
+	else
+		echo "found: $grub_dir" >&2
+	fi
+
+	echo $grub_dir
+}
+
+grub_dirs="/boot/grub /boot/boot/grub"
+
+grub_dir=$(find_grub_dir)
+
+config_file=$grub_dir/menu.lst
+
 default="$1" ; shift
-grub --batch $@ <<EOT
+grub --batch --config-file=$config_file $@ <<EOT
 quit
 EOT
 
