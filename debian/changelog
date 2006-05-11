@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-8) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 12 May 2006 01:03:21 +0200
+
 grub-gfxboot (0.97-7) unstable; urgency=low
 
   * add OpenSolaris patch to keep grub from hanging on Intel Macs, thanks for
