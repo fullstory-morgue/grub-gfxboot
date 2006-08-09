@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-9) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed,  9 Aug 2006 11:59:48 +0200
+
 grub-gfxboot (0.97-8) unstable; urgency=low
 
   * add changes from grub 0.97-13 by Otavio Salvador <otavio@debian.org>:
