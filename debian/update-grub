@@ -26,6 +26,8 @@
 # Abort on errors
 set -e
 
+host_os=`uname -s | tr '[A-Z]' '[a-z]'`
+
 abort() {
 	message=$@
 
@@ -105,7 +107,7 @@ find_root_device ()
 convert_kernel26 ()
 {
     case "$1" in
-	/dev/rd/*|/dev/ida/*)
+	/dev/rd/*)
             echo "$1" | sed 's%^\(/dev/[^/]*\)/\(.*\)%\1!\2%'
 	    ;;
 	*)
@@ -134,8 +136,8 @@ convert_raid1 ()
     [ "$raidlevel" = "raid1" ] || return 1
     
     # Take only the first device that makes up the raid
-    raiddev=$(mdadm -D -b $1 | grep "^   devices=" | \
-            sed "s/^   devices=//" | cut -d"," -f1)
+    raiddev=$(mdadm -D $1 | grep -A1 "Number" | grep "dev" \
+                          | sed "s/^.*\(\/dev\/.*\)$/\1/")
     [ -n "$raiddev" ] || return 1
 
     echo $raiddev
@@ -154,16 +156,16 @@ convert () {
 		exit 1
     fi
 
-	host_os=`uname -s | tr '[A-Z]' '[a-z]'`
+	host_os=`uname -s | tr '[[:upper:]]' '[[:lower:]]'`
 
     # Break the device name into the disk part and the partition part.
     case "$host_os" in
     linux)
-		tmp_disk=`echo "$1" | sed -e 's%\([sh]d[a-z]\)[0-9]*$%\1%' \
+		tmp_disk=`echo "$1" | sed -e 's%\([sh]d[[:lower:]]\)[0-9]*$%\1%' \
 				  -e 's%\(fd[0-9]*\)$%\1%' \
 				  -e 's%/part[0-9]*$%/disc%' \
 				  -e 's%\(c[0-7]d[0-9]*\).*$%\1%'`
-		tmp_part=`echo "$1" | sed -e 's%.*/[sh]d[a-z]\([0-9]*\)$%\1%' \
+		tmp_part=`echo "$1" | sed -e 's%.*/[sh]d[[:lower:]]\([0-9]*\)$%\1%' \
 				  -e 's%.*/fd[0-9]*$%%' \
 				  -e 's%.*/floppy/[0-9]*$%%' \
 				  -e 's%.*/\(disc\|part\([0-9]*\)\)$%\2%' \
@@ -173,8 +175,8 @@ convert () {
 		tmp_disk=`echo "$1" | sed 's%\([sh]d[0-9]*\).*%\1%'`
 		tmp_part=`echo "$1" | sed "s%$tmp_disk%%"` ;;
     freebsd|*/kfreebsd)
-		tmp_disk=`echo "$1" | sed 's%r\{0,1\}\([saw]d[0-9]*\).*$%r\1%' \
-			    | sed 's%r\{0,1\}\(da[0-9]*\).*$%r\1%'`
+		tmp_disk=`echo "$1" | sed 's%r\{0,1\}\([saw]d[0-9]*\).*$%\1%' \
+			    | sed 's%r\{0,1\}\(da[0-9]*\).*$%\1%'`
 		tmp_part=`echo "$1" \
 	    		| sed "s%.*/r\{0,1\}[saw]d[0-9]\(s[0-9]*[a-h]\)%\1%" \
        	    	| sed "s%.*/r\{0,1\}da[0-9]\(s[0-9]*[a-h]\)%\1%"`
@@ -192,7 +194,7 @@ convert () {
 
     # Get the drive name.
     tmp_drive=`grep -v '^#' $device_map | grep "$tmp_disk *$" \
-			| sed 's%.*\(([hf]d[0-9][a-g0-9,]*)\).*%\1%'`
+			| sed 's%.*\(([hf]d[0-9][a-z0-9,]*)\).*%\1%'`
 
     # If not found, print an error message and exit.
     if test "x$tmp_drive" = x; then
@@ -209,13 +211,13 @@ convert () {
 		gnu)
 	    	  if echo $tmp_part | grep "^s" >/dev/null; then
 				tmp_pc_slice=`echo $tmp_part \
-		    		| sed "s%s\([0-9]*\)[a-g]*$%\1%"`
+		    		| sed "s%s\([0-9]*\)[a-z]*$%\1%"`
 				tmp_drive=`echo "$tmp_drive" \
 		    		| sed "s%)%,\`expr "$tmp_pc_slice" - 1\`)%"`
 	    	  fi
-	    	  if echo $tmp_part | grep "[a-g]$" >/dev/null; then
+	    	  if echo $tmp_part | grep "[a-z]$" >/dev/null; then
 				tmp_bsd_partition=`echo "$tmp_part" \
-		    		| sed "s%[^a-g]*\([a-g]\)$%\1%"`
+		    		| sed "s%[^a-z]*\([a-z]\)$%\1%"`
 				tmp_drive=`echo "$tmp_drive" \
 		    		| sed "s%)%,$tmp_bsd_partition)%"`
 	    	  fi
@@ -292,7 +294,7 @@ device_map=$grub_dir/device.map
 kopt="root=$root_device ro"
 
 # Title
-title="Debian GNU/Linux"
+title="Debian GNU/`uname -s | sed -e s,GNU/,,g`"
 
 # should update-grub remember the default entry
 updatedefaultentry="false"
@@ -320,8 +322,17 @@ fi
 # alternatives
 	defoptions=""
 
+# should grub lock the old kernels
+	lockold="false"
+
+# Xen hypervisor options to use with the default Xen boot option
+	xenhopt=""
+
+# Xen Linux kernel options to use with the default Xen boot option
+	xenkopt="console=tty0"
+
 # options to use with the alternative boot options
-	altoptions="(recovery mode) single"
+	altoptions="(single-user mode) single"
 
 # controls howmany kernels are listed in the menu.lst,
 # this does not include the alternative kernels
@@ -465,8 +476,8 @@ CompareVersions()
         v2=$(echo $v2 | sed -e 's!^\(.*-\([0-9]\+\.\)\{2\}[0-9]\+\)\( .*\)!\1.0 \3!g')
           
 	# Then split the version number and remove any '.' 's or dashes
-	v1=$(echo $v1 | sed -e 's![-\.]\+! !g' -e 's!\([0-9]\)\([A-Za-z]\)!\1 \2!')
-	v2=$(echo $v2 | sed -e 's![-\.]\+! !g' -e 's!\([0-9]\)\([A-Za-z]\)!\1 \2!')
+	v1=$(echo $v1 | sed -e 's![-\.]\+! !g' -e 's!\([0-9]\)\([[:alpha:]]\)!\1 \2!')
+	v2=$(echo $v2 | sed -e 's![-\.]\+! !g' -e 's!\([0-9]\)\([[:alpha:]]\)!\1 \2!')
 
 	# we weight different kernel suffixes here
 	# ac   = 50
@@ -571,16 +582,36 @@ get_kernel_opt()
 
 write_kernel_entry()
 {
-	kernel_version=$1
-	recovery_desc=$2
-	lock_alternative=$3
-	grub_root_device=$4
-	kernel=$5
-	kernel_options=$6
-	recovery_suffix=$7
-	initrd=$8
+	local kernel_version; kernel_version=$1; shift
+	local recovery_desc; recovery_desc=$1; shift
+	local lock_alternative; lock_alternative=$1; shift
+	local grub_root_device; grub_root_device=$1; shift
+	local kernel; kernel=$1; shift
+	local kernel_options; kernel_options=$1; shift
+	local recovery_suffix; recovery_suffix=$1; shift
+	local initrd; initrd=$1; shift
+	#local savedefault; savedefault=$1; shift
+	shift
+	local lockold; lockold=$1; shift
+	local hypervisor
+	if [ -n "$1" ]; then
+		# Hypervisor.
+		hypervisor=$1; shift
+		local hypervisor_image; hypervisor_image=$1; shift
+		local hypervisor_version; hypervisor_version=$1; shift
+		local hypervisor_options; hypervisor_options=$1; shift
+	fi
 
-	echo -n "title		$title, kernel $kernel_version" >> $buffer
+	echo -n "title		" >> $buffer
+
+	if [ -n "$hypervisor" ]; then
+		echo -n "$hypervisor $hypervisor_version / " >> $buffer
+	fi
+
+	echo -n "$title" >> $buffer
+	if [ -n "$kernel_version" ]; then
+		echo -n ", kernel $kernel_version" >> $buffer
+	fi
 	if [ -n "$recovery_desc" ]; then
 		echo -n " $recovery_desc" >> $buffer
 	fi
@@ -590,16 +621,38 @@ write_kernel_entry()
 	if test x"$lock_alternative" = x"true" ; then
 		echo "lock" >> $buffer
 	fi
+	# lock the old entries
+	if test x"$lockold" = x"true" ; then
+	echo "lock" >> $buffer
+	fi
 
 	echo "root		$grub_root_device" >> $buffer
-	echo -n "kernel		$kernel $kernel_options"  >> $buffer
+
+	echo -n "kernel		"  >> $buffer
+	if [ -n "$hypervisor" ]; then
+		echo -n "$hypervisor_image" >> $buffer
+		if [ -n "$hypervisor_options" ]; then
+			echo -n " $hypervisor_options"  >> $buffer
+		fi
+		echo >> $buffer
+		echo -n "module		"  >> $buffer
+	fi
+	echo -n "$kernel"  >> $buffer
+	if [ -n "$kernel_options" ]; then
+		echo -n " $kernel_options"  >> $buffer
+	fi
 	if [ -n "$recovery_desc" ]; then
 		echo -n " $recovery_suffix"  >> $buffer
 	fi
 	echo >> $buffer
 
 	if [ -n "$initrd" ]; then
-		echo "initrd		$initrd" >> $buffer
+		if [ -n "$hypervisor" ]; then
+			echo -n "module		" >> $buffer
+		else
+			echo -n "initrd		" >> $buffer
+		fi
+		echo "$initrd" >> $buffer
 	fi
 
 	echo "boot" >> $buffer
@@ -651,9 +704,9 @@ kopt=$(GetMenuOpt "kopt" "$kopt")
 test -z "$(GetMenuOpt "kopt" "")" && kopt_2_6="root=$root_device_2_6 ro"
 
 # Extract options for specific kernels
-opts="$(ExtractMenuOpts "\(kopt_[a-zA-Z0-9_]\+\)")"
+opts="$(ExtractMenuOpts "\(kopt_[[:alnum:]_]\+\)")"
 test -z "$opts" || eval "$opts"
-CustomKopts=$(GetMenuOpts "\(kopt_[a-zA-Z0-9_]\+\)")
+CustomKopts=$(GetMenuOpts "\(kopt_[[:alnum:]_]\+\)")
 
 # Extract the grub root
 grub_root_device=$(GetMenuOpt "groot" "$grub_root_device")
@@ -669,6 +722,15 @@ lockalternative=$(GetMenuOpt "lockalternative" "$lockalternative")
 
 # Extract the additional default options
 defoptions=$(GetMenuOpt "defoptions" "$defoptions")
+
+# Extract the lockold value
+lockold=$(GetMenuOpt "lockold" "$lockold")
+
+# Extract Xen hypervisor options
+xenhopt=$(GetMenuOpt "xenhopt" "$xenhopt")
+
+# Extract Xen Linux kernel options
+xenkopt=$(GetMenuOpt "xenkopt" "$xenkopt")
 
 # Extract the howmany value
 howmany=$(GetMenuOpt "howmany" "$howmany")
@@ -729,10 +791,24 @@ echo "## e.g. defoptions=vga=791 resume=/dev/hda5" >> $buffer
 echo "# defoptions=$defoptions" >> $buffer
 echo >> $buffer
 
+echo "## should update-grub lock old automagic boot options" >> $buffer
+echo "## e.g. lockold=false" >> $buffer
+echo "##      lockold=true" >> $buffer
+echo "# lockold=$lockold" >> $buffer
+echo >> $buffer
+
+echo "## Xen hypervisor options to use with the default Xen boot option" >> $buffer
+echo "# xenhopt=$xenhopt" >> $buffer
+echo >> $buffer
+
+echo "## Xen Linux kernel options to use with the default Xen boot option" >> $buffer
+echo "# xenkopt=$xenkopt" >> $buffer
+echo >> $buffer
+
 echo "## altoption boot targets option" >> $buffer
 echo "## multiple altoptions lines are allowed" >> $buffer
 echo "## e.g. altoptions=(extra menu suffix) extra boot options" >> $buffer
-echo "##      altoptions=(recovery mode) single" >> $buffer
+echo "##      altoptions=(single-user) single" >> $buffer
 
 if ! grep -q "^# altoptions" $menu ; then
 	echo "# altoptions=$altoptions" >> $buffer
@@ -769,7 +845,8 @@ current_splash=`grep '^splashimage=' ${grub_dir}/menu.lst || true`
 splashimage_path="splashimage=${grub_root_device}${grub_dir##${boot_device:+/boot}}/splash.xpm.gz"
 if [ `sed -e "/^$start/,/^$end/d" $grub_dir/menu.lst | grep -c '^splashimage='` != "0" ] ; then
        #checks for splashscreen defined outside the autoupdated part
-       echo "Found splashscreen: $(grep '^splashimage=' ${grub_dir}/menu.lst)" >&2
+       splashimage=$(grep '^splashimage=' ${grub_dir}/menu.lst)
+       echo "found: ${splashimage##*=}" >&2
        echo >&2  
 elif [ -f "${grub_dir}/splash.xpm.gz" ]  && [ "$current_splash" = "" ]; then
        echo "found: /boot/grub/splash.xpm.gz" >&2
@@ -788,22 +865,48 @@ else
 fi
 
 
+xenKernels=""
+for ver in `grep -l CONFIG_XEN_PRIVILEGED_GUEST=y /boot/config* | sed -e s%/boot/config-%%`; do
+  # ver is a kernel version
+  kern="/boot/vmlinuz-$ver"
+  if [ -r $kern ] ; then
+       newerKernels=""
+       for i in $xenKernels ; do
+                res=$(CompareVersions "$kern" "$i")
+                if [ "$kern" != "" ] && [ "$res" -gt 0 ] ; then
+                        newerKernels="$newerKernels $kern $i"
+                        kern=""
+                else
+                        newerKernels="$newerKernels $i"
+                fi
+        done
+        if [ "$kern" != "" ] ; then
+                newerKernels="$newerKernels $kern"
+        fi
+        xenKernels="$newerKernels"
+    fi
+done
+
 sortedKernels=""
-for kern in $(/bin/ls -1vr /boot | grep -v "dpkg-*" | grep "^vmlinuz-") ; do
+for kern in $(/bin/ls -1vr /boot | grep -v "dpkg-*" | grep -v "xen" | grep "^vmlinuz-") ; do
 	# found a kernel
+        if `echo "$xenKernels" | grep -q $kern` ; then
+          continue
+        fi
+        # not a Xen kernel
         kern="/boot/$kern"
 	newerKernels=""
 	for i in $sortedKernels ; do
-		res=$(CompareVersions "$kern" "$i")
-		if [ "$kern" != "" ] && [ "$res" -gt 0 ] ; then
-			newerKernels="$newerKernels $kern $i"
-			kern=""
-		else
-			newerKernels="$newerKernels $i"
-		fi
+	    res=$(CompareVersions "$kern" "$i")
+	    if [ "$kern" != "" ] && [ "$res" -gt 0 ] ; then
+		newerKernels="$newerKernels $kern $i"
+	 	kern=""
+	    else
+		newerKernels="$newerKernels $i"
+	    fi
 	done
 	if [ "$kern" != "" ] ; then
-		newerKernels="$newerKernels $kern"
+	    newerKernels="$newerKernels $kern"
 	fi
 	sortedKernels="$newerKernels"
 done
@@ -814,6 +917,13 @@ fi
 if test -f "/boot/vmlinuz" ; then
 	sortedKernels="/boot/vmlinuz $sortedKernels"
 fi
+
+hypervisors=""
+for hyp in /boot/xen-*.gz; do
+    if [ ! -h "$hyp" ] && [ -f "$hyp" ]; then
+	hypervisors="$hypervisors `basename "$hyp"`"
+    fi
+done
 
 # figure out where grub looks for the kernels at boot time
 kernel_dir=/boot
@@ -842,8 +952,52 @@ else
 		notChangeDefault="yes"
 fi
 
+case "$host_os" in
+  freebsd|*/kfreebsd)
+    if test -e /boot/loader.gz ; then
+      kernel=/boot/loader.gz
+    else
+      kernel=/boot/loader
+    fi
+    write_kernel_entry "" "" "" "$grub_root_device" "$kernel" "" "" "" "true" ""
+  ;;
+esac
+
 ## heres where we start writing out the kernel entries
 counter=0
+
+# Xen entries first.
+for hypervisor in $hypervisors; do
+    hypVersion=`basename "$hypervisor" .gz | sed s%xen-%%`
+
+    for kern in $xenKernels ; do
+                if test ! x"$howmany" = x"all" ; then
+        	        if [ $counter -gt $howmany ] ; then
+                	        break
+                	fi
+		fi
+        	kernelName=$(basename $kern)
+	
+        	kernelVersion=$(echo $kernelName | sed -e 's/vmlinuz//')
+        	initrdName=$(FindInitrdName "/boot" "$kernelVersion")
+        	initrd=""
+
+        	kernel=$kernel_dir/$kernelName
+        	if [ -n "$initrdName" ] ; then
+               	    initrd=$kernel_dir/$initrdName
+        	fi
+
+        	echo "Found Xen hypervisor $hypVersion,  kernel: $kernel"
+
+        	kernelVersion=$(echo $kernelVersion | sed -e 's/^-//')
+		currentOpt=$(get_kernel_opt $kernelVersion)
+
+		write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
+		  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \
+		  Xen "$kernel_dir/$hypervisor" "$hypVersion" "$xenhopt"
+	done
+done
+
 for kern in $sortedKernels ; do
 	counter=$(($counter + 1))
 	if test ! x"$howmany" = x"all" ; then
@@ -885,8 +1039,12 @@ for kern in $sortedKernels ; do
 	
 	currentOpt=$(get_kernel_opt $kernelVersion)
 
+	do_lockold=$lockold
+	# do not lockold for the first entry
+	[ $counter -eq 1 ] && do_lockold=false
+
 	write_kernel_entry "$kernelVersion" "" "" "$grub_root_device" "$kernel" \
-	"$currentOpt $defoptions" "" "$initrd" "true"
+		"$currentOpt $defoptions" "" "$initrd" "true" "$do_lockold"
 
 	# insert the alternative boot options
 	if test ! x"$alternative" = x"false" ; then
@@ -895,14 +1053,16 @@ for kern in $sortedKernels ; do
 			descr=$(echo $line | sed -ne 's/\(([^)]*)\)[[:space:]]\(.*\)/\1/p')
 			suffix=$(echo $line | sed -ne 's/\(([^)]*)\)[[:space:]]\(.*\)/\2/p')
 
+			test x"$lockalternative" = x"true" && do_lockold=false
 			write_kernel_entry "$kernelVersion" "$descr" "$lockalternative" \
-			"$grub_root_device" "$kernel" "$currentOpt" "$suffix" "$initrd" \
-			"true"
+				"$grub_root_device" "$kernel" "$currentOpt" "$suffix" "$initrd" \
+				"true" "$do_lockold"
 
 		done
 	fi
 done
 
+    
 memtest86names="memtest86 memtest86+"
 
 if test ! x"$memtest86" = x"false" ; then
@@ -916,7 +1076,7 @@ if test ! x"$memtest86" = x"false" ; then
 			echo "Found kernel: $kernel" >&2
 
 			write_kernel_entry "$kernelVersion" "" "" "$grub_root_device" \
-			"$kernel" "$currentOpt" "" "$initrd" "false"
+			"$kernel" "$currentOpt" "" "$initrd" "false" ""
 		fi
 	done
 fi

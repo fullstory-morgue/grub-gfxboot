@@ -1,3 +1,6 @@
+# Used to grab fixes from CVS. Run debian/rules cvs-sync to update it.
+cvs-sync.dpatch
+
 menu.lst_gnu-hurd.dpatch
 raid.dpatch
 raid_cciss.dpatch
@@ -7,6 +10,8 @@ kfreebsd.dpatch
 grub-special_device_names.dpatch
 initrd_max_address.dpatch
 grub-install_addsyncs.dpatch
+grub-install_regexp.dpatch
+grub-install_aoe_support.dpatch
 geometry-26kernel.dpatch
 print_func.dpatch
 mprotect.dpatch
@@ -16,9 +21,7 @@ mprotect.dpatch
 #fix_amd64_compile.dpatch
 
 # add SuSE's gfxboot patches
-grub-splashscreen-v4.dpatch
-grub-splashscreen-v4_v5.dpatch
-grub-splashscreen-v5_v7.dpatch
+grub-gfxmenu-v7.dpatch
 
 # patches stolen from SuSE
 force-LBA-off.dpatch

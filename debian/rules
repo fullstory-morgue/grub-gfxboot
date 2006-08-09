@@ -156,6 +156,11 @@ clean:
 	# clean up documentation directory removing created dirs.
 	-( cd docs && rm -rf grub multiboot )
 
+	# remove files that will be change due our automake and autoconf rebuilding
+	-rm -f $(find . -name 'Makefile.in' -o \
+                    -name 'aclocal.m4' -o \
+                    -name 'configure')
+
 	# reverse patches we applied. this has to happen after make distclean
 	-$(MAKE) -s -f debian/rules unpatch
 
@@ -265,6 +270,18 @@ binary-indep: build-indep install-indep
 # Build architecture dependant packages using the common target.
 binary-arch: build-arch install-arch
 	$(MAKE) -f debian/rules DH_OPTIONS=-a binary-common
+
+# Grab fixes from CVS using our version as reference.
+cvs-sync:
+	cvs -d:pserver:anonymous@cvs.savannah.gnu.org:/cvsroot/grub checkout -d grub-cvs grub; \
+	UVERSION=$$(dpkg-parsechangelog | grep Version | sed 's,Version: ,,g;s,-[0-9]*$$,,g;s,\.,_,g'); \
+	cd grub-cvs && \
+	rm -f ../debian/patches/cvs-sync.patch ../debian/patches/cvs-sync.dpatch && \
+	cat ../debian/dpatch.header > ../debian/patches/cvs-sync.dpatch && \
+	cvs diff -uN -r release_$$UVERSION -r HEAD \
+          | sed 's,^\(---\|+++\) \(.*\)$$,\1 foo/\2,g' \
+          | filterdiff -x '*/.cvsignore' -x '*/docs/version.texi' -x '*/docs/stamp-vti' > ../debian/patches/cvs-sync.dpatch; \
+	cd .. && rm -rf grub-cvs
 
 binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary install install-indep install-arch configure patch unpatch

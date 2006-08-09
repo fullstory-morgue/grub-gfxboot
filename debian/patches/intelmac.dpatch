@@ -1,21 +1,8 @@
 #! /bin/sh /usr/share/dpatch/dpatch-run
-## intelmac.patch by Stefan Lippers-Hollmann <s.l-h@gmx.de>
+## intelmac.diff by Stefan Lippers-Hollmann <s.l-h@gmx.de>
 ##
 ## All lines beginning with `## DP:' are a description of the patch.
-## DP: Pinguin im Apfel
-## DP: Linux auf Intel-Macs zum Laufen bringen
-## DP: --------------------------------------------
-## DP: c't 10/06, Seite 133, ps
-## DP: 
-## DP: Bei der Ursachenforschung, warum Grub auf den Intel-Macs hängen  
-## DP: blieb, stießen wir auf einen Thread in den Foren der OpenSolaris- 
-## DP: Entwickler: https://www.opensolaris.org/jive/thread.jspa? 
-## DP: threadID=7554&tstart=0 Die dort vorgeschlagenen Patches haben wir  
-## DP: versuchsweise in das Grub-Debian-Paket eingebaut, woraufhin der  
-## DP: Bootloader auch auf dem Intel-Mac arbeitete.  Die diff-Datei  
-## DP: beschreibt den kompletten Patch gegen das Quelldateien von Grub (er  
-## DP: enthält keine Debian-spezifischen Teile, bezieht sich allerdings auf  
-## DP: die in Debian vorhandene Version ...).
+## DP: No description
 
 @DPATCH@
 --- grub-0.97.orig/stage2/asm.S	2004-06-19 18:55:22.000000000 +0200

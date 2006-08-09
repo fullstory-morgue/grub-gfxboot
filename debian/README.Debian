@@ -28,11 +28,11 @@ quick setup
 
 after installing the package:
 
-1) grub-install /dev/hda
+1) grub-install "(hd0)"
    or if /boot is a separate partition
-   grub-install --root-directory=/boot /dev/hda
+   grub-install --root-directory=/boot "(hd0)"
 
-   using in place of /dev/hda the device that you boot from
+   using in place of "(hd0)" the device that you boot from
 
 2) update-grub which will create a menu.lst for you if one does not exist
    or manually create one, and skip to step 4
