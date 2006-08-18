@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-10) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 19 Aug 2006 00:50:31 +0200
+
 grub-gfxboot (0.97-9) unstable; urgency=low
 
   * compile with gcc-4.0, gcc-4.1 seems to have compatibility issues.
