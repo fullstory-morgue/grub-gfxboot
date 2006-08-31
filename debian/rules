@@ -237,9 +237,9 @@ install-arch:
 # in another 'make' thread.
 binary-common:
 	# Add a wrapper for update-grub. Remove it post-etch
-	cp debian/wrappers debian/grub/sbin/update-grub
-	mv debian/grub/usr/sbin/update-grub debian/grub/usr/sbin/update-grub.real
-	cp debian/wrappers debian/grub/usr/sbin/update-grub
+	cp debian/wrappers debian/grub-gfxboot/sbin/update-grub
+	mv debian/grub/usr/sbin/update-grub debian/grub-gfxboot/usr/sbin/update-grub.real
+	cp debian/wrappers debian/grub-gfxboot/usr/sbin/update-grub
 
 	dh_testdir
 	dh_testroot
