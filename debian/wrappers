@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# Wrapper to warn user about kernel-img.conf move
+#
+
+if grep -q '  */sbin/update-grub$' /etc/kernel-img.conf 2> /dev/null ; then
+	cat <<EOF
+Your /etc/kernel-img.conf needs upgrade. Read grub's NEWS.Debian[1]
+file and follow its instructions.
+
+ 1. /usr/share/doc/grub/NEWS.Debian
+
+
+EOF
+fi
+
+if [ -x /usr/sbin/update-grub.real ]; then
+	if [ "$0" == "/sbin/update-grub" ]; then
+		echo "You shouldn't call /sbin/update-grub. Please call /usr/sbin/update-grub instead!"
+		echo
+	fi
+	exec -a update-grub /usr/sbin/update-grub.real $*
+else
+	echo "Your /usr is broken, please fix it before call this wrapper!"
+fi

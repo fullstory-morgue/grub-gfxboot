@@ -81,7 +81,7 @@ configure-stamp: patch-stamp
 	CC=$(CC) LDFLAGS=$(LDFLAGS) ./configure \
 		--host=$(DEB_HOST_GNU_TYPE) \
 		--build=$(DEB_BUILD_GNU_TYPE) \
-		--prefix=/ \
+		--prefix=/usr \
 		--mandir=/usr/share/man \
 		--infodir=/usr/share/info \
 		--disable-auto-linux-mem-opt
@@ -179,7 +179,7 @@ install-indep: install-arch
 
 	# grub-gfxboot-disk
 	mkdir -p $(CURDIR)/debian/tmp/root/boot/grub
-	cp $(CURDIR)/debian/grub-gfxboot/lib/grub/*-*/{stage1,e2fs_stage1_5,stage2} \
+	cp $(CURDIR)/debian/grub-gfxboot/usr/lib/grub/*-*/{stage1,e2fs_stage1_5,stage2} \
 		$(CURDIR)/docs/menu.lst \
 		$(CURDIR)/debian/tmp/root/boot/grub
 	tar -C $(CURDIR)/debian/tmp/root \
@@ -190,7 +190,7 @@ install-indep: install-arch
 		-f $(CURDIR)/debian/tmp/grub.tar.gz
 
 	rm -f $(CURDIR)/debian/tmp/root/boot/grub/*stage*
-	cp $(CURDIR)/debian/grub-gfxboot/lib/grub/*-*/stage2_eltorito \
+	cp $(CURDIR)/debian/grub-gfxboot/usr/lib/grub/*-*/stage2_eltorito \
 		$(CURDIR)/debian/tmp/root/boot/grub
 	mkisofs \
 		-b boot/grub/stage2_eltorito \
@@ -221,14 +221,14 @@ install-arch:
 
 	# Cleanup filesystems not used natively in Debian.
 	# (non-native filesystems are supported via stage2)
-	mkdir debian/grub-gfxboot/lib/grub/tmp/
-	mv debian/grub-gfxboot/lib/grub/*-*/*_stage1_5 \
-		debian/grub-gfxboot/lib/grub/tmp/
+	mkdir debian/grub-gfxboot/usr/lib/grub/tmp/
+	mv debian/grub-gfxboot/usr/lib/grub/*-*/*_stage1_5 \
+		debian/grub-gfxboot/usr/lib/grub/tmp/
 	for i in $(filesystems) ; do \
-		mv debian/grub-gfxboot/lib/grub/tmp/$${i}_stage1_5 \
-		debian/grub-gfxboot/lib/grub/*-*/ ; \
+		mv debian/grub-gfxboot/usr/lib/grub/tmp/$${i}_stage1_5 \
+		debian/grub-gfxboot/usr/lib/grub/*-*/ ; \
 	done
-	rm -rf debian/grub-gfxboot/lib/grub/tmp/
+	rm -rf debian/grub-gfxboot/usr/lib/grub/tmp/
 
 	dh_install -s
 
@@ -236,6 +236,11 @@ install-arch:
 # binary-arch/binary-indep
 # in another 'make' thread.
 binary-common:
+	# Add a wrapper for update-grub. Remove it post-etch
+	cp debian/wrappers debian/grub/sbin/update-grub
+	mv debian/grub/usr/sbin/update-grub debian/grub/usr/sbin/update-grub.real
+	cp debian/wrappers debian/grub/usr/sbin/update-grub
+
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs ChangeLog

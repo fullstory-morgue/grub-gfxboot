@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 #
-# Insert a list of installed kernels in a grub menu.lst file
+# Insert a list of installed kernels in a grub config file
 #   Copyright 2001 Wichert Akkerman <wichert@linux.com>
 #
 # This file is free software; you can redistribute it and/or modify it
@@ -99,21 +99,6 @@ find_root_device ()
 	fi
 
 	echo $device
-}
-
-# Usage: convert_kernel26 os_device
-# Convert system path to the kernel26 notation
-# I.e. /dev/ida/c0d0p2 -> /dev/ida!c0d0p2
-convert_kernel26 ()
-{
-    case "$1" in
-	/dev/rd/*)
-            echo "$1" | sed 's%^\(/dev/[^/]*\)/\(.*\)%\1!\2%'
-	    ;;
-	*)
-	    echo "$1"
-	    ;;
-    esac
 }
 
 # Usage: convert_raid1 os_device
@@ -278,11 +263,11 @@ grub_dirs="/boot/grub /boot/boot/grub"
 grub_dir=$(find_grub_dir)
 
 # Full path to the menu.lst
-menu_file=$grub_dir/menu.lst
+menu_file_basename=menu.lst
+menu_file=$grub_dir/$menu_file_basename
 
 # the device for the / filesystem
 root_device=$(find_root_device)
-root_device_2_6=$(convert_kernel26 "$root_device")
 
 # the device for the /boot filesystem
 boot_device=$(find_device "/boot")
@@ -334,7 +319,7 @@ fi
 # options to use with the alternative boot options
 	altoptions="(single-user mode) single"
 
-# controls howmany kernels are listed in the menu.lst,
+# controls howmany kernels are listed in the config file,
 # this does not include the alternative kernels
 	howmany="all"
 
@@ -349,12 +334,12 @@ if test -f "/etc/default/grub" ; then
     . /etc/default/grub
 fi
 
-# Default options to use in a new menu.lst . This will only be used if menu.lst
+# Default options to use in a new config file. This will only be used if $menu_file
 # doesn't already exist. Only edit the lines between the two "EOF"s. The others are
 # part of the script.
 newtemplate=$(tempfile)
 cat > "$newtemplate" <<EOF
-# menu.lst - See: grub(8), info grub, update-grub(8)
+# $menu_file_basename - See: grub(8), info grub, update-grub(8)
 #            grub-install(8), grub-floppy(8),
 #            grub-md5-crypt, /usr/share/doc/grub
 #            and /usr/share/doc/grub-doc/.
@@ -409,7 +394,7 @@ end="### END DEBIAN AUTOMAGIC KERNELS LIST"
 startopt="## ## Start Default Options ##"
 endopt="## ## End Default Options ##"
 
-# Extract options from menu.lst
+# Extract options from config file
 ExtractMenuOpt()
 {
 	opt=$1
@@ -654,13 +639,11 @@ write_kernel_entry()
 		fi
 		echo "$initrd" >> $buffer
 	fi
-
-	echo "boot" >> $buffer
 	echo >> $buffer
 }
 
 
-echo -n "Testing for an existing GRUB menu.list file ... " >&2
+echo -n "Testing for an existing GRUB $menu_file_basename file ... " >&2
 
 # Test if our menu file exists
 if [ -f "$menu_file" ] ; then
@@ -701,7 +684,7 @@ fi
 kopt=$(GetMenuOpt "kopt" "$kopt")
 
 # Set the kernel 2.6 option only for fresh install
-test -z "$(GetMenuOpt "kopt" "")" && kopt_2_6="root=$root_device_2_6 ro"
+test -z "$(GetMenuOpt "kopt" "")" && kopt_2_6="root=$root_device ro"
 
 # Extract options for specific kernels
 opts="$(ExtractMenuOpts "\(kopt_[[:alnum:]_]\+\)")"
@@ -817,7 +800,7 @@ else
 fi
 echo >> $buffer
 
-echo "## controls how many kernels should be put into the menu.lst" >> $buffer
+echo "## controls how many kernels should be put into the $menu_file_basename" >> $buffer
 echo "## only counts the first occurence of a kernel, not the" >> $buffer
 echo "## alternative kernel options" >> $buffer
 echo "## e.g. howmany=all" >> $buffer
@@ -841,11 +824,11 @@ echo "## ## End Default Options ##" >> $buffer
 echo >> $buffer
 
 echo -n "Searching for splash image ... " >&2
-current_splash=`grep '^splashimage=' ${grub_dir}/menu.lst || true`
+current_splash=`grep '^splashimage=' ${menu_file} || true`
 splashimage_path="splashimage=${grub_root_device}${grub_dir##${boot_device:+/boot}}/splash.xpm.gz"
-if [ `sed -e "/^$start/,/^$end/d" $grub_dir/menu.lst | grep -c '^splashimage='` != "0" ] ; then
+if [ `sed -e "/^$start/,/^$end/d" $menu_file | grep -c '^splashimage='` != "0" ] ; then
        #checks for splashscreen defined outside the autoupdated part
-       splashimage=$(grep '^splashimage=' ${grub_dir}/menu.lst)
+       splashimage=$(grep '^splashimage=' ${menu_file})
        echo "found: ${splashimage##*=}" >&2
        echo >&2  
 elif [ -f "${grub_dir}/splash.xpm.gz" ]  && [ "$current_splash" = "" ]; then
@@ -857,7 +840,7 @@ elif [ -f "${grub_dir}/splash.xpm.gz" ]  && [ "$current_splash" = "$splashimage_
        echo "$splashimage_path" >> $buffer
        echo >> $buffer
 elif [ "$current_splash" != "" ] && [ "$current_splash" != "$splashimage_path" ]; then
-       echo "found but preserving previous setting: $(grep '^splashimage=' ${grub_dir}/menu.lst)" >&2
+       echo "found but preserving previous setting: $(grep '^splashimage=' ${menu_file})" >&2
        echo "$current_splash" >> $buffer
        echo >> $buffer
 else

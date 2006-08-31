@@ -1,4 +1,4 @@
-debian/update-grub sbin
-debian/grub-floppy sbin
-debian/grub-reboot sbin
-util/mkbimage bin
+debian/update-grub	usr/sbin
+debian/grub-floppy	usr/sbin
+debian/grub-reboot	usr/sbin
+util/mkbimage		usr/bin

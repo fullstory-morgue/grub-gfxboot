@@ -1,8 +1,27 @@
-grub-gfxboot (0.97-10) UNRELEASED; urgency=low
+grub-gfxboot (0.97-10) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * add changes from grub 0.97-14:
+    [ Robert Millan ]
+    - Make update-grub more $menu_file agnostic to ease code sharing with grub2
+      (which uses grub.cfg).  Also remove explicit "boot" command that has never
+      been required, and would break grub2.
+    - Fix FHS-me-harder headache.  (Closes: #361929)
+      - rules:  --prefix=/usr.
+      - grub.install:  Move the stuff to /usr.
+    - update-grub:  Set interpreter to /bin/bash to cope with non-POSIX
+      extensions.  (also mentioned in #361929)
+    [ Otavio Salvador ]
+    - Remove convert_kernel26 usage since it's not necessary anymore and due
+      initramfs-tools changes it's bug too.
+    - Add a NEWS file describing how to upgrade the system regarting to
+      grub-install and update-grub moving.
+    - Change the way we handle FHS headache:
+      - debian/wrappers: New. Provide a wrapper to old locations.
+          - debian/rules: install the wrappers.
+      - grub.dirs: New. Create /sbin.
+  * indent debian/rules properly.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 19 Aug 2006 00:50:31 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri,  1 Sep 2006 01:07:49 +0200
 
 grub-gfxboot (0.97-9) unstable; urgency=low
 
