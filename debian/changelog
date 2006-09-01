@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-12) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri,  1 Sep 2006 02:34:12 +0200
+
 grub-gfxboot (0.97-11) unstable; urgency=low
 
   * fix reference to NEWS.Debian.gz in debian/wrapper.
