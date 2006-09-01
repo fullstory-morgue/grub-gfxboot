@@ -8,7 +8,7 @@ if grep -q '  */sbin/update-grub$' /etc/kernel-img.conf 2> /dev/null ; then
 Your /etc/kernel-img.conf needs upgrade. Read grub's NEWS.Debian[1]
 file and follow its instructions.
 
- 1. /usr/share/doc/grub/NEWS.Debian
+ 1. /usr/share/doc/grub-gfxboot/NEWS.Debian.gz
 
 
 EOF
