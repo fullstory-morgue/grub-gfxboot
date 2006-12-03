@@ -21,7 +21,7 @@ mprotect.dpatch
 #fix_amd64_compile.dpatch
 
 # add SuSE's gfxboot patches
-grub-gfxmenu-v7.dpatch
+grub-gfxmenu-v8.dpatch
 
 # patches stolen from SuSE
 force-LBA-off.dpatch

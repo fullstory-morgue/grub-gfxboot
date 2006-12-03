@@ -63,7 +63,7 @@ ifeq ($(DEB_BUILD_GNU_CPU),x86_64)
   LDFLAGS=-static
 endif
 
-CC=gcc-4.0
+CC=gcc
 
 gen-control:
 	cat debian/control.in \

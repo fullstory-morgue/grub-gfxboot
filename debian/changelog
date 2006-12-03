@@ -1,8 +1,10 @@
 grub-gfxboot (0.97-12) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * update gfxmenu/ gfxboot patches to v8.
+  * use the default gcc again.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri,  1 Sep 2006 02:34:12 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun,  3 Dec 2006 13:03:16 +0100
 
 grub-gfxboot (0.97-11) unstable; urgency=low
 
