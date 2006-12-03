@@ -4,8 +4,9 @@ grub-gfxboot (0.97-12) unstable; urgency=low
   * update gfxmenu/ gfxboot patches to v8.
   * use the default gcc again.
   * mkisofs --> genisoimage, my dear do you really call this free software?
+  * provide correct path for mkbimage.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun,  3 Dec 2006 13:12:18 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun,  3 Dec 2006 13:43:58 +0100
 
 grub-gfxboot (0.97-11) unstable; urgency=low
 

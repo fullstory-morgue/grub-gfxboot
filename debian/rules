@@ -185,7 +185,7 @@ install-indep: install-arch
 	tar -C $(CURDIR)/debian/tmp/root \
 		-cvzf $(CURDIR)/debian/tmp/grub.tar.gz boot
 	chmod +x $(CURDIR)/util/mkbimage
-	$(CURDIR)/util/mkbimage -t 1.44 \
+	PATH="$(CURDIR)/grub:$(PATH)" $(CURDIR)/util/mkbimage -t 1.44 \
 		-d $(CURDIR)/debian/tmp/ -s ext2 \
 		-f $(CURDIR)/debian/tmp/grub.tar.gz
 
