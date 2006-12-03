@@ -2,14 +2,14 @@ Source: grub-gfxboot
 Section: admin
 Priority: optional
 Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-Build-Depends: debhelper (>= 5.0.0), dpatch, automake1.9, autoconf, autotools-dev, texinfo, libncurses5-dev | libncurses-dev, type-handling (>= 0.2.1), libc6-dev-i386 [amd64]
+Build-Depends: debhelper (>= 5.0.0), dpatch, automake1.9, autoconf, autotools-dev, texinfo, libncurses5-dev | libncurses-dev, libc6-dev-i386 [amd64 kfreebsd-amd64]
 Build-Depends-Indep: texi2html, e2tools, genisoimage
 Standards-Version: 3.7.2.1
 
 Package: grub-gfxboot
-Architecture: i386 darwin-i386 freebsd-i386 kfreebsd-i386 knetbsd-i386 netbsd-i386 openbsd-i386 hurd-i386 amd64
+Architecture: any-i386 any-amd64
 Depends: ${shlibs:Depends}
-Suggests: grub-gfxboot-doc, grubconf, mdadm, gfxboot
+Suggests: grub-gfxboot-doc, mdadm, gfxboot
 Provides: grub
 Conflicts: grub, grub-disk, grub-doc
 Description: GRand Unified Bootloader

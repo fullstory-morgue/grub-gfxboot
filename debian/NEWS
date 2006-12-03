@@ -1,10 +1,11 @@
-grub (0.97-14) unstable; urgency=low
+grub (0.97-16) unstable; urgency=low
 
-  grub-install and update-grub has change location.
+  grub-install and update-grub have changed location.
   
   There's a wrapper available in /sbin to keep backward compatibility but
-  it'll be remove once Etch is release as stable. You _must_ edit your
-  /etc/kernel-img.conf and remove the full paths from it. For example:
+  it'll be removed once Etch is release as stable. You _must_ edit your
+  /etc/kernel-img.conf and change the paths to /usr/sbin/update-grub. 
+  For example:
 
   ,----[ /etc/kernel-img.conf ]
   | ...
@@ -16,9 +17,8 @@ grub (0.97-14) unstable; urgency=low
   
   ,----[ /etc/kernel-img.conf ]
   | ...
-  | postinst_hook = update-grub
-  | postrm_hook   = update-grub
+  | postinst_hook = /usr/sbin/update-grub
+  | postrm_hook   = /usr/sbin/update-grub
   `----
 
- -- Otavio Salvador <otavio@debian.org>  Wed, 30 Aug 2006 10:46:10 -0300
-
+ -- Otavio Salvador <otavio@debian.org>  Thu, 14 Sep 2006 23:25:36 -0300

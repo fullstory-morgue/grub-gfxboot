@@ -21,7 +21,7 @@
 dd=`which dd`
 ls=`which ls`
 head=`which head`
-pkglibdir=/lib/grub/*-*
+pkglibdir=/usr/lib/grub/*-*
 stage1=`$ls -1 $pkglibdir/stage1 | $head -1`
 stage2=`$ls -1 $pkglibdir/stage2 | $head -1`
 

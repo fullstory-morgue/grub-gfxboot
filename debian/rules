@@ -65,13 +65,6 @@ endif
 
 CC=gcc
 
-gen-control:
-	cat debian/control.in \
-	| sed "s/@i386@/`type-handling i386 any`/g" \
-	| sed "s/@x86_64@/amd64/g" \
-	| sed "s/@arches@/`type-handling i386 any`\ amd64/g" \
-	> debian/control
-
 configure: configure-stamp
 configure-stamp: patch-stamp
 	dh_testdir

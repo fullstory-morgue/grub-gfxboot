@@ -434,9 +434,7 @@ GetMenuOpt()
 	opt=$1
 	value=$2
 
-	tmp=$(ExtractMenuOpt "$opt")
-
-	[ -z "$tmp" ] || value="$tmp"
+	[ -z "$(GetMenuOpts "$opt")" ] || value=$(ExtractMenuOpt "$opt")
 
 	echo $value
 }
@@ -540,6 +538,17 @@ FindInitrdName()
 
 	# return the result
 	echo $initrdName
+}
+
+FindXenHypervisorVersions ()
+{
+	version=$1
+
+	if [ -f "/var/lib/linux-image-$version/xen-versions" ]; then
+		ret="$(cat /var/lib/linux-image-$version/xen-versions)"
+	fi
+
+	echo $ret
 }
 
 get_kernel_opt()
@@ -873,7 +882,7 @@ done
 sortedKernels=""
 for kern in $(/bin/ls -1vr /boot | grep -v "dpkg-*" | grep -v "xen" | grep "^vmlinuz-") ; do
 	# found a kernel
-        if `echo "$xenKernels" | grep -q $kern` ; then
+        if `echo "$xenKernels" | grep -q "$kern "` ; then
           continue
         fi
         # not a Xen kernel
@@ -950,35 +959,55 @@ esac
 counter=0
 
 # Xen entries first.
-for hypervisor in $hypervisors; do
-    hypVersion=`basename "$hypervisor" .gz | sed s%xen-%%`
-
-    for kern in $xenKernels ; do
-                if test ! x"$howmany" = x"all" ; then
-        	        if [ $counter -gt $howmany ] ; then
-                	        break
-                	fi
+for kern in $xenKernels ; do
+	counter=$(($counter + 1))
+	if test ! x"$howmany" = x"all" ; then
+		if [ $counter -gt $howmany ] ; then
+			break
 		fi
-        	kernelName=$(basename $kern)
-	
-        	kernelVersion=$(echo $kernelName | sed -e 's/vmlinuz//')
-        	initrdName=$(FindInitrdName "/boot" "$kernelVersion")
-        	initrd=""
+	fi
 
-        	kernel=$kernel_dir/$kernelName
-        	if [ -n "$initrdName" ] ; then
-               	    initrd=$kernel_dir/$initrdName
-        	fi
+	kernelName=$(basename $kern)
+	kernelVersion=$(echo $kernelName | sed -e 's/vmlinuz//')
 
-        	echo "Found Xen hypervisor $hypVersion,  kernel: $kernel"
+	initrdName=$(FindInitrdName "/boot" "$kernelVersion")
+	initrd=""
 
-        	kernelVersion=$(echo $kernelVersion | sed -e 's/^-//')
-		currentOpt=$(get_kernel_opt $kernelVersion)
+	kernel=$kernel_dir/$kernelName
+	if [ -n "$initrdName" ] ; then
+		initrd=$kernel_dir/$initrdName
+	fi
 
-		write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
-		  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \
-		  Xen "$kernel_dir/$hypervisor" "$hypVersion" "$xenhopt"
+	kernelVersion=$(echo $kernelVersion | sed -e 's/^-//')
+	currentOpt=$(get_kernel_opt $kernelVersion)
+
+	hypervisorVersions=$(FindXenHypervisorVersions "$kernelVersion")
+
+	found=
+	for hypervisorVersion in $hypervisorVersions; do
+		hypervisor="$kernel_dir/xen-$hypervisorVersion.gz"
+		if [ -e "$hypervisor" ]; then
+			found=1
+
+			echo "Found Xen hypervisor $hypervisorVersion,  kernel: $kernel"
+
+			write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
+			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \
+			  Xen "$hypervisor" "$hypervisorVersion" "$xenhopt"
+		fi
 	done
+
+	if [ -z $found ]; then
+		for hypervisor in $hypervisors; do
+			hypVersion=`basename "$hypervisor" .gz | sed s%xen-%%`
+		
+			echo "Found Xen hypervisor $hypVersion,  kernel: $kernel"
+
+			write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
+			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \
+			  Xen "$kernel_dir/$hypervisor" "$hypVersion" "$xenhopt"
+		done
+	fi
 done
 
 for kern in $sortedKernels ; do
@@ -1045,6 +1074,16 @@ for kern in $sortedKernels ; do
 	fi
 done
 
+grub2name="/boot/grub/core.img"
+if test -f $grub2name ; then
+	echo "Found GRUB 2: $grub2name" >&2
+	cat >> $buffer << EOF
+title		Chainload into GRUB 2
+root		$grub_root_device
+kernel		$grub2name
+
+EOF
+fi
     
 memtest86names="memtest86 memtest86+"
 

@@ -23,7 +23,7 @@ Assume 'yes' on all questions.
 .B \fBupdate\-grub\fR
 is a program used to generate the \fImenu.lst\fR file used by the grub bootloader.
 It works by looking in \fI/boot\fR for all files which start with "\fIvmlinuz\-\fR". They will be treated as kernels, and grub menu entries will be created for each. It will also create the initial \fImenu.lst\fR if none exists, after prompting the user.
-It will also add initrd lines for ramdisk images found with the same version as kernels found. e.g. /boot/vmlinuz-2.4.5 and /boot/initrd-2.4.5 will cause a line of "initrd=/boot/initrd-2.4.5 or simliar to be added for the kernel entry in the menu.lst.
+It will also add initrd lines for ramdisk images found with the same version as kernels found. e.g. /boot/vmlinuz-2.4.5 and /boot/initrd-2.4.5 will cause a line of "initrd=/boot/initrd-2.4.5 or similar to be added for the kernel entry in the menu.lst.
 
 After \fBupdate\-grub\fR has been run for the first time, the user is required to edit the generated \fBmenu.lst\fR. The user must set the two options \fBupdate\-grub\fR uses. Then re\-run the \fBupdate\-grub\fR script to update the \fImenu.lst\fR file using the default's that have been set.
 

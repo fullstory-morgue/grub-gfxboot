@@ -69,8 +69,8 @@ either intially, and/or automatically everytime you install a new kernel.
 
 To setup automatic updates add these lines to your /etc/kernel-img.conf:
 
-postinst_hook = /sbin/update-grub
-postrm_hook = /sbin/update-grub
+postinst_hook = /usr/sbin/update-grub
+postrm_hook = /usr/sbin/update-grub
 do_bootloader = no
 
 For further information see the manpage kernel-img.conf(5) or update-grub(8)
@@ -142,3 +142,5 @@ critical problems in booting later versions of NetBSD and OpenBSD.  FreeBSD is
 not a big problem, because GRUB can boot it via /boot/loader for now.
 
 If you're willing to give help to us, please contact us."
+
+ -- Otavio Salvador <otavio@debian.org>, Thu, 14 Sep 2006 23:27:33 -0300

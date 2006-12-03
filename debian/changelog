@@ -1,12 +1,76 @@
 grub-gfxboot (0.97-12) unstable; urgency=low
 
-  * NOT RELEASED YET
   * update gfxmenu/ gfxboot patches to v8.
   * use the default gcc again.
   * mkisofs --> genisoimage, my dear do you really call this free software?
   * provide correct path for mkbimage.
+  * add changes from grub 0.97-19:
+    [ Leandro Dorileo ]
+    - Changed how grub handles the saved default entry in the savedefault(once)
+      patch in stage2/stage2.c cmain function, changed grub-reboot to print
+      the warning already being printed in grub-set-default to default file.
+      Closes: #367889, #397021.
+    [ Otavio Salvador ]
+    - Applied patch from "Christian Eckerle" <ce@publishing-etc.de> to not
+      always prepend /boot in front of the kernel line for xen if /boot is
+      on its on partition. Closes: #393488.
+    - Applied patch from Mike Kasick <mkasick@club.cc.cmu.edu> to fix the
+      handle of null options. Closes: #395275.
+    - Applied patch from Markus Schulz <msc@antzsystem.de> to fix xen kernel
+      name detection. Closes: #397775.
+    - Fix grub-install and update-grub mess. Closes: #394020.
+    - Applied patch from "A. Costa" <agcosta@gis.net> to fix a typo on
+     update-grub.8. Closes: #396315.
+  * add changes from grub 0.97-18:
+    [ Otavio Salvador ]
+    - Fix clean target to remove generated files. Thanks to Joey Hess
+      <joeyh@debian.org> for the patch. Closes: #385980
+    - Fix grub-install.wrapper to check for /usr/sbin/grub-install.real
+      otherwise grub-install will never be run. Thanks to Pier Luigi Pau
+      <pigipau@gmail.com> by noticed it. Closes: #387729
+    [ Robert Millan ]
+    - grub-floppy: Update old /lib path.  (Closes: #390167)
+  * add changes from grub 0.97-17:
+    [ Petter Reinholdtsen ]
+    - Install grub-install.wrapper as /sbin/grub-install, not
+      /usr/sbin/grub-install. (Closes: #387500, #387729)
+    [ Leandro Dorileo ]
+    - Changed few mistakes in NEWS. Closes: #387700
+    - Install grub-install as /usr/sbin/grub-install.real and changed its wrapper.
+    - Corrected few english mistakes in grub-install.wrapper and
+      update-grub.wrapper.
+    - Changed the wrappers to call the real script with "$@" instead of $*.
+      Closes: #388277
+    [ Robert Millan ]
+    - update-grub: Detect GRUB 2 core image (and add title to chainload it).
+    - Get rid of type-handling.
+      - control.in: Remove.
+      - rules: Drop control generation target.
+      - control: Staticalise the dynamicaly generated tags.
+    - control (Suggests): Remove grubconf (Closes: #389094).
+    - Add a big warning to bug reporters, explaining that GRUB Legacy is feature
+      frozen.
+      - presubj: New.  Install it in every package.
+    [ Otavio Salvador ]
+    - Add XS-X-Vcs-Svn on control file and point it to our current svn
+      repository.
+  * add changes from grub 0.97-16:
+    ### High urgency since it solve a installation problem on beta3 of d-i ###
+    [ Bastian Blank ]
+    - Add selection of xen hypervisors.
+    [ Robert Millan ]
+    - rules:  Install grub-disk iso uncompressed (tradeoff is reasonable, unlike
+      the ext2fs image).
+    [ Otavio Salvador ]
+    - Add grub-install wrapper forgotten in transition handle. Closes: #387500
+    - Edited NEWS.Debian following Manoj Srivastava <srivasta@debian.org>
+      suggestion to avoid brokeness when removing old kernels. Closes: #387325
+    - Fix README.Debian to cite the new scripts place.
+  * add changes from grub 0.97-15:
+    [ Otavio Salvador ]
+    - Remove bashism from update-grub wrapper.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun,  3 Dec 2006 13:43:58 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun,  3 Dec 2006 14:11:18 +0100
 
 grub-gfxboot (0.97-11) unstable; urgency=low
 
