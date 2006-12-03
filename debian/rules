@@ -192,7 +192,7 @@ install-indep: install-arch
 	rm -f $(CURDIR)/debian/tmp/root/boot/grub/*stage*
 	cp $(CURDIR)/debian/grub-gfxboot/usr/lib/grub/*-*/stage2_eltorito \
 		$(CURDIR)/debian/tmp/root/boot/grub
-	mkisofs \
+	genisoimage \
 		-b boot/grub/stage2_eltorito \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \
 		-o $(CURDIR)/debian/tmp/raw.iso \
