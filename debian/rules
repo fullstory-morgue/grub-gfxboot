@@ -229,10 +229,12 @@ install-arch:
 # binary-arch/binary-indep
 # in another 'make' thread.
 binary-common:
+binary-common:
 	# Add a wrapper for update-grub. Remove it post-etch
-	cp debian/wrappers debian/grub-gfxboot/sbin/update-grub
-	mv debian/grub-gfxboot/usr/sbin/update-grub debian/grub-gfxboot/usr/sbin/update-grub.real
-	cp debian/wrappers debian/grub-gfxboot/usr/sbin/update-grub
+	cp debian/update-grub.wrapper debian/grub-gfxboot/sbin/update-grub
+	
+	# Add a wrapper for grub-install. Remove it post-etch
+	cp debian/grub-install.wrapper debian/grub-gfxboot/sbin/grub-install
 
 	dh_testdir
 	dh_testroot
