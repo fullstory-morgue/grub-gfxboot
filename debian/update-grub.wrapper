@@ -4,7 +4,7 @@
 #
 
 if grep -q '  */sbin/update-grub$' /etc/kernel-img.conf 2> /dev/null ; then
-	cat <<EOF
+	cat >&2 <<EOF
 Your /etc/kernel-img.conf needs to be updated. Read grub's NEWS.Debian[1]
 file and follow its instructions.
 
@@ -16,10 +16,10 @@ fi
 
 if [ -x /usr/sbin/update-grub ]; then
 	if [ "$0" = "/sbin/update-grub" ]; then
-		echo "You shouldn't call /sbin/update-grub. Please call /usr/sbin/update-grub instead!"
-		echo
+		echo "You shouldn't call /sbin/update-grub. Please call /usr/sbin/update-grub instead!" >&2
+		echo >&2
 	fi
 	exec /usr/sbin/update-grub "$@"
 else
-	echo "Your /usr is broken, please fix it before call this wrapper!"
+	echo "Your /usr is broken, please fix it before call this wrapper!" >&2
 fi

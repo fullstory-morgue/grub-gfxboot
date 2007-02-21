@@ -5,9 +5,9 @@
 ## DP: No description
 
 @DPATCH@
-diff -uNr grub-0.97-orig/stage2/builtins.c grub-0.97/stage2/builtins.c
---- grub-0.97-orig/stage2/builtins.c	2005-02-15 16:58:23.000000000 -0500
-+++ grub-0.97/stage2/builtins.c	2006-11-06 15:27:26.000000000 -0500
+diff -uNr grub-0.97/stage2/builtins.c grub-0.97.modif/stage2/builtins.c
+--- grub-0.97/stage2/builtins.c	2005-02-15 16:58:23.000000000 -0500
++++ grub-0.97.modif/stage2/builtins.c	2007-01-09 00:17:59.000000000 -0500
 @@ -82,6 +82,10 @@
     inside other functions.  */
  static int configfile_func (char *arg, int flags);
@@ -26,9 +26,9 @@ diff -uNr grub-0.97-orig/stage2/builtins.c grub-0.97/stage2/builtins.c
 -#if !defined(SUPPORT_DISKLESS) && !defined(GRUB_UTIL)
 +#if !defined(SUPPORT_DISKLESS)
 +  #if !defined(GRUB_UTIL)
-+	savedefault_helper(arg, flags);
++	return savedefault_helper(arg, flags);
 +  #else
-+	savedefault_shell(arg, flags);
++	return savedefault_shell(arg, flags);
 +  #endif
 +#else /* !SUPPORT_DISKLESS */ 
 +  errnum = ERR_UNRECOGNIZED;
@@ -123,7 +123,11 @@ diff -uNr grub-0.97-orig/stage2/builtins.c grub-0.97/stage2/builtins.c
    unsigned long tmp_drive = saved_drive;
    unsigned long tmp_partition = saved_partition;
    char *default_file = (char *) DEFAULT_FILE_BUF;
-@@ -3300,19 +3399,23 @@
+@@ -3297,22 +3396,26 @@
+       
+       disk_read_hook = disk_read_savesect_func;
+       len = grub_read (buf, sizeof (buf));
++      buf[9]='\0';/* Make sure grub_strstr() below terminates */
        disk_read_hook = 0;
        grub_close ();
        
@@ -146,17 +150,16 @@ diff -uNr grub-0.97-orig/stage2/builtins.c grub-0.97/stage2/builtins.c
 +      {
 +       int f_len = grub_strlen(buf) - grub_strlen(tmp);
 +       char *def;
-+       int a;
-+       for(a = 0; a < f_len; a++)
-+         grub_memcpy(&def[a], &buf[a], sizeof(char));
++       buf[f_len] = '\0';
++       def = buf;
 +       safe_parse_maxint (&def, &entryno);
 +      }
        
        /* Set up a string to be written.  */
        grub_memset (buf, '\n', sizeof (buf));
-diff -uNr grub-0.97-orig/stage2/stage2.c grub-0.97/stage2/stage2.c
---- grub-0.97-orig/stage2/stage2.c	2005-03-19 12:51:57.000000000 -0500
-+++ grub-0.97/stage2/stage2.c	2006-11-06 15:27:23.000000000 -0500
+diff -uNr grub-0.97/stage2/stage2.c grub-0.97.modif/stage2/stage2.c
+--- grub-0.97/stage2/stage2.c	2005-03-19 12:51:57.000000000 -0500
++++ grub-0.97.modif/stage2/stage2.c	2007-01-09 00:13:18.000000000 -0500
 @@ -891,8 +891,16 @@
  	      len = grub_read (buf, sizeof (buf));
  	      if (len > 0)

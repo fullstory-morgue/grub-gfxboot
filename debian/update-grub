@@ -266,6 +266,10 @@ grub_dir=$(find_grub_dir)
 menu_file_basename=menu.lst
 menu_file=$grub_dir/$menu_file_basename
 
+# Full path to the default file
+default_file_basename=default
+default_file=$grub_dir/$default_file_basename
+
 # the device for the / filesystem
 root_device=$(find_root_device)
 
@@ -384,6 +388,13 @@ color cyan/blue white/blue
 EOF
 ## End Configuration Options
 
+echo -n "Searching for default file ... " >&2
+if [ -f "$default_file" ] ; then
+  echo "found: $default_file" >&2
+else
+  echo "Generating $default_file file and setting the default boot entry to 0" >&2
+  grub-set-default 0
+fi
 
 # Make sure we use the standard sorting order
 LC_COLLATE=C
@@ -455,8 +466,8 @@ CompareVersions()
         v1=$(echo $1 | sed -e 's!^\(.*-\([0-9]\+\.\)\{2,3\}[0-9]\+\)\(.*\)!\1 \3!g')
 	v2=$(echo $2 | sed -e 's!^\(.*-\([0-9]\+\.\)\{2,3\}[0-9]\+\)\(.*\)!\1 \3!g')
 	#If the version number only has 3 digits then put in another .0
-        v1=$(echo $v1 | sed -e 's!^\(.*-\([0-9]\+\.\)\{2\}[0-9]\+\)\( .*\)!\1.0 \3!g')
-        v2=$(echo $v2 | sed -e 's!^\(.*-\([0-9]\+\.\)\{2\}[0-9]\+\)\( .*\)!\1.0 \3!g')
+        v1=$(echo $v1 | sed -e 's!^\(.*-\([0-9]\+\.\)\{2\}[0-9]\+\)\( .*\|$\)!\1.0 \3!g')
+        v2=$(echo $v2 | sed -e 's!^\(.*-\([0-9]\+\.\)\{2\}[0-9]\+\)\( .*\|$\)!\1.0 \3!g')
           
 	# Then split the version number and remove any '.' 's or dashes
 	v1=$(echo $v1 | sed -e 's![-\.]\+! !g' -e 's!\([0-9]\)\([[:alpha:]]\)!\1 \2!')
@@ -879,13 +890,26 @@ for ver in `grep -l CONFIG_XEN_PRIVILEGED_GUEST=y /boot/config* | sed -e s%/boot
     fi
 done
 
+in_domU=
+if [ -e /proc/xen/capabilities ] && ! grep -q "control_d" /proc/xen/capabilities; then
+	in_domU=1
+fi
+
 sortedKernels=""
-for kern in $(/bin/ls -1vr /boot | grep -v "dpkg-*" | grep -v "xen" | grep "^vmlinuz-") ; do
-	# found a kernel
-        if `echo "$xenKernels" | grep -q "$kern "` ; then
+for kern in $(/bin/ls -1vr /boot | grep -v "dpkg-*" | grep "^vmlinuz-") ; do
+	if `echo "$xenKernels" | grep -q "$kern "` || `echo "$kern" | grep -q "xen"`; then
+		is_xen=1
+	else
+		is_xen=
+	fi
+
+	if [ ! "$in_domU" ] && [ "$is_xen" ]; then
+	  # skip xen kernels
           continue
+        elif [ "$in_domU" ] && ! [ "$is_xen" ]; then
+	  # skip non-xen kernels
+	  continue
         fi
-        # not a Xen kernel
         kern="/boot/$kern"
 	newerKernels=""
 	for i in $sortedKernels ; do
@@ -989,7 +1013,7 @@ for kern in $xenKernels ; do
 		if [ -e "$hypervisor" ]; then
 			found=1
 
-			echo "Found Xen hypervisor $hypervisorVersion,  kernel: $kernel"
+			echo "Found Xen hypervisor $hypervisorVersion,  kernel: $kernel" >&2
 
 			write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
 			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \
@@ -1001,7 +1025,7 @@ for kern in $xenKernels ; do
 		for hypervisor in $hypervisors; do
 			hypVersion=`basename "$hypervisor" .gz | sed s%xen-%%`
 		
-			echo "Found Xen hypervisor $hypVersion,  kernel: $kernel"
+			echo "Found Xen hypervisor $hypVersion,  kernel: $kernel" >&2
 
 			write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
 			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \

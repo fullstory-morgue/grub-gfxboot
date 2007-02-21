@@ -96,6 +96,7 @@ build-arch-stamp: configure-stamp
 	# create man page for grub-gfxboot
 	( cd docs && ./help2man \
 	--name="the grub shell" \
+	--include=grub.8.additions \
 	--section=8 --output=grub.8 \
 	../grub/grub )
 
@@ -103,6 +104,7 @@ build-arch-stamp: configure-stamp
 	( cd util && chmod 755 grub-install )
 	( cd docs && ./help2man \
 	--name="install GRUB on your drive" \
+	--include=grub-install.8.additions \
 	--section=8 --output=grub-install.8 \
 	../util/grub-install )
 

@@ -30,4 +30,5 @@ reiser-unpack.dpatch
 # custom patches
 grub-0.96-noemul.dpatch
 intelmac.dpatch
+crossreference_manpages.diff
 mkisofs2genisoimage.dpatch

@@ -1,8 +1,38 @@
-grub-gfxboot (0.97-13) UNRELEASED; urgency=low
+grub-gfxboot (0.97-13) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * add changes from grub 0.97-23:
+    [ Tomas Pospisek ]
+    - Cross-referenced grub-install(8), grub(8) and update-grub(8) with
+      each other. Closes: #267998,
+    - Mention in the manpages that the info documentation comes with
+      the grub-doc package. Closes: #160337, #345655
+    - Note in the referring manpage, that kernel-img.conf comes with the
+      kernel-package package. Closes: #398419
+    [ Otavio Salvador ]
+    - Applied patch from Jason Rhinelander <jason@imaginary.ca> to fix
+  * add changes from grub 0.97-22:
+    [ Otavio Salvador ]
+    - Applied patch from Chip Salzenberg <chip@pobox.com> to avoid to write
+      to stdout. Fix kernel postrm calls. Closes: #409190.
+    - Applied patch from Joey Hess <joeyh@debian.org> to put xen kernels
+      when running inside of a domU. Closes: #404536.
+  * add changes from grub 0.97-21:
+    [ Leandro Dorileo ]
+    - Changed update-grub to call grub-set-default 0, and a warning a message
+      telling the user that the default file was regeneraged. Closes: #406068.
+    - Added some missing savedefault_func return in stage2.c and how the read
+      default buf was being handled. Thanks Len Sorensen
+      <lennartsorensen@ruggedcom.com> by the suggestions. Closes: #403763.
+  * add changes from grub 0.97-20:
+    [ Otavio Salvador ]
+    - Add manpage for grub-set-default. Thanks for Patrick Schönfeld
+      <schoenfeld@in-medias-res.com> by the patch. Closes: #399699
+    - Write grub-install wrapper messages on stderr instead of stdout.
+      Closes: #390038, #388696, #395359.
+    - Write update-grub wrapper messages on stderr instead of stdout.
+  * don't apply the savedefault patches, those would clash with gfxboot.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun,  3 Dec 2006 14:24:00 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 21 Feb 2007 01:48:35 +0100
 
 grub-gfxboot (0.97-12) unstable; urgency=low
 
