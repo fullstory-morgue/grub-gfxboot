@@ -26,6 +26,15 @@ grub-gfxmenu-v8.dpatch
 # patches stolen from SuSE
 force-LBA-off.dpatch
 reiser-unpack.dpatch
+grub-R.dpatch
+grub-linux-setup-fix.dpatch
+bad-assert-sideeffect.dpatch
+fix-uninitialized.dpatch
+gcc4.dpatch
+chainloader-devicefix.dpatch
+grub-install-fix-UUID_LABEL.dpatch
+e100-newIDs.dpatch
+pacify-autoconf.dpatch
 
 # custom patches
 grub-0.96-noemul.dpatch

@@ -5,9 +5,9 @@
 ## DP: No description
 
 @DPATCH@
-diff -uNr grub-0.97/stage2/builtins.c grub-0.97.modif/stage2/builtins.c
---- grub-0.97/stage2/builtins.c	2005-02-15 16:58:23.000000000 -0500
-+++ grub-0.97.modif/stage2/builtins.c	2007-01-09 00:17:59.000000000 -0500
+diff -uNr grub-0.97.orig/stage2/builtins.c grub-0.97/stage2/builtins.c
+--- grub-0.97.orig/stage2/builtins.c	2005-02-15 21:58:23.000000000 +0000
++++ grub-0.97/stage2/builtins.c	2007-03-06 22:32:02.000000000 +0000
 @@ -82,6 +82,10 @@
     inside other functions.  */
  static int configfile_func (char *arg, int flags);
@@ -19,7 +19,7 @@ diff -uNr grub-0.97/stage2/builtins.c grub-0.97.modif/stage2/builtins.c
  /* Initialize the data for builtins.  */
  void
  init_builtins (void)
-@@ -3221,7 +3225,102 @@
+@@ -3221,7 +3225,109 @@
  static int
  savedefault_func (char *arg, int flags)
  {
@@ -82,14 +82,15 @@ diff -uNr grub-0.97/stage2/builtins.c grub-0.97.modif/stage2/builtins.c
 +  default_file[i] = 0;
 +  grub_strncat (default_file + i, "default", DEFAULT_FILE_BUFLEN - i);
 +
-+  if(!(fp = fopen(default_file,"w")))
++  if(!(fp = fopen(default_file,"r")))
 +    {
 +      errnum = ERR_READ;
 +      goto fail;
 +    }
 +  
-+  read(&line, -1);
-+    
++  fgets(line, bytes, fp);
++  fclose(fp);
++ 
 +  sscanf(line, "%d:%d", &curr_prev_default, &curr_default);
 +     
 +  if(curr_default != -1)
@@ -103,9 +104,15 @@ diff -uNr grub-0.97/stage2/builtins.c grub-0.97.modif/stage2/builtins.c
 +    }
 +     
 +  if(once_only)
-+    sprintf(buf, "%d:%d\n", new_prev_default, new_default);
++    sprintf(buf, "%d:%d", new_prev_default, new_default);
 +  else
-+    sprintf(buf, "%d\n", new_default);
++    sprintf(buf, "%d", new_default);
++
++  if(!(fp = fopen(default_file,"w")))
++    {
++      errnum = ERR_READ;
++      goto fail;
++    }
 +     
 +  fprintf(fp, buf);   
 +     
@@ -123,7 +130,7 @@ diff -uNr grub-0.97/stage2/builtins.c grub-0.97.modif/stage2/builtins.c
    unsigned long tmp_drive = saved_drive;
    unsigned long tmp_partition = saved_partition;
    char *default_file = (char *) DEFAULT_FILE_BUF;
-@@ -3297,22 +3396,26 @@
+@@ -3297,22 +3403,26 @@
        
        disk_read_hook = disk_read_savesect_func;
        len = grub_read (buf, sizeof (buf));
@@ -157,9 +164,9 @@ diff -uNr grub-0.97/stage2/builtins.c grub-0.97.modif/stage2/builtins.c
        
        /* Set up a string to be written.  */
        grub_memset (buf, '\n', sizeof (buf));
-diff -uNr grub-0.97/stage2/stage2.c grub-0.97.modif/stage2/stage2.c
---- grub-0.97/stage2/stage2.c	2005-03-19 12:51:57.000000000 -0500
-+++ grub-0.97.modif/stage2/stage2.c	2007-01-09 00:13:18.000000000 -0500
+diff -uNr grub-0.97.orig/stage2/stage2.c grub-0.97/stage2/stage2.c
+--- grub-0.97.orig/stage2/stage2.c	2005-03-19 17:51:57.000000000 +0000
++++ grub-0.97/stage2/stage2.c	2007-03-06 22:17:55.000000000 +0000
 @@ -891,8 +891,16 @@
  	      len = grub_read (buf, sizeof (buf));
  	      if (len > 0)

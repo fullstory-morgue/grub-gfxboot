@@ -1,8 +1,30 @@
-grub-gfxboot (0.97-14) UNRELEASED; urgency=low
+grub-gfxboot (0.97-14) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * add changes from grub 0.97-27:
+    [ Otavio Salvador ]
+    - When counting the number of kernels, do not count invalid xen
+      ones. Thanks to "Jon H. Davis" <jon@mast.queensu.ca> by investigate
+      and produce the patch for it. Closes: #411908
+  * add changes from grub 0.97-26:
+    [ Otavio Salvador ]
+    - Brown bag release!
+    - Fix two stupid mistakes on previous changes. Thanks to Steve Langasek
+      <vorlon@debian.org> by identify them.
+  * add changes from grub 0.97-25:
+    [ Otavio Salvador ]
+    - Fix grub-install regexp to work when providing the whole device as in
+      /dev/cciss/c0d0. Thanks to Jason Cormie <j.cormie@abertay.ac.uk> by
+      the patch. Closes: #414161
+  * add changes from grub 0.97-24:
+    [ Leandro Dorileo ]
+    - Changed grub-set-default to search for grub dir if rootdir is not
+      informed. Closes:  #411109, #412334
+    - Applied changes from Friedemann Baitinger <baiti@web.de>
+      to savedefault-once. closes: #254475
+  * import further patches from SuSE.
+  * remove custom patch targets that clashed with dpatch.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 21 Feb 2007 01:55:09 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 31 Mar 2007 03:49:21 +0200
 
 grub-gfxboot (0.97-13) unstable; urgency=low
 

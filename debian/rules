@@ -156,9 +156,6 @@ clean:
                     -name 'aclocal.m4' -o \
                     -name 'configure')
 
-	# reverse patches we applied. this has to happen after make distclean
-	-$(MAKE) -s -f debian/rules unpatch
-
 	dh_clean
 
 install: install-indep install-arch
@@ -286,4 +283,4 @@ cvs-sync:
 	cd .. && rm -rf grub-cvs
 
 binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch configure patch unpatch
+.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch configure

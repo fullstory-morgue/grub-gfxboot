@@ -984,7 +984,6 @@ counter=0
 
 # Xen entries first.
 for kern in $xenKernels ; do
-	counter=$(($counter + 1))
 	if test ! x"$howmany" = x"all" ; then
 		if [ $counter -gt $howmany ] ; then
 			break
@@ -1018,6 +1017,7 @@ for kern in $xenKernels ; do
 			write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
 			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \
 			  Xen "$hypervisor" "$hypervisorVersion" "$xenhopt"
+	        counter=$(($counter + 1))
 		fi
 	done
 
@@ -1030,6 +1030,7 @@ for kern in $xenKernels ; do
 			write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
 			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \
 			  Xen "$kernel_dir/$hypervisor" "$hypVersion" "$xenhopt"
+	        counter=$(($counter + 1))
 		done
 	fi
 done
