@@ -1,3 +1,10 @@
+grub-gfxboot (0.97-16) unstable; urgency=low
+
+  * fix debian-rules-ignores-make-clean-error.
+  * fix manpage-has-useless-whatis-entry.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 17 Aug 2007 18:28:16 +0200
+
 grub-gfxboot (0.97-15) unstable; urgency=low
 
   * add changes from 0.97-29:

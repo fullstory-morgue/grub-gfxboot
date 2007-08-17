@@ -139,7 +139,7 @@ clean:
 	rm -f build-arch-stamp build-indep-stamp configure-stamp config.log
 
 	# Add here commands to clean up after the build process.
-	-$(MAKE) distclean
+	[ ! -f Makefile ] || $(MAKE) distclean
 
 	# The Makefile doesn't clean up the generated info files so we will do
 	# it here so the doco is uptodate.
