@@ -1,4 +1,4 @@
-grub-gfxboot (0.97-15) UNRELEASED; urgency=low
+grub-gfxboot (0.97-15) unstable; urgency=low
 
   * add changes from 0.97-29:
     [ Otavio Salvador ]
@@ -29,7 +29,7 @@ grub-gfxboot (0.97-15) UNRELEASED; urgency=low
   * switch to automake1.10.
   * fix broken conflicts with standard grub.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 17 Aug 2007 18:18:30 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 17 Aug 2007 18:22:40 +0200
 
 grub-gfxboot (0.97-14) unstable; urgency=low
 
