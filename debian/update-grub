@@ -344,9 +344,8 @@ fi
 newtemplate=$(tempfile)
 cat > "$newtemplate" <<EOF
 # $menu_file_basename - See: grub(8), info grub, update-grub(8)
-#            grub-install(8), grub-floppy(8),
-#            grub-md5-crypt, /usr/share/doc/grub
-#            and /usr/share/doc/grub-doc/.
+#            grub-install(8), grub-md5-crypt, 
+#            /usr/share/doc/grub and /usr/share/doc/grub-doc/.
 
 ## default num
 # Set the default entry to the entry number NUM. Numbering starts from 0, and
@@ -479,9 +478,9 @@ CompareVersions()
 	# rc   = -40
 	# test = -60
 	# others are given 99
-	v1=$(echo $v1 | sed -e 's! k7! 786 !g' -e 's! ac! 50 !g' -e 's! rc! -40 !g' -e 's! pre! -50 !g' -e 's! test! -60 !g' -e 's![^-0-9 ]\+!99!g')
+	v1=$(echo $v1 | sed -e 's! k7! 786 !g' -e 's! ac! 50 !g' -e 's! rc! -40 !g' -e 's! pre! -50 !g' -e 's! test! -60 !g' -e 's![^ ]*[^-0-9 ][^ ]*!99!g')
 
-	v2=$(echo $v2 | sed -e 's! k7! 786 !g' -e 's! ac! 50 !g' -e 's! rc! -40 !g' -e 's! pre! -50 !g' -e 's! test! -60 !g' -e 's![^-0-9 ]\+!99!g')
+	v2=$(echo $v2 | sed -e 's! k7! 786 !g' -e 's! ac! 50 !g' -e 's! rc! -40 !g' -e 's! pre! -50 !g' -e 's! test! -60 !g' -e 's![^ ]*[^-0-9 ][^ ]*!99!g')
 
 	result=0; v1finished=0; v2finished=0;
 	while [ $result -eq 0 ] && [ $v1finished -eq 0 ] && [ $v2finished -eq 0 ];

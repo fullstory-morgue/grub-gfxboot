@@ -75,9 +75,9 @@ booting the same kernel even if a new one is installed.
 
 The \fBupdate\-grub\fR script can be ran automagically from the \fI/etc/kernel\-img.conf\fR file by adding the following lines:
 
-postinst_hook = /sbin/update\-grub
+postinst_hook = update\-grub
 .br 
-postrm_hook = /sbin/update\-grub
+postrm_hook = update\-grub
 .br 
 do_bootloader = no
 

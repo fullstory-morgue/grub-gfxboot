@@ -70,7 +70,7 @@ configure-stamp: patch-stamp
 	dh_testdir
 
 	# Add here commands to configure the package.
-	aclocal-1.9 && automake-1.9 && autoconf
+	aclocal-1.10 && automake-1.10 && autoconf
 	CC=$(CC) LDFLAGS=$(LDFLAGS) ./configure \
 		--host=$(DEB_HOST_GNU_TYPE) \
 		--build=$(DEB_BUILD_GNU_TYPE) \
@@ -168,32 +168,6 @@ install-indep: install-arch
 	# Add here commands to install the indep part of the package into
 	# debian/<package>-doc.
 	#INSTALLDOC#
-
-	# grub-gfxboot-disk
-	mkdir -p $(CURDIR)/debian/tmp/root/boot/grub
-	cp $(CURDIR)/debian/grub-gfxboot/usr/lib/grub/*-*/{stage1,e2fs_stage1_5,stage2} \
-		$(CURDIR)/docs/menu.lst \
-		$(CURDIR)/debian/tmp/root/boot/grub
-	tar -C $(CURDIR)/debian/tmp/root \
-		-cvzf $(CURDIR)/debian/tmp/grub.tar.gz boot
-	chmod +x $(CURDIR)/util/mkbimage
-	PATH="$(CURDIR)/grub:$(PATH)" $(CURDIR)/util/mkbimage -t 1.44 \
-		-d $(CURDIR)/debian/tmp/ -s ext2 \
-		-f $(CURDIR)/debian/tmp/grub.tar.gz
-
-	rm -f $(CURDIR)/debian/tmp/root/boot/grub/*stage*
-	cp $(CURDIR)/debian/grub-gfxboot/usr/lib/grub/*-*/stage2_eltorito \
-		$(CURDIR)/debian/tmp/root/boot/grub
-	genisoimage \
-		-b boot/grub/stage2_eltorito \
-		-no-emul-boot -boot-load-size 4 -boot-info-table \
-		-o $(CURDIR)/debian/tmp/raw.iso \
-		-r $(CURDIR)/debian/tmp/root
-
-	gzip -c9 $(CURDIR)/debian/tmp/1.44.image > \
-		$(CURDIR)/debian/grub-gfxboot-disk/usr/share/grub-disk/${GRUB_DISK_IMAGE}.ext2fs.gz
-	gzip -c9 $(CURDIR)/debian/tmp/raw.iso > \
-		 $(CURDIR)/debian/grub-gfxboot-disk/usr/share/grub-disk/${GRUB_DISK_IMAGE}.iso.gz
 
 	dh_install -i
 

@@ -1,8 +1,35 @@
 grub-gfxboot (0.97-15) UNRELEASED; urgency=low
 
-  * NOT RELEASED YET
+  * add changes from 0.97-29:
+    [ Otavio Salvador ]
+    - update-grub: Improve sorting with mixed numeric and non-numeric
+      characters. Thanks dann frazier <dannf@debian.org> for the
+      patch. Closes: #422759
+    [ Robert Millan ]
+    - Add myself to Uploaders.
+    - update-grub: Remove core.img handling.  It was becoming meaningless
+      without presence of the grub-pc package.
+    - control (Architecture): Replace any-* arches with the old, boring,
+      hardcoded list.  (Closes: #424510)
+    - Get rid of grub-disk, mkbimage and grub-floppy.  They're deprecated
+      in favour of grub-rescue-pc now.  (Closes: #399168, #250938, #429576,
+      #352731)
+  * add changes from 0.97-28:
+    [ Robert Millan ]
+    - Remove second /sbin/update-grub warning.  Apparently, it is
+      impossible to detect /etc/kernel-img.conf syntax by checking $0.
+      (Closes: #421321)
+    - update-grub.8: Don't recommend /sbin/update-grub anymore.
+      (Closes: #418064)
+    - control (Build-Depends): s/libc6-dev-i386/gcc-multilib/g.
+    - update-grub: When GRUB 2 core.img is detected, set it as first option
+      (note that first doesn't imply default).
+  * remove grub-gfxboot-disk alltogether, don't rely on transitional dumms
+    packages.
+  * switch to automake1.10.
+  * fix broken conflicts with standard grub.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 31 Mar 2007 03:53:34 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 17 Aug 2007 18:18:30 +0200
 
 grub-gfxboot (0.97-14) unstable; urgency=low
 
