@@ -1,8 +1,9 @@
 grub-gfxboot (0.97-17) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * add VCS control headers.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 17 Aug 2007 18:30:27 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Sep 2007 20:15:49 +0200
 
 grub-gfxboot (0.97-16) unstable; urgency=low
 
