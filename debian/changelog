@@ -1,10 +1,11 @@
-grub-gfxboot (0.97-17) UNRELEASED; urgency=low
+grub-gfxboot (0.97-17) unstable; urgency=low
 
-  * NOT RELEASED YET
   * add VCS control headers.
   * update syntax for Vcs headers in debian/control
+  * add patch to fix A20 gate issues, especially in Intel Macs, this replaces
+    intelmac.dpatch.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 07 Oct 2007 14:42:35 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 09 Oct 2007 15:23:19 +0200
 
 grub-gfxboot (0.97-16) unstable; urgency=low
 

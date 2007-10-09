@@ -35,9 +35,9 @@ chainloader-devicefix.dpatch
 grub-install-fix-UUID_LABEL.dpatch
 e100-newIDs.dpatch
 pacify-autoconf.dpatch
+grub-a20.dpatch
 
 # custom patches
 grub-0.96-noemul.dpatch
-intelmac.dpatch
 crossreference_manpages.dpatch
 mkisofs2genisoimage.dpatch
