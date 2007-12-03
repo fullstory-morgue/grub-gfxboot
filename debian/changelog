@@ -1,8 +1,9 @@
 grub-gfxboot (0.97-18) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * update to Standards-Version 3.7.3, no changes necessary.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 09 Oct 2007 15:28:33 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 03 Dec 2007 13:51:01 +0100
 
 grub-gfxboot (0.97-17) unstable; urgency=low
 
