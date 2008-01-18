@@ -2,7 +2,7 @@ Source: grub-gfxboot
 Section: admin
 Priority: optional
 Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-Build-Depends: debhelper (>= 5.0.0), dpatch, automake1.10, autoconf, autotools-dev, texinfo, libncurses5-dev | libncurses-dev, gcc-multilib [amd64 kfreebsd-amd64]
+Build-Depends: debhelper (>= 6), dpatch, automake1.10, autoconf, autotools-dev, texinfo, libncurses5-dev | libncurses-dev, gcc-multilib [amd64 kfreebsd-amd64]
 Build-Depends-Indep: texi2html, e2tools, genisoimage
 Standards-Version: 3.7.3
 Vcs-Svn: svn://svn.berlios.de/fullstory/grub-gfxboot/trunk
