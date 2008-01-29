@@ -4,15 +4,17 @@ grub-gfxboot (0.97-21) unstable; urgency=low
     [ Robert Millan ]
     - update-grub:
       + Update Marc Haber's address.  (Closes: #432700)
-      + Make it more friendly to its GRUB 2 compatibiliy fork.
+      + Make it more friendly to its GRUB 2 compatibility fork.
       + update-grub: When in GRUB 2 compatibility mode, always set "default"
         to 0.
     - control (Build-Depends-Indep): Remove e2tools and mkisofs.
   * savedefault is finally working in combination with gfxmenu, enable it
     again.
   * finalize sync with upstream debian's grub packaging.
+  * remove auto-generated files from upstream source (which are already
+    removed in debian/rule's clean target).
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 20:57:28 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 21:03:30 +0100
 
 grub-gfxboot (0.97-20) unstable; urgency=low
 
