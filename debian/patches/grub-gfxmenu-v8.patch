@@ -482,7 +482,7 @@
  	  printf ("\
        Press enter to boot the selected OS or \'p\' to enter a\n\
        password to unlock the next set of features.");
-@@ -757,6 +765,493 @@
+@@ -757,6 +765,496 @@
  }
  
  
@@ -924,6 +924,9 @@
 +
 +  if(selected_entry < 0 || selected_entry > num_entries) return;
 +
++  /* for 'savedefault' */
++  current_entryno = selected_entry;
++
 +
 +  /* create new config with modified kernel option */
 +
@@ -976,7 +979,7 @@
  static int
  get_line_from_config (char *cmdline, int maxlen, int read_from_file)
  {
-@@ -1063,9 +1558,12 @@
+@@ -1063,9 +1561,12 @@
  	}
        else
  	{
