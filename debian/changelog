@@ -6,8 +6,9 @@ grub-gfxboot (0.97-21) UNRELEASED; urgency=low
     - update-grub:
       + Update Marc Haber's address.  (Closes: #432700)
       + Make it more friendly to its GRUB 2 compatibiliy fork.
+    - control (Build-Depends-Indep): Remove e2tools and mkisofs.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 19:28:37 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 19:30:00 +0100
 
 grub-gfxboot (0.97-20) unstable; urgency=low
 
