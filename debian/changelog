@@ -3,9 +3,11 @@ grub-gfxboot (0.97-21) UNRELEASED; urgency=low
   * NOT RELEASED YET
   * add changes from, as of yet unreleased 0.97-30:
     [ Robert Millan ]
-    - update-grub: Update Marc Haber's address.  (Closes: #432700)
+    - update-grub:
+      + Update Marc Haber's address.  (Closes: #432700)
+      + Make it more friendly to its GRUB 2 compatibiliy fork.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 19:26:06 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 19:28:37 +0100
 
 grub-gfxboot (0.97-20) unstable; urgency=low
 

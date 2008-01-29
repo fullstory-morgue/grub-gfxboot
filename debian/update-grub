@@ -981,6 +981,18 @@ esac
 ## heres where we start writing out the kernel entries
 counter=0
 
+if [ "$LET_US_TRY_GRUB_2" = "true" ] \
+  && test -f /boot/grub/core.img ; then
+	grub2name="$kernel_dir/grub/core.img"
+	echo "Found GRUB 2: $grub2name" >&2
+	cat >> $buffer << EOF
+title		Chainload into GRUB 2
+root		$grub_root_device
+kernel		$grub2name
+
+EOF
+fi
+
 # Xen entries first.
 for kern in $xenKernels ; do
 	if test ! x"$howmany" = x"all" ; then
@@ -1098,17 +1110,6 @@ for kern in $sortedKernels ; do
 	fi
 done
 
-grub2name="/boot/grub/core.img"
-if test -f $grub2name ; then
-	echo "Found GRUB 2: $grub2name" >&2
-	cat >> $buffer << EOF
-title		Chainload into GRUB 2
-root		$grub_root_device
-kernel		$grub2name
-
-EOF
-fi
-    
 memtest86names="memtest86 memtest86+"
 
 if test ! x"$memtest86" = x"false" ; then
