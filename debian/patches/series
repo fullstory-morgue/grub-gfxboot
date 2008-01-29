@@ -37,9 +37,6 @@ e100-newIDs.patch
 pacify-autoconf.patch
 grub-a20.patch
 
-# patches stolen from Fedora
-grub-support-256byte-inode.patch
-
 # custom patches
 grub-0.96-noemul.patch
 crossreference_manpages.patch
