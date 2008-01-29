@@ -1,6 +1,5 @@
-grub-gfxboot (0.97-21) UNRELEASED; urgency=low
+grub-gfxboot (0.97-21) unstable; urgency=low
 
-  * NOT RELEASED YET
   * add changes from, as of yet unreleased 0.97-30, up to svn r616:
     [ Robert Millan ]
     - update-grub:
