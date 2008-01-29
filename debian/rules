@@ -152,7 +152,7 @@ clean: unpatch
 	-( cd docs && rm -rf grub multiboot )
 	
 	# remove files that will be change due our automake and autoconf rebuilding
-	-rm -f $(find . -name 'Makefile.in' -o \
+	-rm -f $(shell find . -name 'Makefile.in' -o \
                     -name 'aclocal.m4' -o \
                     -name 'configure')
 	
@@ -177,7 +177,7 @@ install-arch:
 	dh_clean -k -s 
 	dh_installdirs -s
 	
-	# Add here commands to install the package into debian/grub-gfxboot.
+	# Add here commands to install the package into debian/grub.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/grub-gfxboot/
 	
 	# make install puts the info files in the grub-gfxboot package but we want them
@@ -249,11 +249,9 @@ cvs-sync:
 	cvs -d:pserver:anonymous@cvs.savannah.gnu.org:/cvsroot/grub checkout -d grub-cvs grub; \
 	UVERSION=$$(dpkg-parsechangelog | grep Version | sed 's,Version: ,,g;s,-[0-9]*$$,,g;s,\.,_,g'); \
 	cd grub-cvs && \
-	rm -f ../debian/patches/cvs-sync.patch ../debian/patches/cvs-sync.dpatch && \
-	cat ../debian/dpatch.header > ../debian/patches/cvs-sync.dpatch && \
-	cvs diff -uN -r release_$$UVERSION -r HEAD \
-          | sed 's,^\(---\|+++\) \(.*\)$$,\1 foo/\2,g' \
-          | filterdiff -x '*/.cvsignore' -x '*/docs/version.texi' -x '*/docs/stamp-vti' > ../debian/patches/cvs-sync.dpatch; \
+		cvs diff -uN -r release_$$UVERSION -r HEAD \
+			| sed 's,^\(---\|+++\) \(.*\)$$,\1 foo/\2,g' \
+			| filterdiff -x '*/.cvsignore' -x '*/docs/version.texi' -x '*/docs/stamp-vti' > ../debian/patches/cvs-sync.patch; \
 	cd .. && rm -rf grub-cvs
 
 binary: binary-arch binary-indep
