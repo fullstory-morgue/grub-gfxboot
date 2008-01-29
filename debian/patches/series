@@ -15,10 +15,10 @@ grub-install_aoe_support.patch
 geometry-26kernel.patch
 print_func.patch
 mprotect.patch
-#savedefault.dpatch
+#savedefault.patch
 
 # We aren't building amd64 binaries, see #244498
-#fix_amd64_compile.dpatch
+#fix_amd64_compile.patch
 
 # add SuSE's gfxboot patches
 grub-gfxmenu-v8.patch

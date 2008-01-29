@@ -5,10 +5,11 @@ grub-gfxboot (0.97-20) UNRELEASED; urgency=low
   * import grub-support-256byte-inode.patch by Jesse Keating
     <jkeating@redhat.com> from Fedora and rediff against SuSE's gcc4.patch.
   * update grub-gfxmenu-v8.patch to SuSE's current variant, "make
-    'savedefault' work with gfxmenu (#249812)" by Steffen Winterfeldt 
+    'savedefault' work with gfxmenu (#249812)" by Steffen Winterfeldt
     <snwint@suse.de>.
+  * refresh unused savedefault and fix_amd64_compile patches.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 17:39:53 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 17:44:29 +0100
 
 grub-gfxboot (0.97-19) unstable; urgency=low
 

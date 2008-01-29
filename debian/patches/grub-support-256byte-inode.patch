@@ -1,0 +1,12 @@
+--- a/stage2/fsys_ext2fs.c
++++ b/stage2/fsys_ext2fs.c
+@@ -567,7 +567,8 @@
+ 
+       raw_inode = INODE +
+ 	((current_ino - 1)
+-	 & (EXT2_BLOCK_SIZE (SUPERBLOCK) / sizeof (struct ext2_inode) - 1));
++	 & ((EXT2_BLOCK_SIZE (SUPERBLOCK) / sizeof (struct ext2_inode) - 1)) *
++	 EXT2_INODE_SIZE (SUPERBLOCK));
+ #ifdef E2DEBUG
+       printf ("ipb=%d, sizeof(inode)=%d\n",
+ 	      (EXT2_BLOCK_SIZE (SUPERBLOCK) / sizeof (struct ext2_inode)),
