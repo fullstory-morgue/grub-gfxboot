@@ -266,6 +266,11 @@ grub_dir=$(find_grub_dir)
 menu_file_basename=menu.lst
 menu_file=$grub_dir/$menu_file_basename
 
+# sidux/ grub-gfxboot
+if [ -r "${menu_file}" ]; then
+	grep -q savedefault "${menu_file}" || NO_SAVEDEFAULT_SUPPORTED_IN_MBR="yes"
+fi
+
 # Full path to the default file
 default_file_basename=default
 default_file=$grub_dir/$default_file_basename
@@ -1192,6 +1197,9 @@ elif test -z "$notChangeDefault"; then
 		set_default_value "$newDefaultNumber"
 	fi
 fi
+
+# sidux/ grub-gfxboot
+[ "${NO_SAVEDEFAULT_SUPPORTED_IN_MBR}" = "yes" ] && sed "/^savedefault/d"
 
 echo "done" >&2
 echo >&2

@@ -1,8 +1,9 @@
-grub-gfxboot (0.97-22) UNRELEASED; urgency=low
+grub-gfxboot (0.97-22) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * be careful and don't introduce savedefault on systems using the old,
+    savedefault incompatbile, gfxmenu grub bootsectors.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 21:05:52 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 21:41:10 +0100
 
 grub-gfxboot (0.97-21) unstable; urgency=low
 
