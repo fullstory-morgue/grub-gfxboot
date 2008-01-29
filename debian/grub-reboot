@@ -63,6 +63,7 @@ default_file=$grub_dir/default
 
 default="$1" ; shift
 grub --batch --config-file=$config_file $@ <<EOT
+savedefault --once --default=$default
 quit
 EOT
 
