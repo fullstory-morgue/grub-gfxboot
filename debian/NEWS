@@ -1,6 +1,6 @@
 grub (0.97-16) unstable; urgency=low
 
-  grub-install and update-grub have changed location.
+  grub-install and update-grub has changed location.
   
   There's a wrapper available in /sbin to keep backward compatibility but
   it'll be removed once Etch is release as stable. You _must_ edit your

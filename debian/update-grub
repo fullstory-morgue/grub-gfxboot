@@ -344,12 +344,18 @@ fi
 newtemplate=$(tempfile)
 cat > "$newtemplate" <<EOF
 # $menu_file_basename - See: grub(8), info grub, update-grub(8)
-#            grub-install(8), grub-md5-crypt, 
-#            /usr/share/doc/grub and /usr/share/doc/grub-doc/.
+#            grub-install(8), grub-floppy(8),
+#            grub-md5-crypt, /usr/share/doc/grub
+#            and /usr/share/doc/grub-doc/.
 
 ## default num
 # Set the default entry to the entry number NUM. Numbering starts from 0, and
 # the entry number 0 is the default if the command is not used.
+#
+# You can specify 'saved' instead of a number. In this case, the default entry
+# is the entry saved with the command 'savedefault'.
+# WARNING: If you are using dmraid do not change this entry to 'saved' or your
+# array will desync and will not let you boot your system.
 default		0
 
 ## timeout sec
@@ -594,8 +600,7 @@ write_kernel_entry()
 	local kernel_options; kernel_options=$1; shift
 	local recovery_suffix; recovery_suffix=$1; shift
 	local initrd; initrd=$1; shift
-	#local savedefault; savedefault=$1; shift
-	shift
+	local savedefault; savedefault=$1; shift
 	local lockold; lockold=$1; shift
 	local hypervisor
 	if [ -n "$1" ]; then
@@ -657,6 +662,10 @@ write_kernel_entry()
 			echo -n "initrd		" >> $buffer
 		fi
 		echo "$initrd" >> $buffer
+	fi
+
+	if test x"$savedefault" = x"true" ; then
+		echo "savedefault" >> $buffer
 	fi
 	echo >> $buffer
 }
@@ -989,9 +998,11 @@ if [ "$LET_US_TRY_GRUB_2" = "true" ] \
 title		Chainload into GRUB 2
 root		$grub_root_device
 kernel		$grub2name
+savedefault
 
 EOF
 fi
+    
 
 # Xen entries first.
 for kern in $xenKernels ; do

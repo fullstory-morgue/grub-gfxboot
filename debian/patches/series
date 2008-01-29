@@ -15,7 +15,7 @@ grub-install_aoe_support.patch
 geometry-26kernel.patch
 print_func.patch
 mprotect.patch
-#savedefault.patch
+savedefault.patch
 
 # We aren't building amd64 binaries, see #244498
 #fix_amd64_compile.patch

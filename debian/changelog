@@ -9,8 +9,11 @@ grub-gfxboot (0.97-21) UNRELEASED; urgency=low
       + update-grub: When in GRUB 2 compatibility mode, always set "default"
         to 0.
     - control (Build-Depends-Indep): Remove e2tools and mkisofs.
+  * savedefault is finally working in combination with gfxmenu, enable it
+    again.
+  * start synching up with debian's grub.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 19:34:51 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 20:39:09 +0100
 
 grub-gfxboot (0.97-20) unstable; urgency=low
 
