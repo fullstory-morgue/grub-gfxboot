@@ -9,8 +9,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-# Include dpatch stuff.
-include /usr/share/dpatch/dpatch.make
+# Include quilt support.
+include /usr/share/quilt/quilt.make
 
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
@@ -66,9 +66,9 @@ endif
 CC=gcc
 
 configure: configure-stamp
-configure-stamp: patch-stamp
+configure-stamp: $(QUILT_STAMPFN)
 	dh_testdir
-
+	
 	# Add here commands to configure the package.
 	aclocal-1.10 && automake-1.10 && autoconf
 	CC=$(CC) LDFLAGS=$(LDFLAGS) ./configure \
@@ -78,7 +78,7 @@ configure-stamp: patch-stamp
 		--mandir=/usr/share/man \
 		--infodir=/usr/share/info \
 		--disable-auto-linux-mem-opt
-
+	
 	touch configure-stamp
 
 build: build-arch
@@ -86,10 +86,10 @@ build: build-arch
 build-arch: build-arch-stamp
 build-arch-stamp: configure-stamp
 	dh_testdir
-
+	
 	# Add here commands to compile the package.
 	$(MAKE)
-
+	
 	## the creation of these manpages here is temporary,
 	## when building grub-gfxboot finally works with the version
 	## of autoconf in debian we can use MAINTAINER_MODE_TRUE
@@ -99,7 +99,7 @@ build-arch-stamp: configure-stamp
 	--include=grub.8.additions \
 	--section=8 --output=grub.8 \
 	../grub/grub )
-
+	
 	# create man page for grub-install
 	( cd util && chmod 755 grub-install )
 	( cd docs && ./help2man \
@@ -107,55 +107,55 @@ build-arch-stamp: configure-stamp
 	--include=grub-install.8.additions \
 	--section=8 --output=grub-install.8 \
 	../util/grub-install )
-
+	
 	# create man page for mbchk
 	( cd docs && ./help2man \
 	--name="check the format of a Multiboot kernel" \
 	--section=1 --output=mbchk.1 \
 	../util/mbchk )
-
+	
 	# create man page for grub-md5-crypt
 	( cd util && chmod 755 grub-md5-crypt )
 	( cd docs && ./help2man \
 	--name="Encrypt a password in MD5 format" \
 	--section=8 --output=grub-md5-crypt.8 \
 	../util/grub-md5-crypt )
-
+	
 	touch build-arch-stamp
 
 build-indep: build-indep-stamp
 build-indep-stamp: configure-stamp
 	dh_testdir
-
+	
 	# create html documentation from texi files
 	( cd docs && texi2html -split_chapter grub.texi )
 	( cd docs && texi2html -split_chapter multiboot.texi )
 
 	touch build-indep-stamp
 
-clean:
+clean: unpatch
 	dh_testdir
 	dh_testroot
 	rm -f build-arch-stamp build-indep-stamp configure-stamp config.log
-
+	
 	# Add here commands to clean up after the build process.
 	[ ! -f Makefile ] || $(MAKE) distclean
-
+	
 	# The Makefile doesn't clean up the generated info files so we will do
 	# it here so the doco is uptodate.
 	-( cd docs && rm -f *.info* )
-
+	
 	# clean up generated html documentation
 	-( cd docs && rm -f *.html )
-
+	
 	# clean up documentation directory removing created dirs.
 	-( cd docs && rm -rf grub multiboot )
-
+	
 	# remove files that will be change due our automake and autoconf rebuilding
 	-rm -f $(find . -name 'Makefile.in' -o \
                     -name 'aclocal.m4' -o \
                     -name 'configure')
-
+	
 	dh_clean
 
 install: install-indep install-arch
@@ -176,15 +176,15 @@ install-arch:
 	dh_testroot
 	dh_clean -k -s 
 	dh_installdirs -s
-
+	
 	# Add here commands to install the package into debian/grub-gfxboot.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/grub-gfxboot/
-
+	
 	# make install puts the info files in the grub-gfxboot package but we want them
 	# in the grub-gfxboot-doc package so lets clean shop and let dh_installinfo do
 	# the work
 	rm -rf debian/grub-gfxboot/usr/share/info
-
+	
 	# Cleanup filesystems not used natively in Debian.
 	# (non-native filesystems are supported via stage2)
 	mkdir debian/grub-gfxboot/usr/lib/grub/tmp/
@@ -195,7 +195,7 @@ install-arch:
 		debian/grub-gfxboot/usr/lib/grub/*-*/ ; \
 	done
 	rm -rf debian/grub-gfxboot/usr/lib/grub/tmp/
-
+	
 	dh_install -s
 
 # Must not depend on anything. This is to be called by
@@ -208,7 +208,7 @@ binary-common:
 	
 	# Add a wrapper for grub-install. Remove it post-etch
 	cp debian/grub-install.wrapper debian/grub-gfxboot/sbin/grub-install
-
+	
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs ChangeLog

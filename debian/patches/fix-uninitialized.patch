@@ -1,0 +1,11 @@
+--- a/netboot/i82586.c
++++ b/netboot/i82586.c
+@@ -735,7 +735,7 @@
+ static int exos205_probe2(void)
+ {
+ 	unsigned short		i;
+-	unsigned short		shmem[10];
++	unsigned short		shmem[10] = { 0,0,0,0,0,0,0,0,0,0 };
+ 
+ 	/* Fix the ISCP address and base. */
+ 	init_words[3] = scb_base;

@@ -1,0 +1,46 @@
+# Used to grab fixes from CVS. Run debian/rules cvs-sync to update it.
+cvs-sync.patch
+
+menu.lst_gnu-hurd.patch
+raid.patch
+raid_cciss.patch
+xfs_freeze.patch
+2gb_limit.patch
+kfreebsd.patch
+grub-special_device_names.patch
+initrd_max_address.patch
+grub-install_addsyncs.patch
+grub-install_regexp.patch
+grub-install_aoe_support.patch
+geometry-26kernel.patch
+print_func.patch
+mprotect.patch
+#savedefault.dpatch
+
+# We aren't building amd64 binaries, see #244498
+#fix_amd64_compile.dpatch
+
+# add SuSE's gfxboot patches
+grub-gfxmenu-v8.patch
+
+# patches stolen from SuSE
+force-LBA-off.patch
+reiser-unpack.patch
+grub-R.patch
+grub-linux-setup-fix.patch
+bad-assert-sideeffect.patch
+fix-uninitialized.patch
+gcc4.patch
+chainloader-devicefix.patch
+grub-install-fix-UUID_LABEL.patch
+e100-newIDs.patch
+pacify-autoconf.patch
+grub-a20.patch
+
+# patches stolen from Fedora
+grub-support-256byte-inode.patch
+
+# custom patches
+grub-0.96-noemul.patch
+crossreference_manpages.patch
+mkisofs2genisoimage.patch

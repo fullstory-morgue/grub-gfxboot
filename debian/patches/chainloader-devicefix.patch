@@ -1,0 +1,13 @@
+--- a/stage2/builtins.c
++++ b/stage2/builtins.c
+@@ -457,6 +457,10 @@
+     *((unsigned long *) (BOOTSEC_LOCATION + BOOTSEC_BPB_HIDDEN_SECTORS))
+       = part_start;
+ 
++  /* if a new device was specified, make sure DX is passed correctly */
++  if ('(' == *file)
++    set_device(file);
++
+   errnum = ERR_NONE;
+   
+   return 0;

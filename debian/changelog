@@ -1,8 +1,11 @@
 grub-gfxboot (0.97-20) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * switch from dpatch to quilt.
+  * import grub-support-256byte-inode.patch by Jesse Keating
+    <jkeating@redhat.com> from Fedora and rediff against SuSE's gcc4.patch.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 18 Jan 2008 23:51:38 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 29 Jan 2008 17:34:27 +0100
 
 grub-gfxboot (0.97-19) unstable; urgency=low
 
