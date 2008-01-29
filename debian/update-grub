@@ -1161,7 +1161,9 @@ set_default_value() {
 }
 
 #Updating the default number
-if test -z "$notChangeDefault"; then
+if [ "$LET_US_TRY_GRUB_2" = "true" ] && test -f /boot/grub/core.img ; then
+	set_default_value "0"
+elif test -z "$notChangeDefault"; then
 	newDefaultNumberPlusOne=$(grep "^[[:blank:]]*title[[:blank:]]*" $menu | grep -n "${defaultEntry}" | cut -f1 -d ":" | sed -ne "1p")
 	if test -z "$newDefaultNumberPlusOne"; then
 		echo "Previous default entry removed, resetting to 0">&2
