@@ -1199,7 +1199,7 @@ elif test -z "$notChangeDefault"; then
 fi
 
 # sidux/ grub-gfxboot
-[ "${NO_SAVEDEFAULT_SUPPORTED_IN_MBR}" = "yes" ] && sed "/^savedefault/d"
+[ "${NO_SAVEDEFAULT_SUPPORTED_IN_MBR}" = "yes" ] && sed -i "/^savedefault/d" "${menu_file}"
 
 echo "done" >&2
 echo >&2
