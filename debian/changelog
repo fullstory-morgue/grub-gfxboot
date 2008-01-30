@@ -3,8 +3,10 @@ grub-gfxboot (0.97-23) unstable; urgency=low
   * attempt to port Fedora's patch to support 156 byte inodes on ext3 by Jesse
     Keating <jkeating@redhat.com>.
   * refresh quilt series.
+  * debian uses *.diff as patch suffix, now we're using quilt we can revert to
+    a common naming standard to ease up diff'ing.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 30 Jan 2008 13:38:18 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 30 Jan 2008 14:05:45 +0100
 
 grub-gfxboot (0.97-22) unstable; urgency=low
 
