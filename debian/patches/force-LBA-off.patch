@@ -53,7 +53,7 @@
  	
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -1856,7 +1856,12 @@
+@@ -1860,7 +1860,12 @@
    /* First, check the GNU-style long option.  */
    while (1)
      {
@@ -67,7 +67,7 @@
  	{
  	  is_force_lba = 1;
  	  arg = skip_to (0, arg);
-@@ -2285,7 +2290,7 @@
+@@ -2289,7 +2294,7 @@
    "install",
    install_func,
    BUILTIN_CMDLINE,
@@ -76,7 +76,7 @@
    "Install STAGE1 on DEVICE, and install a blocklist for loading STAGE2"
    " as a Stage 2. If the option `d' is present, the Stage 1 will always"
    " look for the disk where STAGE2 was installed, rather than using"
-@@ -2298,8 +2303,9 @@
+@@ -2302,8 +2307,9 @@
    " 1.5 and REAL_CONFIG_FILE is present, then the Stage 2 CONFIG_FILE is"
    " patched with the configuration filename REAL_CONFIG_FILE."
    " If the option `--force-lba' is specified, disable some sanity checks"
@@ -88,7 +88,7 @@
  };
  
  
-@@ -3931,7 +3937,12 @@
+@@ -4041,7 +4047,12 @@
    /* Check if the user specifies --force-lba.  */
    while (1)
      {
@@ -102,7 +102,7 @@
  	{
  	  is_force_lba = 1;
  	  arg = skip_to (0, arg);
-@@ -4059,7 +4070,9 @@
+@@ -4169,7 +4180,9 @@
  #if 1
    /* Don't embed a drive number unnecessarily.  */
    grub_sprintf (cmd_arg, "%s%s%s%s %s%s %s p %s %s",
@@ -113,7 +113,7 @@
  		stage2_arg? stage2_arg : "",
  		stage2_arg? " " : "",
  		stage1,
-@@ -4112,17 +4125,18 @@
+@@ -4222,17 +4235,18 @@
    "setup",
    setup_func,
    BUILTIN_CMDLINE | BUILTIN_HELP_LIST,

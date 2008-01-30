@@ -359,7 +359,7 @@
  /* The address for Multiboot command-line buffer.  */
  static char *mb_cmdline;
  /* The password.  */
-@@ -1331,6 +1333,26 @@
+@@ -1335,6 +1337,26 @@
  };
  
  
@@ -386,7 +386,7 @@
  /* geometry */
  static int
  geometry_func (char *arg, int flags)
-@@ -4842,6 +4864,7 @@
+@@ -4952,6 +4974,7 @@
    &builtin_find,
    &builtin_fstest,
    &builtin_geometry,
@@ -979,7 +979,7 @@
  static int
  get_line_from_config (char *cmdline, int maxlen, int read_from_file)
  {
-@@ -1063,9 +1561,12 @@
+@@ -1071,9 +1569,12 @@
  	}
        else
  	{

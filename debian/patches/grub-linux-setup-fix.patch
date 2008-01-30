@@ -1,6 +1,6 @@
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -4093,6 +4093,9 @@
+@@ -4203,6 +4203,9 @@
  	}
    }
  

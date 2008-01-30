@@ -1,6 +1,6 @@
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -457,6 +457,10 @@
+@@ -461,6 +461,10 @@
      *((unsigned long *) (BOOTSEC_LOCATION + BOOTSEC_BPB_HIDDEN_SECTORS))
        = part_start;
  

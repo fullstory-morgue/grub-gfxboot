@@ -19,7 +19,7 @@
  #endif
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -1869,9 +1869,23 @@
+@@ -1873,9 +1873,23 @@
  #ifdef GRUB_UTIL
        else if (grub_memcmp ("--stage2=", arg, sizeof ("--stage2=") - 1) == 0)
  	{
