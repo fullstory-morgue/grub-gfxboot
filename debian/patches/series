@@ -44,3 +44,4 @@ grub-support-256byte-inode.diff
 grub-0.96-noemul.diff
 crossreference_manpages.diff
 mkisofs2genisoimage.diff
+grub-0.97_support-ext4-extents.diff
