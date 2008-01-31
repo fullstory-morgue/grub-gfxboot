@@ -7,7 +7,7 @@ grub-gfxboot (0.97-25) unstable; urgency=low
       "default <entry number>" to "default saved" in /boot/grub/menu.lst.
   * 256 byte inode sizes on ext3
     - e2fsprogs >= 1.40.5-1 creates ext3 filesystems with 256 byte large
-      inodes by default (in contrast to 128 byte used before), to accomodate
+      inodes by default (in contrast to 128 byte used before), to accommodate
       for further ext4 related changes.
   * ext4 extents
     - starting with kernel 2.6.23, ext4 filesystems are mounted using extents
