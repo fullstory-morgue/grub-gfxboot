@@ -2,16 +2,16 @@ grub-gfxboot (0.97-25) unstable; urgency=low
 
   The following features have been recently added to grub-gfxboot:
   * savedefault
-    - remember the last booted kernel
+    - remembers the last booted kernel
       this requires adding "savedefault" to all kernel stanzas and changing 
       "default <entry number>" to "default saved" in /boot/grub/menu.lst.
   * 256 byte inode sizes on ext3
     - e2fsprogs >= 1.40.5-1 creates ext3 filesystems with 256 byte large
-      inodes on default (in contrast to 128 byte used before), to accomodate
+      inodes by default (in contrast to 128 byte used before), to accomodate
       for further ext4 related changes.
   * ext4 extents
     - starting with kernel 2.6.23, ext4 filesystems are mounted using extents
-      on default.
+      by default.
   using any of these new features requires updating the bootsector of your
   system.
   Bootsectors written by grub or earlier versions of grub-gfxboot are not 

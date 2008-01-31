@@ -1,6 +1,5 @@
-grub-gfxboot (0.97-25) UNRELEASED; urgency=low
+grub-gfxboot (0.97-25) unstable; urgency=low
 
-  * NOT RELEASED YET
   * add debian/NEWS entry explaining new savedefault, ext3 with 256 byte
     inodes and ext4 extents features.
 
