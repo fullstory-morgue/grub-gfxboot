@@ -1,8 +1,12 @@
 grub-gfxboot (0.97-26) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * add changes from, as of yet unreleased 0.97-30/ final:
+    [ Robert Millan ]
+    - patches/ext3_256byte_inode.diff: New.  Support 256-byte inodes in ext3.
+      Thanks Stefan Lippers-Hollmann.  (Closes: #463236)
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 31 Jan 2008 23:48:50 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 03 Feb 2008 03:19:48 +0100
 
 grub-gfxboot (0.97-25) unstable; urgency=low
 

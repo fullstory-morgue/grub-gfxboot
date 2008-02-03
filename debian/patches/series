@@ -38,7 +38,7 @@ pacify-autoconf.diff
 grub-a20.diff
 
 # adapted from Fedora
-grub-support-256byte-inode.diff
+ext3_256byte_inode.diff
 
 # custom patches
 grub-0.96-noemul.diff

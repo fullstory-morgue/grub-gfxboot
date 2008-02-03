@@ -1,3 +1,6 @@
+
+Patch from Red Hat. See #463236, #463123.
+
 --- a/stage2/fsys_ext2fs.c
 +++ b/stage2/fsys_ext2fs.c
 @@ -79,7 +79,52 @@
