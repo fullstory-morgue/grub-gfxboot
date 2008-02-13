@@ -1,7 +1,8 @@
 # Used to grab fixes from CVS. Run debian/rules cvs-sync to update it.
-cvs-sync.diff
+cvs-sync.patch
 
 menu.lst_gnu-hurd.diff
+#graphics.diff
 raid.diff
 raid_cciss.diff
 xfs_freeze.diff
@@ -9,6 +10,7 @@ xfs_freeze.diff
 kfreebsd.diff
 grub-special_device_names.diff
 initrd_max_address.diff
+#splashimage_help.diff
 grub-install_addsyncs.diff
 grub-install_regexp.diff
 grub-install_aoe_support.diff
@@ -16,6 +18,10 @@ geometry-26kernel.diff
 print_func.diff
 mprotect.diff
 savedefault.diff
+#find-grub-dir.diff
+#intelmac.diff
+crossreference_manpages.diff
+ext3_256byte_inode.diff
 
 # We aren't building amd64 binaries, see #244498
 #fix_amd64_compile.diff
@@ -37,11 +43,7 @@ e100-newIDs.diff
 pacify-autoconf.diff
 grub-a20.diff
 
-# adapted from Fedora
-ext3_256byte_inode.diff
-
 # custom patches
 grub-0.96-noemul.diff
-crossreference_manpages.diff
 mkisofs2genisoimage.diff
 grub-0.97_support-ext4-extents.diff
