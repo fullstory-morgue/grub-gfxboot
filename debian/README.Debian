@@ -69,8 +69,8 @@ either intially, and/or automatically everytime you install a new kernel.
 
 To setup automatic updates add these lines to your /etc/kernel-img.conf:
 
-postinst_hook = /usr/sbin/update-grub
-postrm_hook = /usr/sbin/update-grub
+postinst_hook = update-grub
+postrm_hook = update-grub
 do_bootloader = no
 
 For further information see the manpage kernel-img.conf(5) or update-grub(8)

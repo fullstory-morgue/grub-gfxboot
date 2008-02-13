@@ -266,11 +266,6 @@ grub_dir=$(find_grub_dir)
 menu_file_basename=menu.lst
 menu_file=$grub_dir/$menu_file_basename
 
-# sidux/ grub-gfxboot
-if [ -r "${menu_file}" ]; then
-	grep -q savedefault "${menu_file}" || NO_SAVEDEFAULT_SUPPORTED_IN_MBR="yes"
-fi
-
 # Full path to the default file
 default_file_basename=default
 default_file=$grub_dir/$default_file_basename
@@ -334,6 +329,9 @@ fi
 
 # should grub create a memtest86 entry
 	memtest86="true"
+
+# should grub add "savedefault" to default boot options
+	savedefault="false"
 
 # stores the command line arguments
 	command_line_arguments=$1
@@ -758,6 +756,8 @@ memtest86=$(GetMenuOpt "memtest86" "$memtest86")
 # Extract the updatedefaultentry option
 updatedefaultentry=$(GetMenuOpt "updatedefaultentry" "$updatedefaultentry")
 
+# Extract the savedefault option
+savedefault=$(GetMenuOpt "savedefault" "$savedefault")
 
 # Generate the menu options we want to insert
 buffer=$(tempfile)
@@ -851,6 +851,11 @@ echo >> $buffer
 echo "## should update-grub adjust the value of the default booted system" >> $buffer
 echo "## can be true or false" >> $buffer
 echo "# updatedefaultentry=$updatedefaultentry" >> $buffer
+echo >> $buffer
+
+echo "## should update-grub add savedefault to the default options" >> $buffer
+echo "## can be true or false" >> $buffer
+echo "# savedefault=$savedefault" >> $buffer
 echo >> $buffer
 
 echo "## ## End Default Options ##" >> $buffer
@@ -988,7 +993,7 @@ case "$host_os" in
     else
       kernel=/boot/loader
     fi
-    write_kernel_entry "" "" "" "$grub_root_device" "$kernel" "" "" "" "true" ""
+    write_kernel_entry "" "" "" "$grub_root_device" "$kernel" "" "" "" "$savedefault" ""
   ;;
 esac
 
@@ -1003,7 +1008,18 @@ if [ "$LET_US_TRY_GRUB_2" = "true" ] \
 title		Chainload into GRUB 2
 root		$grub_root_device
 kernel		$grub2name
-savedefault
+
+title		`echo ───────────────────────────────────────────────────────────────────── | iconv -f utf-8 -t cp437`
+root
+		
+title		When you have verified GRUB 2 works, you can use this command to
+root
+
+title		complete the upgrade:  upgrade-from-grub-legacy
+root
+
+title		`echo ───────────────────────────────────────────────────────────────────── | iconv -f utf-8 -t cp437`
+root
 
 EOF
 fi
@@ -1042,7 +1058,7 @@ for kern in $xenKernels ; do
 			echo "Found Xen hypervisor $hypervisorVersion,  kernel: $kernel" >&2
 
 			write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
-			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \
+			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" "$savedefault" '' \
 			  Xen "$hypervisor" "$hypervisorVersion" "$xenhopt"
 	        counter=$(($counter + 1))
 		fi
@@ -1055,7 +1071,7 @@ for kern in $xenKernels ; do
 			echo "Found Xen hypervisor $hypVersion,  kernel: $kernel" >&2
 
 			write_kernel_entry "$kernelVersion" '' '' "$grub_root_device" \
-			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" true '' \
+			  "$kernel" "$currentOpt $xenkopt" '' "$initrd" "$savedefault" '' \
 			  Xen "$kernel_dir/$hypervisor" "$hypVersion" "$xenhopt"
 	        counter=$(($counter + 1))
 		done
@@ -1108,7 +1124,7 @@ for kern in $sortedKernels ; do
 	[ $counter -eq 1 ] && do_lockold=false
 
 	write_kernel_entry "$kernelVersion" "" "" "$grub_root_device" "$kernel" \
-		"$currentOpt $defoptions" "" "$initrd" "true" "$do_lockold"
+		"$currentOpt $defoptions" "" "$initrd" "$savedefault" "$do_lockold"
 
 	# insert the alternative boot options
 	if test ! x"$alternative" = x"false" ; then
@@ -1120,7 +1136,7 @@ for kern in $sortedKernels ; do
 			test x"$lockalternative" = x"true" && do_lockold=false
 			write_kernel_entry "$kernelVersion" "$descr" "$lockalternative" \
 				"$grub_root_device" "$kernel" "$currentOpt" "$suffix" "$initrd" \
-				"true" "$do_lockold"
+				"$savedefault" "$do_lockold"
 
 		done
 	fi
@@ -1197,9 +1213,6 @@ elif test -z "$notChangeDefault"; then
 		set_default_value "$newDefaultNumber"
 	fi
 fi
-
-# sidux/ grub-gfxboot
-[ "${NO_SAVEDEFAULT_SUPPORTED_IN_MBR}" = "yes" ] && sed -i "/^savedefault/d" "${menu_file}"
 
 echo "done" >&2
 echo >&2

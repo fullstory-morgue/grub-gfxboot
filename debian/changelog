@@ -5,8 +5,19 @@ grub-gfxboot (0.97-26) UNRELEASED; urgency=low
     [ Robert Millan ]
     - patches/ext3_256byte_inode.diff: New.  Support 256-byte inodes in ext3.
       Thanks Stefan Lippers-Hollmann.  (Closes: #463236)
+  * add changes from 0.97-31:
+    [ Robert Millan ]
+    - README.Debian, NEWS.Debian: Recommend that users invoke update-grub
+      directly without hardcoding its path.  (Closes: #465235)
+    - savedefault command is now issued when enabled via menu.lst variable of
+      the same name, when user accepts the implications (note, that in the
+      default configuration it was already disabled).
+      (Closes: #393079, #462701)
+    - Restrict license in debian/copyright to GPLv2-only.  (Closes: #438177)
+  * debian now defaults savedefault to off and provides an own option
+    triggering it, no need to keep our custom hack anymore.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 03 Feb 2008 03:19:48 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 14 Feb 2008 00:19:51 +0100
 
 grub-gfxboot (0.97-25) unstable; urgency=low
 

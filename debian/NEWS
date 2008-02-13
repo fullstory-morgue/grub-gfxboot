@@ -44,8 +44,8 @@ grub (0.97-16) unstable; urgency=low
   
   ,----[ /etc/kernel-img.conf ]
   | ...
-  | postinst_hook = /usr/sbin/update-grub
-  | postrm_hook   = /usr/sbin/update-grub
+  | postinst_hook = update-grub
+  | postrm_hook   = update-grub
   `----
 
  -- Otavio Salvador <otavio@debian.org>  Thu, 14 Sep 2006 23:25:36 -0300
