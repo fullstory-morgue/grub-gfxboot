@@ -17,6 +17,7 @@ grub-gfxboot (0.97-26) UNRELEASED; urgency=low
   * debian now defaults savedefault to off and provides an own option
     triggering it, no need to keep our custom hack anymore.
   * reorder series to match upstream debian, as far as possible.
+  * import, but comment out, debian specific patches we're omitting.
   * refresh quilt series.
 
  -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 14 Feb 2008 00:45:31 +0100
