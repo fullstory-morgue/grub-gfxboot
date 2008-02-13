@@ -19,8 +19,9 @@ grub-gfxboot (0.97-26) UNRELEASED; urgency=low
   * reorder series to match upstream debian, as far as possible.
   * import, but comment out, debian specific patches we're omitting.
   * refresh quilt series.
+  * activate find-grub-dir.diff.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 14 Feb 2008 00:45:31 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 14 Feb 2008 00:51:42 +0100
 
 grub-gfxboot (0.97-25) unstable; urgency=low
 
