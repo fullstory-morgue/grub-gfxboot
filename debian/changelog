@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-28) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 20 Feb 2008 22:59:58 +0100
+
 grub-gfxboot (0.97-27) unstable; urgency=low
 
   * appease lintian and write (C) as © in debian/copyright.
