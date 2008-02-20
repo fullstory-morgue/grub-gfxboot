@@ -3,8 +3,9 @@ grub-gfxboot (0.97-25) unstable; urgency=low
   The following features have been recently added to grub-gfxboot:
   * savedefault
     - remembers the last booted kernel
-      this requires adding "savedefault" to all kernel stanzas and changing 
-      "default <entry number>" to "default saved" in /boot/grub/menu.lst.
+      this requires setting "savedefault=true" within the automagic kernel 
+      list and changing "default <entry number>" to "default saved" in 
+      /boot/grub/menu.lst.
   * 256 byte inode sizes on ext3
     - e2fsprogs >= 1.40.5-1 creates ext3 filesystems with 256 byte large
       inodes by default (in contrast to 128 byte used before), to accommodate

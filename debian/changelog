@@ -1,8 +1,9 @@
-grub-gfxboot (0.97-27) UNRELEASED; urgency=low
+grub-gfxboot (0.97-27) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * appease lintian and write (C) as © in debian/copyright.
+  * adapt debian/NEWS to the current way of specifying savedefault.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 14 Feb 2008 15:16:09 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 20 Feb 2008 22:56:27 +0100
 
 grub-gfxboot (0.97-26) unstable; urgency=low
 
