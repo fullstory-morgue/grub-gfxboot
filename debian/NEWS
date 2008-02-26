@@ -15,13 +15,14 @@ grub-gfxboot (0.97-25) unstable; urgency=low
       by default.
   using any of these new features requires updating the bootsector of your
   system.
-  Bootsectors written by grub or earlier versions of grub-gfxboot are not 
-  able to boot or even access partitions using any of these new features!
+  Bootsectors written by "grub" or earlier versions of "grub-gfxboot" are 
+  not able to boot or even access partitions using any of these new 
+  features!
 
   While these changes don't affect existing systems, we strongly recommend
   updating your bootsectors using:
   	grub-install --recheck --no-floppy <raw device or partition>
-  to get access to newly created ext3 (with inode sizes exceeding 256 byte)
+  to get access to newly created ext3 (with inode sizes exceeding 128 byte)
   or ext4 partitions, or to use savedefault features.
 
  -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 31 Jan 2008 16:22:38 +0100
