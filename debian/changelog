@@ -1,8 +1,17 @@
 grub-gfxboot (0.97-28) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * add changes from 0.97-33:
+    [ Robert Millan ]
+    - update-grub: Rewrite find_device() and convert() using grub-probe from
+      grub-common package.  (Closes: #435708, #443897, #463274, #301373,
+      #284790)
+    - patches/use_grub-probe_in_grub-install.diff: Do the same for
+      grub-install. Closes: #441080)
+  * drop SuSE's grub-install-fix-UUID_LABEL.diff, its functionality is now
+    provided by Debian's use_grub-probe_in_grub-install.diff.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 20 Feb 2008 22:59:58 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Mar 2008 20:36:51 +0100
 
 grub-gfxboot (0.97-27) unstable; urgency=low
 

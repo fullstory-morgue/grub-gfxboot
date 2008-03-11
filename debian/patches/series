@@ -27,6 +27,7 @@ ext3_256byte_inode.diff
 #fix_amd64_compile.diff
 
 # add SuSE's gfxboot patches
+use_grub-probe_in_grub-install.diff
 grub-gfxmenu-v8.diff
 
 # patches stolen from SuSE
@@ -38,7 +39,6 @@ bad-assert-sideeffect.diff
 fix-uninitialized.diff
 gcc4.diff
 chainloader-devicefix.diff
-grub-install-fix-UUID_LABEL.diff
 e100-newIDs.diff
 pacify-autoconf.diff
 grub-a20.diff
