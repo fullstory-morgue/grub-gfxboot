@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-30) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Mar 2008 22:15:12 +0100
+
 grub-gfxboot (0.97-29) unstable; urgency=low
 
   * drop use_grub-probe_in_grub-install.diff and revert modifications for 
