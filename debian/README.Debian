@@ -21,7 +21,7 @@ runtime by the `grub-install` script or given as an option to the
 
 more documentation
 ------------------
-the full grub documentation is available in the grub-doc package.
+the full grub documentation is available in the multiboot-doc package.
 
 quick setup
 -----------

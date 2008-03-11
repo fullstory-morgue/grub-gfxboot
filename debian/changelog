@@ -1,7 +1,6 @@
-grub-gfxboot (0.97-28) UNRELEASED; urgency=low
+grub-gfxboot (0.97-28) unstable; urgency=low
 
-  * NOT RELEASED YET
-  * add changes from 0.97-33:
+  * add changes from 0.97-33, we don't import 0.97-32:
     [ Robert Millan ]
     - update-grub: Rewrite find_device() and convert() using grub-probe from
       grub-common package.  (Closes: #435708, #443897, #463274, #301373,
@@ -12,8 +11,9 @@ grub-gfxboot (0.97-28) UNRELEASED; urgency=low
     provided by Debian's use_grub-probe_in_grub-install.diff.
   * drop grub-gfxboot-doc, "grub-doc" has been renamed to multiboot-doc and
     does the job just as well.
+  * refer to multiboot-doc wherever needed.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Mar 2008 21:13:03 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Mar 2008 21:18:18 +0100
 
 grub-gfxboot (0.97-27) unstable; urgency=low
 

@@ -6,7 +6,7 @@
  .B $program
 -is maintained as a Texinfo manual.  If the
 +is maintained as a Texinfo manual in the
-+.B grub-doc
++.B multiboot-doc
 +package.  If the
  .B info
  and
