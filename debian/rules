@@ -123,20 +123,10 @@ build-arch-stamp: configure-stamp
 	
 	touch build-arch-stamp
 
-build-indep: build-indep-stamp
-build-indep-stamp: configure-stamp
-	dh_testdir
-	
-	# create html documentation from texi files
-	( cd docs && texi2html -split_chapter grub.texi )
-	( cd docs && texi2html -split_chapter multiboot.texi )
-
-	touch build-indep-stamp
-
 clean: unpatch
 	dh_testdir
 	dh_testroot
-	rm -f build-arch-stamp build-indep-stamp configure-stamp config.log
+	rm -f build-arch-stamp configure-stamp config.log
 	
 	# Add here commands to clean up after the build process.
 	[ ! -f Makefile ] || $(MAKE) distclean
@@ -158,19 +148,7 @@ clean: unpatch
 	
 	dh_clean
 
-install: install-indep install-arch
-install-indep: install-arch
-	dh_testdir
-	dh_testroot
-	dh_clean -k -i 
-	dh_installdirs -i
-
-	# Add here commands to install the indep part of the package into
-	# debian/<package>-doc.
-	#INSTALLDOC#
-
-	dh_install -i
-
+install: install-arch
 install-arch:
 	dh_testdir
 	dh_testroot
@@ -198,9 +176,7 @@ install-arch:
 	
 	dh_install -s
 
-# Must not depend on anything. This is to be called by
-# binary-arch/binary-indep
-# in another 'make' thread.
+# Must not depend on anything.
 binary-common:
 binary-common:
 	# Add a wrapper for update-grub. Remove it post-etch
@@ -236,9 +212,6 @@ binary-common:
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
-# Build architecture independant packages using the common target.
-binary-indep: build-indep install-indep
-	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
 
 # Build architecture dependant packages using the common target.
 binary-arch: build-arch install-arch
@@ -254,5 +227,5 @@ cvs-sync:
 			| filterdiff -x '*/.cvsignore' -x '*/docs/version.texi' -x '*/docs/stamp-vti' > ../debian/patches/cvs-sync.patch; \
 	cd .. && rm -rf grub-cvs
 
-binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch configure
+binary: binary-arch
+.PHONY: build clean binary-arch binary install install-arch configure

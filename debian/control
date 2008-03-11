@@ -3,7 +3,6 @@ Section: admin
 Priority: optional
 Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
 Build-Depends: debhelper (>= 6), quilt, automake1.10, autoconf, autotools-dev, texinfo, libncurses5-dev | libncurses-dev, gcc-multilib [amd64 kfreebsd-amd64]
-Build-Depends-Indep: texi2html
 Standards-Version: 3.7.3
 Vcs-Svn: svn://svn.berlios.de/fullstory/grub-gfxboot/trunk
 Vcs-Browser: http://svn.berlios.de/wsvn/fullstory/grub-gfxboot/trunk/
@@ -11,7 +10,7 @@ Vcs-Browser: http://svn.berlios.de/wsvn/fullstory/grub-gfxboot/trunk/
 Package: grub-gfxboot
 Architecture: i386 kfreebsd-i386 hurd-i386 amd64 kfreebsd-amd64
 Depends: ${shlibs:Depends}, grub-common
-Suggests: grub-gfxboot-doc, mdadm, gfxboot
+Suggests: multiboot-doc, mdadm, gfxboot
 Provides: grub
 Conflicts: grub
 Description: GRand Unified Bootloader
@@ -20,15 +19,3 @@ Description: GRand Unified Bootloader
  Linux kernel, it implements the Multiboot standard, which allows for 
  flexible loading of multiple boot images (needed for modular kernels such as 
  the GNU Hurd).
-
-Package: grub-gfxboot-doc
-Section: doc
-Architecture: all
-Suggests: doc-base
-Provides: grub-doc
-Conflicts: grub-doc
-Description: Documentation for GRand Unified Bootloader (gfxboot)
- GRUB-gfxboot is a GPLed bootloader intended to unify bootloading across x86
- operating systems.  In addition to loading the Linux kernel,
- it implements the Multiboot standard, which allows for flexible loading
- of multiple boot images (needed for modular kernels such as the GNU Hurd).
