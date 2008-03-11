@@ -12,8 +12,9 @@ grub-gfxboot (0.97-28) unstable; urgency=low
   * drop grub-gfxboot-doc, "grub-doc" has been renamed to multiboot-doc and
     does the job just as well.
   * refer to multiboot-doc wherever needed.
+  * restore accidentally removed grub-gfxboot.docs.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Mar 2008 21:18:18 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Mar 2008 21:25:25 +0100
 
 grub-gfxboot (0.97-27) unstable; urgency=low
 
