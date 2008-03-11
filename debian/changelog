@@ -3,8 +3,9 @@ grub-gfxboot (0.97-29) unstable; urgency=low
   * drop use_grub-probe_in_grub-install.diff and revert modifications for 
     update-grub from 0.97-33, the changes to grub-install don't work with 
     --root-directory yet.
+  * drop dependency on grub-common.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Mar 2008 22:01:51 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Mar 2008 22:03:44 +0100
 
 grub-gfxboot (0.97-28) unstable; urgency=low
 

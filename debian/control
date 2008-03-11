@@ -9,7 +9,7 @@ Vcs-Browser: http://svn.berlios.de/wsvn/fullstory/grub-gfxboot/trunk/
 
 Package: grub-gfxboot
 Architecture: i386 kfreebsd-i386 hurd-i386 amd64 kfreebsd-amd64
-Depends: ${shlibs:Depends}, grub-common
+Depends: ${shlibs:Depends}
 Suggests: multiboot-doc, mdadm, gfxboot
 Provides: grub
 Conflicts: grub
