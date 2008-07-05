@@ -1,8 +1,67 @@
 grub-gfxboot (0.97-30) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * fix bashisms in debian/grub-reboot instead of harcoding bash.
+  * add changes from 0.97-41:
+    [ Robert Millan ]
+    - Fix problem with root= argument generation in loop-AES.  Reported by
+      Max Vozeler.  (Closes: #488016)
+    - update-grub: Only special-case Xen detection for older Linux images
+      without CONFIG_PARAVIRT.  Thanks Ian Campbell.  (Closes: #468824)
+  * add changes from 0.97-40:
+    [ Robert Millan ]
+    - Remove obsolete note about initrd size.  (Closes: #482611)
+    - update-grub: Use filesystem UUIDs when available.
+  * add changes from 0.97-39:
+    [ Robert Millan ]
+    - New upstream snapshot.
+      + Fixes license violation.  (Closes: #479623)
+      + patches/1tib_disk_limit.diff: Merged.
+      + patches/geometry-26kernel.diff: Resync.
+    - Adjust make_system_path_relative_to_its_root() not to print trailing
+      slashes.  (Closes: #479169)
+    - Handle relative paths for splash images.  Thanks Petter
+      Reinholdtsen.  (Closes: #477791)
+    - Support for Xen style xvd[a-z] devices.  Thanks Ian Campbell.
+      (Closes: #456776)
+    - Document that grub-set-default counts entries starting with 0.
+      (Closes: #451709)
+  * add changes from 0.97-38:
+    [ Robert Millan ]
+    - patches/use_grub-probe_in_grub-install.diff: Reinstate RAID1 hack.
+      Based on patch from Goswin Brederlow <goswin-v-b@web.de>.
+      (Closes: #478547, #464146)
+  * add changes from 0.97-37:
+    [ Robert Millan ]
+    - update-grub: Fix detection of /dev/md/X RAID.  Thanks Stephen Kitt.
+      (Closes: #477998)
+    - update-grub/grub-install: Pass --device-map to grub-probe.  Thanks
+      segmentation@ntlworld.com.  (Closes: #476833)
+    - script: Fix use of uninitialised $i.
+    - update-grub: Make relative path resolution more robust.  (Closes: #478006)
+  * add changes from 0.97-36:
+    [ Robert Millan ]
+    - Add debian/script.
+    - Set grub-reboot interpreter to /bin/bash.  (Closes: #473685)
+    - update-grub: Create device.map if it doesn't exist.  (Closes: #473889)
+  * add changes from 0.97-35:
+    [ Robert Millan ]
+    - Upload to unstable.
+  * add changes from 0.97-34:
+    [ Robert Millan ]
+    - patches/128gib_disk_limit.diff: Extend disk addressing up to 2 TiB.
+      (Closes: #450951)
+  * add changes from 0.97-33, again:
+    [ Robert Millan ]
+    - control (grub): Suggest multiboot-doc.
+    - update-grub: Rewrite find_device() and convert() using grub-probe from
+      grub-common package. (Closes: #435708, #443897, #463274, #301373, #284790)
+    - patches/use_grub-probe_in_grub-install.diff: Do the same for grub-install.
+      (Closes: #441080)
+  * refresh and fix patches.
+  * fix syntax error in update-grub.8.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 11 Mar 2008 22:15:12 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 06 Jul 2008 01:11:19 +0200
 
 grub-gfxboot (0.97-29) unstable; urgency=low
 

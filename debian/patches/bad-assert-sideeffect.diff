@@ -1,6 +1,6 @@
 --- a/lib/device.c
 +++ b/lib/device.c
-@@ -1081,9 +1081,11 @@
+@@ -1113,9 +1113,11 @@
  is_disk_device (char **map, int drive)
  {
    struct stat st;

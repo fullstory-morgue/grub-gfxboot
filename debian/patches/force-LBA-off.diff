@@ -1,6 +1,6 @@
 --- a/docs/grub.texi
 +++ b/docs/grub.texi
-@@ -2920,7 +2920,7 @@
+@@ -2905,7 +2905,7 @@
  @node install
  @subsection install
  
@@ -9,7 +9,7 @@
  This command is fairly complex, and you should not use this command
  unless you are familiar with GRUB. Use @command{setup} (@pxref{setup})
  instead.
-@@ -2967,6 +2967,13 @@
+@@ -2952,6 +2952,13 @@
  bitmap even if they do have the support. So GRUB provides a solution to
  ignore the wrong bitmap, that is, the option @option{--force-lba}. Don't
  use this option if you know that your BIOS doesn't have LBA support.

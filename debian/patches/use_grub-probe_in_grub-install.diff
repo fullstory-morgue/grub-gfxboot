@@ -1,24 +1,17 @@
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
-@@ -129,114 +129,7 @@
- # Convert an OS device to the corresponding GRUB drive.
- # This part is OS-specific.
- convert () {
--    # First, check if the device file exists.
--    if test -e "$1"; then
--	:
--    else
--	echo "$1: Not found or not a block device." 1>&2
--	exit 1
--    fi
--
+@@ -137,106 +137,12 @@
+ 	exit 1
+     fi
+ 
 -    # Break the device name into the disk part and the partition part.
 -    case "$host_os" in
 -    linux*)
--	# Find an actual physical device if we're passed a RAID device
--	case $1 in
+ 	# Find an actual physical device if we're passed a RAID device
+ 	case $1 in
 -		/dev/md*)  set -- `getraid_mdadm $1`
--	esac
++		/dev/md* | /dev/md/*)  set -- `getraid_mdadm $1`
+ 	esac
 -	tmp_disk=`echo "$1" | sed -e 's%\([sh]d[a-z]\)[0-9]*$%\1%' \
 -				  -e 's%\(d[0-9]*\)p[0-9]*$%\1%' \
 -				  -e 's%\(fd[0-9]*\)$%\1%' \
@@ -54,7 +47,7 @@
 -	echo "grub-install does not support your OS yet." 1>&2
 -	exit 1 ;;
 -    esac
--
+ 
 -    # Get the drive name.
 -    tmp_drive=`grep -v '^#' $device_map | grep "$tmp_disk *$" \
 -	| sed 's%.*\(([hf]d[0-9][a-z0-9,]*)\).*%\1%'`
@@ -112,18 +105,18 @@
 -	# If no partition is specified, just print the drive name.
 -	echo "$tmp_drive"
 -    fi
-+	GRUB_LEGACY_0_BASED_PARTITIONS=1 grub-probe -t drive -d "$1"
++	GRUB_LEGACY_0_BASED_PARTITIONS=1 grub-probe --device-map=${device_map} -t drive -d "$1"
  }
  
  # Usage: resolve_symlink file
-@@ -265,9 +158,7 @@
+@@ -265,9 +171,7 @@
  # Usage: find_device file
  # Find block device on which the file resides.
  find_device () {
 -    # For now, this uses the program `df' to get the device name, but is
 -    # this really portable?
 -    tmp_fname=`df $1/ | sed -n 's%.*\(/dev/[^ 	]*\).*%\1%p'`
-+    tmp_fname=`grub-probe -t device $1/`
++    tmp_fname=`grub-probe --device-map=${device_map} -t device $1/`
  
      if test -z "$tmp_fname"; then
  	echo "Could not find device for $1" 2>&1

@@ -15,7 +15,7 @@ Debian Status Following:
 
 --- a/docs/grub.texi
 +++ b/docs/grub.texi
-@@ -2685,6 +2685,7 @@
+@@ -2670,6 +2670,7 @@
  * module::                      Load a module
  * modulenounzip::               Load a module without decompression
  * pause::                       Wait for a key press
@@ -23,7 +23,7 @@ Debian Status Following:
  * quit::                        Exit from the grub shell
  * reboot::                      Reboot your computer
  * read::                        Read data from memory
-@@ -3091,6 +3092,16 @@
+@@ -3076,6 +3077,16 @@
  @end deffn
  
  

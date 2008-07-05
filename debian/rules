@@ -127,6 +127,7 @@ clean: unpatch
 	dh_testdir
 	dh_testroot
 	rm -f build-arch-stamp configure-stamp config.log
+	chmod +x debian/script
 	
 	# Add here commands to clean up after the build process.
 	[ ! -f Makefile ] || $(MAKE) distclean
@@ -222,7 +223,7 @@ cvs-sync:
 	cvs -d:pserver:anonymous@cvs.savannah.gnu.org:/cvsroot/grub checkout -d grub-cvs grub; \
 	UVERSION=$$(dpkg-parsechangelog | grep Version | sed 's,Version: ,,g;s,-[0-9]*$$,,g;s,\.,_,g'); \
 	cd grub-cvs && \
-		cvs diff -uN -r release_$$UVERSION -r HEAD \
+		cvs diff -x configure -x Makefile.in -r release_$$UVERSION -r HEAD \
 			| sed 's,^\(---\|+++\) \(.*\)$$,\1 foo/\2,g' \
 			| filterdiff -x '*/.cvsignore' -x '*/docs/version.texi' -x '*/docs/stamp-vti' > ../debian/patches/cvs-sync.patch; \
 	cd .. && rm -rf grub-cvs

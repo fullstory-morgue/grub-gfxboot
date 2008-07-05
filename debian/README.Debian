@@ -79,14 +79,6 @@ Unlike Lilo, it is not necessary to re-run or re-install the boot loader
 after every change to /boot/grub/menu.lst.  menu.lst is automatically 
 found on GRUB's root disk and read during GRUB's boot process.
 
-initrd
-------
-Be warned if your initrd image is larger than 4MB it is bigger than the
-default ramdisk size and you will need to use a kernel command line
-option like the following:
-
-ramdisk_size=16384
-
 splashimage support
 -------------------
 The use of graphics is an unofficial extension to Grub that has not yet been

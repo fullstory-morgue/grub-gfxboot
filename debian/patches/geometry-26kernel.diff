@@ -160,32 +160,30 @@
  /* Get the geometry of a drive DRIVE.  */
  void
  get_drive_geometry (struct geometry *geom, char **map, int drive)
-@@ -151,21 +297,16 @@
+@@ -151,19 +297,15 @@
  #if defined(__linux__)
    /* Linux */
    {
 -    struct hd_geometry hdg;
-     unsigned long nr;
--    
+     unsigned long long nr;
+     
 -    if (ioctl (fd, HDIO_GETGEO, &hdg))
 -      goto fail;
- 
-     if (ioctl (fd, BLKGETSIZE, &nr))
+-
+     if (ioctl (fd, BLKGETSIZE64, &nr))
        goto fail;
      
      /* Got the geometry, so save it. */
 -    geom->cylinders = hdg.cylinders;
 -    geom->heads = hdg.heads;
 -    geom->sectors = hdg.sectors;
-     geom->total_sectors = nr;
--    
 +    get_linux_geometry(fd, geom);
 +    if (!geom->heads && !geom->cylinders && !geom->sectors)
-+        goto fail;
++      goto fail;
+     geom->total_sectors = nr / 512;
+     
      goto success;
-   }
- 
-@@ -953,6 +1094,7 @@
+@@ -984,6 +1126,7 @@
  {
    char dev[PATH_MAX];	/* XXX */
    int fd;
@@ -193,7 +191,7 @@
    
    if ((partition & 0x00FF00) != 0x00FF00)
      {
-@@ -987,35 +1129,13 @@
+@@ -1018,35 +1161,13 @@
        errnum = ERR_NO_PART;
        return 0;
      }

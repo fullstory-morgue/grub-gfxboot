@@ -1,6 +1,72 @@
 --- a/ChangeLog
 +++ b/ChangeLog
-@@ -1,3 +1,61 @@
+@@ -1,3 +1,127 @@
++2008-05-20  Robert Millan  <rmh@aybabtu.com>
++
++	* netboot/cs89x0.c: Fix license violation.
++	* netboot/cs89x0.h: Likewise.
++
++2008-04-10  Pavel Roskin  <proski@gnu.org>
++
++	* configure.ac: Always use "_cv_" in cache variables for
++	compatibility with Autoconf 2.62.
++
++2008-03-28  Robert Millan  <rmh@aybabtu.com>
++
++	Surpass 1 TiB disk addressing limit.  Note: there are no plans to handle
++	the 2 TiB disk limit in GRUB Legacy, since that would need considerable
++	rework.  If you have >2TiB disks, use GRUB 2 instead.
++
++	* grub/asmstub.c (biosdisk): Add unsigned qualifier to `sector'.
++	* stage2/bios.c (biosdisk): Likewise.
++	* stage2/disk_io.c (rawread, devread, rawwrite, devwrite): Likewise.
++	* stage2/shared.h (rawread, devread, rawwrite, devwrite): Likewise.
++	* lib/device.c (get_drive_geometry): Replace BLKGETSIZE with
++	BLKGETSIZE64.
++
++2007-10-29  Pavel Roskin  <proski@gnu.org>
++
++	* configure.ac: Test if '--build-id=none' is supported by the
++	linker and add it to LDFLAGS if possible.  Build ID causes
++	objcopy to generate huge binary files.
++	* aclocal.m4 (grub_PROG_OBJCOPY_ABSOLUTE): Use LDFLAGS when
++	linking, so that build ID doesn't break the test.
++	* stage1/Makefile.am: Preserve LDFLAGS, use stage1_exec_LDFLAGS.
++
++2007-02-22  Pavel Roskin  <proski@gnu.org>
++
++	* stage2/iso9660.h: Remove unnecessary packed attributes.
++
++2007-02-22  Robert Millan  <rmh@aybabtu.com>
++
++	* util/mkbimage: Update my email address, and remove my name from
++	some places where unnecessary credit is given.
++
++2006-09-10  Pavel Roskin  <proski@gnu.org>
++
++	* netboot/natsemi.c: Fix compile error with gcc 4.1.1.  Cast
++	cannot make a variable volatile - it should be declared as such.
++	* netboot/sis900.c: Likewise.
++
++2006-09-08  Pavel Roskin  <proski@gnu.org>
++
++	* netboot/etherboot.h: Remove incorrect extern declarations of
++	the variables later declared static.  Move BOOTP_DATA_ADDR ...
++	* netboot/main.c: ... here.  Eliminate end_of_rfc1533 - it's
++	write-only.
++
++2006-06-24  Yoshinori K. Okuji  <okuji@enbug.org>
++
++	* docs/grub.texi: Changed the license term to the GNU Free
++	Documentation License 1.2.
++
++	* docs/multiboot.texi: Reformatted to show the license term
++	and the version number explicitly.
++	
++	* docs/fdl.texi: New file.
++	
++	* docs/Makefile.am (grub_TEXINFOS): Added fdl.texi.
++
 +2006-06-24  Robert Millan  <robertmh@gnu.org>
 +
 +	* lib/device.c (write_to_partition): /dev/ataraid/ and /dev/rd/
@@ -62,36 +128,875 @@
  2005-05-08  Yoshinori K. Okuji  <okuji@enbug.org>
  
  	* configure.ac (AC_INIT): Upgraded to 0.97.
+--- a/THANKS
++++ b/THANKS
+@@ -121,3 +121,4 @@
+ Yedidyah Bar-David <didi@post.tau.ac.il>
+ Yury V. Umanets <umka@namesys.com>
+ Yuri Zaporogets <yuriz@ukr.net>
++Vitaly Fertman <vitaly@namesys.com>
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -57,7 +57,7 @@
+ fi
+ grub_cv_prog_objcopy_absolute=yes
+ for link_addr in 2000 8000 7C00; do
+-  if AC_TRY_COMMAND([${CC-cc} ${CFLAGS} -nostdlib -Wl,-N -Wl,-Ttext -Wl,$link_addr conftest.o -o conftest.exec]); then :
++  if AC_TRY_COMMAND([${CC-cc} ${CFLAGS} ${LDFLAGS} -nostdlib -Wl,-N -Wl,-Ttext -Wl,$link_addr conftest.o -o conftest.exec]); then :
+   else
+     AC_MSG_ERROR([${CC-cc} cannot link at address $link_addr])
+   fi
+--- a/configure.ac
++++ b/configure.ac
+@@ -86,13 +86,13 @@
+     fi
+     STAGE1_CFLAGS="-O2"
+     GRUB_CFLAGS="-O2"
+-    AC_CACHE_CHECK([whether optimization for size works], size_flag, [
++    AC_CACHE_CHECK([whether optimization for size works], grub_cv_cc_Os, [
+       saved_CFLAGS=$CFLAGS
+       CFLAGS="-Os -g"
+-      AC_TRY_COMPILE(, , size_flag=yes, size_flag=no)
++      AC_TRY_COMPILE(, , grub_cv_cc_Os=yes, grub_cv_cc_Os=no)
+       CFLAGS=$saved_CFLAGS
+     ])
+-    if test "x$size_flag" = xyes; then
++    if test "x$grub_cv_cc_Os" = xyes; then
+       STAGE2_CFLAGS="-Os"
+     else
+       STAGE2_CFLAGS="-O2 -fno-strength-reduce -fno-unroll-loops"
+@@ -100,16 +100,16 @@
+     # OpenBSD has a GCC extension for protecting applications from
+     # stack smashing attacks, but GRUB doesn't want this feature.
+     AC_CACHE_CHECK([whether gcc has -fno-stack-protector],
+-		   no_stack_protector_flag, [
++		   grub_cv_cc_no_stack_protector, [
+       saved_CFLAGS=$CFLAGS
+       CFLAGS="-fno-stack-protector"
+       AC_TRY_COMPILE(,
+ 		     ,
+-		     no_stack_protector_flag=yes,
+-		     no_stack_protector_flag=no)
++		     grub_cv_cc_no_stack_protector=yes,
++		     grub_cv_cc_no_stack_protector=no)
+       CFLAGS=$saved_CFLAGS
+     ])
+-    if test "x$no_stack_protector_flag" = xyes; then
++    if test "x$grub_cv_cc_no_stack_protector" = xyes; then
+       STAGE2_CFLAGS="$STAGE2_CFLAGS -fno-stack-protector"
+     fi
+   fi
+@@ -123,33 +123,44 @@
+ CPPFLAGS="$CPPFLAGS -Wall -Wmissing-prototypes -Wunused -Wshadow"
+ CPPFLAGS="$CPPFLAGS -Wpointer-arith"
+ 
+-AC_CACHE_CHECK([whether -Wundef works], undef_flag, [
++AC_CACHE_CHECK([whether -Wundef works], grub_cv_cc_Wundef, [
+   saved_CPPFLAGS="$CPPFLAGS"
+   CPPFLAGS="-Wundef"
+-  AC_TRY_COMPILE(, , undef_flag=yes, undef_flag=no)
++  AC_TRY_COMPILE(, , grub_cv_cc_Wundef=yes, grub_cv_cc_Wundef=no)
+   CPPFLAGS="$saved_CPPFLAGS"
+ ])
+ 
+ # The options `-falign-*' are supported by gcc 3.0 or later.
+ # Probably it is sufficient to only check for -falign-loops.
+-AC_CACHE_CHECK([whether -falign-loops works], [falign_loop_flag], [
++AC_CACHE_CHECK([whether -falign-loops works], [grub_cv_cc_falign_loop], [
+   saved_CPPFLAGS="$CPPFLAGS"
+   CPPFLAGS="-falign-loops=1"
+-  AC_TRY_COMPILE(, , [falign_loop_flag=yes], [falign_loop_flag=no])
++  AC_TRY_COMPILE(, , [grub_cv_cc_falign_loop=yes], [grub_cv_cc_falign_loop=no])
+   CPPFLAGS="$saved_CPPFLAGS"
+ ])
+ 
+ # Force no alignment to save space.
+-if test "x$falign_loop_flag" = xyes; then
++if test "x$grub_cv_cc_falign_loop" = xyes; then
+   CPPFLAGS="$CPPFLAGS -falign-jumps=1 -falign-loops=1 -falign-functions=1"
+ else
+   CPPFLAGS="$CPPFLAGS -malign-jumps=1 -malign-loops=1 -malign-functions=1"
+ fi
+ 
+-if test "x$undef_flag" = xyes; then
++if test "x$grub_cv_cc_Wundef" = xyes; then
+   CPPFLAGS="$CPPFLAGS -Wundef"
+ fi
+ 
++# Check if build ID can be disabled in the linker
++AC_MSG_CHECKING([whether linker accepts `--build-id=none'])
++save_LDFLAGS="$LDFLAGS"
++LDFLAGS="$LDFLAGS -Wl,--build-id=none"
++AC_TRY_LINK(, , build_id_flag=yes, build_id_flag=no)
++AC_MSG_RESULT([$build_id_flag])
++LDFLAGS="$save_LDFLAGS"
++if test "x$build_id_flag" = xyes; then
++  LDFLAGS="$LDFLAGS -Wl,--build-id=none"
++fi
++
+ if test "x$with_binutils" != x; then
+ dnl  AC_PATH_TOOL(OBJCOPY, objcopy, , "$with_binutils:$PATH")
+   AC_PATH_PROG(OBJCOPY, objcopy, , "$with_binutils:$PATH")
+--- a/docs/Makefile.am
++++ b/docs/Makefile.am
+@@ -1,5 +1,5 @@
+ info_TEXINFOS = grub.texi multiboot.texi
+-grub_TEXINFOS = internals.texi
++grub_TEXINFOS = internals.texi fdl.texi
+ EXAMPLES = boot.S kernel.c multiboot.h
+ multiboot_TEXINFOS = boot.S.texi kernel.c.texi multiboot.h.texi
+ man_MANS = grub.8 mbchk.1 grub-install.8 grub-md5-crypt.8 grub-terminfo.8
+--- /dev/null
++++ b/docs/fdl.texi
+@@ -0,0 +1,452 @@
++
++@node GNU Free Documentation License
++@appendixsec GNU Free Documentation License
++
++@cindex FDL, GNU Free Documentation License
++@center Version 1.2, November 2002
++
++@display
++Copyright @copyright{} 2000,2001,2002 Free Software Foundation, Inc.
++51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA
++
++Everyone is permitted to copy and distribute verbatim copies
++of this license document, but changing it is not allowed.
++@end display
++
++@enumerate 0
++@item
++PREAMBLE
++
++The purpose of this License is to make a manual, textbook, or other
++functional and useful document @dfn{free} in the sense of freedom: to
++assure everyone the effective freedom to copy and redistribute it,
++with or without modifying it, either commercially or noncommercially.
++Secondarily, this License preserves for the author and publisher a way
++to get credit for their work, while not being considered responsible
++for modifications made by others.
++
++This License is a kind of ``copyleft'', which means that derivative
++works of the document must themselves be free in the same sense.  It
++complements the GNU General Public License, which is a copyleft
++license designed for free software.
++
++We have designed this License in order to use it for manuals for free
++software, because free software needs free documentation: a free
++program should come with manuals providing the same freedoms that the
++software does.  But this License is not limited to software manuals;
++it can be used for any textual work, regardless of subject matter or
++whether it is published as a printed book.  We recommend this License
++principally for works whose purpose is instruction or reference.
++
++@item
++APPLICABILITY AND DEFINITIONS
++
++This License applies to any manual or other work, in any medium, that
++contains a notice placed by the copyright holder saying it can be
++distributed under the terms of this License.  Such a notice grants a
++world-wide, royalty-free license, unlimited in duration, to use that
++work under the conditions stated herein.  The ``Document'', below,
++refers to any such manual or work.  Any member of the public is a
++licensee, and is addressed as ``you''.  You accept the license if you
++copy, modify or distribute the work in a way requiring permission
++under copyright law.
++
++A ``Modified Version'' of the Document means any work containing the
++Document or a portion of it, either copied verbatim, or with
++modifications and/or translated into another language.
++
++A ``Secondary Section'' is a named appendix or a front-matter section
++of the Document that deals exclusively with the relationship of the
++publishers or authors of the Document to the Document's overall
++subject (or to related matters) and contains nothing that could fall
++directly within that overall subject.  (Thus, if the Document is in
++part a textbook of mathematics, a Secondary Section may not explain
++any mathematics.)  The relationship could be a matter of historical
++connection with the subject or with related matters, or of legal,
++commercial, philosophical, ethical or political position regarding
++them.
++
++The ``Invariant Sections'' are certain Secondary Sections whose titles
++are designated, as being those of Invariant Sections, in the notice
++that says that the Document is released under this License.  If a
++section does not fit the above definition of Secondary then it is not
++allowed to be designated as Invariant.  The Document may contain zero
++Invariant Sections.  If the Document does not identify any Invariant
++Sections then there are none.
++
++The ``Cover Texts'' are certain short passages of text that are listed,
++as Front-Cover Texts or Back-Cover Texts, in the notice that says that
++the Document is released under this License.  A Front-Cover Text may
++be at most 5 words, and a Back-Cover Text may be at most 25 words.
++
++A ``Transparent'' copy of the Document means a machine-readable copy,
++represented in a format whose specification is available to the
++general public, that is suitable for revising the document
++straightforwardly with generic text editors or (for images composed of
++pixels) generic paint programs or (for drawings) some widely available
++drawing editor, and that is suitable for input to text formatters or
++for automatic translation to a variety of formats suitable for input
++to text formatters.  A copy made in an otherwise Transparent file
++format whose markup, or absence of markup, has been arranged to thwart
++or discourage subsequent modification by readers is not Transparent.
++An image format is not Transparent if used for any substantial amount
++of text.  A copy that is not ``Transparent'' is called ``Opaque''.
++
++Examples of suitable formats for Transparent copies include plain
++@sc{ascii} without markup, Texinfo input format, La@TeX{} input
++format, @acronym{SGML} or @acronym{XML} using a publicly available
++@acronym{DTD}, and standard-conforming simple @acronym{HTML},
++PostScript or @acronym{PDF} designed for human modification.  Examples
++of transparent image formats include @acronym{PNG}, @acronym{XCF} and
++@acronym{JPG}.  Opaque formats include proprietary formats that can be
++read and edited only by proprietary word processors, @acronym{SGML} or
++@acronym{XML} for which the @acronym{DTD} and/or processing tools are
++not generally available, and the machine-generated @acronym{HTML},
++PostScript or @acronym{PDF} produced by some word processors for
++output purposes only.
++
++The ``Title Page'' means, for a printed book, the title page itself,
++plus such following pages as are needed to hold, legibly, the material
++this License requires to appear in the title page.  For works in
++formats which do not have any title page as such, ``Title Page'' means
++the text near the most prominent appearance of the work's title,
++preceding the beginning of the body of the text.
++
++A section ``Entitled XYZ'' means a named subunit of the Document whose
++title either is precisely XYZ or contains XYZ in parentheses following
++text that translates XYZ in another language.  (Here XYZ stands for a
++specific section name mentioned below, such as ``Acknowledgements'',
++``Dedications'', ``Endorsements'', or ``History''.)  To ``Preserve the Title''
++of such a section when you modify the Document means that it remains a
++section ``Entitled XYZ'' according to this definition.
++
++The Document may include Warranty Disclaimers next to the notice which
++states that this License applies to the Document.  These Warranty
++Disclaimers are considered to be included by reference in this
++License, but only as regards disclaiming warranties: any other
++implication that these Warranty Disclaimers may have is void and has
++no effect on the meaning of this License.
++
++@item
++VERBATIM COPYING
++
++You may copy and distribute the Document in any medium, either
++commercially or noncommercially, provided that this License, the
++copyright notices, and the license notice saying this License applies
++to the Document are reproduced in all copies, and that you add no other
++conditions whatsoever to those of this License.  You may not use
++technical measures to obstruct or control the reading or further
++copying of the copies you make or distribute.  However, you may accept
++compensation in exchange for copies.  If you distribute a large enough
++number of copies you must also follow the conditions in section 3.
++
++You may also lend copies, under the same conditions stated above, and
++you may publicly display copies.
++
++@item
++COPYING IN QUANTITY
++
++If you publish printed copies (or copies in media that commonly have
++printed covers) of the Document, numbering more than 100, and the
++Document's license notice requires Cover Texts, you must enclose the
++copies in covers that carry, clearly and legibly, all these Cover
++Texts: Front-Cover Texts on the front cover, and Back-Cover Texts on
++the back cover.  Both covers must also clearly and legibly identify
++you as the publisher of these copies.  The front cover must present
++the full title with all words of the title equally prominent and
++visible.  You may add other material on the covers in addition.
++Copying with changes limited to the covers, as long as they preserve
++the title of the Document and satisfy these conditions, can be treated
++as verbatim copying in other respects.
++
++If the required texts for either cover are too voluminous to fit
++legibly, you should put the first ones listed (as many as fit
++reasonably) on the actual cover, and continue the rest onto adjacent
++pages.
++
++If you publish or distribute Opaque copies of the Document numbering
++more than 100, you must either include a machine-readable Transparent
++copy along with each Opaque copy, or state in or with each Opaque copy
++a computer-network location from which the general network-using
++public has access to download using public-standard network protocols
++a complete Transparent copy of the Document, free of added material.
++If you use the latter option, you must take reasonably prudent steps,
++when you begin distribution of Opaque copies in quantity, to ensure
++that this Transparent copy will remain thus accessible at the stated
++location until at least one year after the last time you distribute an
++Opaque copy (directly or through your agents or retailers) of that
++edition to the public.
++
++It is requested, but not required, that you contact the authors of the
++Document well before redistributing any large number of copies, to give
++them a chance to provide you with an updated version of the Document.
++
++@item
++MODIFICATIONS
++
++You may copy and distribute a Modified Version of the Document under
++the conditions of sections 2 and 3 above, provided that you release
++the Modified Version under precisely this License, with the Modified
++Version filling the role of the Document, thus licensing distribution
++and modification of the Modified Version to whoever possesses a copy
++of it.  In addition, you must do these things in the Modified Version:
++
++@enumerate A
++@item
++Use in the Title Page (and on the covers, if any) a title distinct
++from that of the Document, and from those of previous versions
++(which should, if there were any, be listed in the History section
++of the Document).  You may use the same title as a previous version
++if the original publisher of that version gives permission.
++
++@item
++List on the Title Page, as authors, one or more persons or entities
++responsible for authorship of the modifications in the Modified
++Version, together with at least five of the principal authors of the
++Document (all of its principal authors, if it has fewer than five),
++unless they release you from this requirement.
++
++@item
++State on the Title page the name of the publisher of the
++Modified Version, as the publisher.
++
++@item
++Preserve all the copyright notices of the Document.
++
++@item
++Add an appropriate copyright notice for your modifications
++adjacent to the other copyright notices.
++
++@item
++Include, immediately after the copyright notices, a license notice
++giving the public permission to use the Modified Version under the
++terms of this License, in the form shown in the Addendum below.
++
++@item
++Preserve in that license notice the full lists of Invariant Sections
++and required Cover Texts given in the Document's license notice.
++
++@item
++Include an unaltered copy of this License.
++
++@item
++Preserve the section Entitled ``History'', Preserve its Title, and add
++to it an item stating at least the title, year, new authors, and
++publisher of the Modified Version as given on the Title Page.  If
++there is no section Entitled ``History'' in the Document, create one
++stating the title, year, authors, and publisher of the Document as
++given on its Title Page, then add an item describing the Modified
++Version as stated in the previous sentence.
++
++@item
++Preserve the network location, if any, given in the Document for
++public access to a Transparent copy of the Document, and likewise
++the network locations given in the Document for previous versions
++it was based on.  These may be placed in the ``History'' section.
++You may omit a network location for a work that was published at
++least four years before the Document itself, or if the original
++publisher of the version it refers to gives permission.
++
++@item
++For any section Entitled ``Acknowledgements'' or ``Dedications'', Preserve
++the Title of the section, and preserve in the section all the
++substance and tone of each of the contributor acknowledgements and/or
++dedications given therein.
++
++@item
++Preserve all the Invariant Sections of the Document,
++unaltered in their text and in their titles.  Section numbers
++or the equivalent are not considered part of the section titles.
++
++@item
++Delete any section Entitled ``Endorsements''.  Such a section
++may not be included in the Modified Version.
++
++@item
++Do not retitle any existing section to be Entitled ``Endorsements'' or
++to conflict in title with any Invariant Section.
++
++@item
++Preserve any Warranty Disclaimers.
++@end enumerate
++
++If the Modified Version includes new front-matter sections or
++appendices that qualify as Secondary Sections and contain no material
++copied from the Document, you may at your option designate some or all
++of these sections as invariant.  To do this, add their titles to the
++list of Invariant Sections in the Modified Version's license notice.
++These titles must be distinct from any other section titles.
++
++You may add a section Entitled ``Endorsements'', provided it contains
++nothing but endorsements of your Modified Version by various
++parties---for example, statements of peer review or that the text has
++been approved by an organization as the authoritative definition of a
++standard.
++
++You may add a passage of up to five words as a Front-Cover Text, and a
++passage of up to 25 words as a Back-Cover Text, to the end of the list
++of Cover Texts in the Modified Version.  Only one passage of
++Front-Cover Text and one of Back-Cover Text may be added by (or
++through arrangements made by) any one entity.  If the Document already
++includes a cover text for the same cover, previously added by you or
++by arrangement made by the same entity you are acting on behalf of,
++you may not add another; but you may replace the old one, on explicit
++permission from the previous publisher that added the old one.
++
++The author(s) and publisher(s) of the Document do not by this License
++give permission to use their names for publicity for or to assert or
++imply endorsement of any Modified Version.
++
++@item
++COMBINING DOCUMENTS
++
++You may combine the Document with other documents released under this
++License, under the terms defined in section 4 above for modified
++versions, provided that you include in the combination all of the
++Invariant Sections of all of the original documents, unmodified, and
++list them all as Invariant Sections of your combined work in its
++license notice, and that you preserve all their Warranty Disclaimers.
++
++The combined work need only contain one copy of this License, and
++multiple identical Invariant Sections may be replaced with a single
++copy.  If there are multiple Invariant Sections with the same name but
++different contents, make the title of each such section unique by
++adding at the end of it, in parentheses, the name of the original
++author or publisher of that section if known, or else a unique number.
++Make the same adjustment to the section titles in the list of
++Invariant Sections in the license notice of the combined work.
++
++In the combination, you must combine any sections Entitled ``History''
++in the various original documents, forming one section Entitled
++``History''; likewise combine any sections Entitled ``Acknowledgements'',
++and any sections Entitled ``Dedications''.  You must delete all
++sections Entitled ``Endorsements.''
++
++@item
++COLLECTIONS OF DOCUMENTS
++
++You may make a collection consisting of the Document and other documents
++released under this License, and replace the individual copies of this
++License in the various documents with a single copy that is included in
++the collection, provided that you follow the rules of this License for
++verbatim copying of each of the documents in all other respects.
++
++You may extract a single document from such a collection, and distribute
++it individually under this License, provided you insert a copy of this
++License into the extracted document, and follow this License in all
++other respects regarding verbatim copying of that document.
++
++@item
++AGGREGATION WITH INDEPENDENT WORKS
++
++A compilation of the Document or its derivatives with other separate
++and independent documents or works, in or on a volume of a storage or
++distribution medium, is called an ``aggregate'' if the copyright
++resulting from the compilation is not used to limit the legal rights
++of the compilation's users beyond what the individual works permit.
++When the Document is included in an aggregate, this License does not
++apply to the other works in the aggregate which are not themselves
++derivative works of the Document.
++
++If the Cover Text requirement of section 3 is applicable to these
++copies of the Document, then if the Document is less than one half of
++the entire aggregate, the Document's Cover Texts may be placed on
++covers that bracket the Document within the aggregate, or the
++electronic equivalent of covers if the Document is in electronic form.
++Otherwise they must appear on printed covers that bracket the whole
++aggregate.
++
++@item
++TRANSLATION
++
++Translation is considered a kind of modification, so you may
++distribute translations of the Document under the terms of section 4.
++Replacing Invariant Sections with translations requires special
++permission from their copyright holders, but you may include
++translations of some or all Invariant Sections in addition to the
++original versions of these Invariant Sections.  You may include a
++translation of this License, and all the license notices in the
++Document, and any Warranty Disclaimers, provided that you also include
++the original English version of this License and the original versions
++of those notices and disclaimers.  In case of a disagreement between
++the translation and the original version of this License or a notice
++or disclaimer, the original version will prevail.
++
++If a section in the Document is Entitled ``Acknowledgements'',
++``Dedications'', or ``History'', the requirement (section 4) to Preserve
++its Title (section 1) will typically require changing the actual
++title.
++
++@item
++TERMINATION
++
++You may not copy, modify, sublicense, or distribute the Document except
++as expressly provided for under this License.  Any other attempt to
++copy, modify, sublicense or distribute the Document is void, and will
++automatically terminate your rights under this License.  However,
++parties who have received copies, or rights, from you under this
++License will not have their licenses terminated so long as such
++parties remain in full compliance.
++
++@item
++FUTURE REVISIONS OF THIS LICENSE
++
++The Free Software Foundation may publish new, revised versions
++of the GNU Free Documentation License from time to time.  Such new
++versions will be similar in spirit to the present version, but may
++differ in detail to address new problems or concerns.  See
++@uref{http://www.gnu.org/copyleft/}.
++
++Each version of the License is given a distinguishing version number.
++If the Document specifies that a particular numbered version of this
++License ``or any later version'' applies to it, you have the option of
++following the terms and conditions either of that specified version or
++of any later version that has been published (not as a draft) by the
++Free Software Foundation.  If the Document does not specify a version
++number of this License, you may choose any version ever published (not
++as a draft) by the Free Software Foundation.
++@end enumerate
++
++@page
++@appendixsubsec ADDENDUM: How to use this License for your documents
++
++To use this License in a document you have written, include a copy of
++the License in the document and put the following copyright and
++license notices just after the title page:
++
++@smallexample
++@group
++  Copyright (C)  @var{year}  @var{your name}.
++  Permission is granted to copy, distribute and/or modify this document
++  under the terms of the GNU Free Documentation License, Version 1.2
++  or any later version published by the Free Software Foundation;
++  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
++  Texts.  A copy of the license is included in the section entitled ``GNU
++  Free Documentation License''.
++@end group
++@end smallexample
++
++If you have Invariant Sections, Front-Cover Texts and Back-Cover Texts,
++replace the ``with...Texts.'' line with this:
++
++@smallexample
++@group
++    with the Invariant Sections being @var{list their titles}, with
++    the Front-Cover Texts being @var{list}, and with the Back-Cover Texts
++    being @var{list}.
++@end group
++@end smallexample
++
++If you have Invariant Sections without Cover Texts, or some other
++combination of the three, merge those two alternatives to suit the
++situation.
++
++If your document contains nontrivial examples of program code, we
++recommend releasing these examples in parallel under your choice of
++free software license, such as the GNU General Public License,
++to permit their use in free software.
++
++@c Local Variables:
++@c ispell-local-pdict: "ispell-dict"
++@c End:
++
+--- a/docs/grub-install.8
++++ b/docs/grub-install.8
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
+-.TH GRUB-INSTALL "8" "May 2005" "grub-install (GNU GRUB 0.97)" FSF
++.TH GRUB-INSTALL "8" "June 2006" "grub-install (GNU GRUB 0.97)" FSF
+ .SH NAME
+ grub-install \- install GRUB on your drive
+ .SH SYNOPSIS
+--- a/docs/grub-md5-crypt.8
++++ b/docs/grub-md5-crypt.8
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
+-.TH GRUB-MD5-CRYPT "8" "May 2005" "grub-md5-crypt (GNU GRUB )" FSF
++.TH GRUB-MD5-CRYPT "8" "June 2006" "grub-md5-crypt (GNU GRUB )" FSF
+ .SH NAME
+ grub-md5-crypt \- Encrypt a password in MD5 format
+ .SH SYNOPSIS
+--- a/docs/grub-terminfo.8
++++ b/docs/grub-terminfo.8
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
+-.TH GRUB-TERMINFO "8" "May 2005" "grub-terminfo (GNU GRUB 0.97)" FSF
++.TH GRUB-TERMINFO "8" "June 2006" "grub-terminfo (GNU GRUB 0.97)" FSF
+ .SH NAME
+ grub-terminfo \- Generate a terminfo command from a terminfo name
+ .SH SYNOPSIS
+--- a/docs/grub.8
++++ b/docs/grub.8
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
+-.TH GRUB "8" "May 2005" "grub (GNU GRUB 0.97)" FSF
++.TH GRUB "8" "June 2006" "grub (GNU GRUB 0.97)" FSF
+ .SH NAME
+ grub \- the grub shell
+ .SH SYNOPSIS
+--- a/docs/grub.texi
++++ b/docs/grub.texi
+@@ -2,22 +2,41 @@
+ @c -*-texinfo-*-
+ @c %**start of header
+ @setfilename grub.info
+-@settitle GRUB Manual
+-@c %**end of header
+-
+ @include version.texi
+-
++@settitle GNU GRUB Manual @value{VERSION}
+ @c Unify all our little indices for now.
+ @syncodeindex fn cp
+ @syncodeindex vr cp
+ @syncodeindex ky cp
+ @syncodeindex pg cp
+ @syncodeindex tp cp
++@c %**end of header
+ 
+ @footnotestyle separate
+ @paragraphindent 3
+ @finalout
+ 
++@copying
++This manual is for GNU GRUB (version @value{VERSION},
++@value{UPDATED}).
++
++Copyright @copyright{} 1999,2000,2001,2002,2004,2006 Free Software Foundation, Inc.
++
++@quotation
++Permission is granted to copy, distribute and/or modify this document
++under the terms of the GNU Free Documentation License, Version 1.2 or
++any later version published by the Free Software Foundation; with no
++Invariant Sections, with the Front-Cover Texts being ``A GNU Manual,''
++and with the Back-Cover Texts as in (a) below.  A copy of the
++license is included in the section entitled ``GNU Free Documentation
++License.''
++
++(a) The FSF's Back-Cover Text is: ``You have freedom to copy and modify
++this GNU Manual, like GNU software.  Copies published by the Free
++Software Foundation raise funds for GNU development.''
++@end quotation
++@end copying
++
+ @dircategory Kernel
+ @direntry
+ * GRUB: (grub).                 The GRand Unified Bootloader
+@@ -34,53 +53,16 @@
+ 
+ @setchapternewpage odd
+ 
+-@ifinfo
+-Copyright @copyright{} 1999,2000,2001,2002,2004 Free Software Foundation, Inc.
+-
+-Permission is granted to make and distribute verbatim copies of
+-this manual provided the copyright notice and this permission notice
+-are preserved on all copies.
+-
+-@ignore
+-Permission is granted to process this file through TeX and print the
+-results, provided the printed document carries a copying permission
+-notice identical to this one except for the removal of this paragraph
+-(this paragraph not being relevant to the printed manual).
+-
+-@end ignore
+-
+-Permission is granted to copy and distribute modified versions of this
+-manual under the conditions for verbatim copying, provided also that
+-the entire resulting derived work is distributed under the terms of a
+-permission notice identical to this one.
+-
+-Permission is granted to copy and distribute translations of this manual
+-into another language, under the above conditions for modified versions.
+-@end ifinfo
+-
+ @titlepage
+ @sp 10
+-@title the GRUB manual
++@title the GNU GRUB manual
+ @subtitle The GRand Unified Bootloader, version @value{VERSION}, @value{UPDATED}.
+ @author Gordon Matzigkeit
+ @author Yoshinori K. Okuji
+ @c The following two commands start the copyright page.
+ @page
+ @vskip 0pt plus 1filll
+-Copyright @copyright{} 1999,2000,2001,2002,2004 Free Software Foundation, Inc.
+-
+-Permission is granted to make and distribute verbatim copies of
+-this manual provided the copyright notice and this permission notice
+-are preserved on all copies.
+-Permission is granted to copy and distribute modified versions of this
+-manual under the conditions for verbatim copying, provided that the entire
+-resulting derived work is distributed under the terms of a permission
+-notice identical to this one.
+-
+-Permission is granted to copy and distribute translations of this manual
+-into another language, under the above conditions for modified versions,
+-except that this permission notice may be stated in a translation approved
+-by Free Software Foundation.
++@insertcopying
+ @end titlepage
+ 
+ @c Output the table of contents at the beginning.
+@@ -91,12 +73,14 @@
+ 
+ @ifnottex
+ @node Top
+-@top GRUB manual
++@top GNU GRUB manual
+ 
+ This is the documentation of GNU GRUB, the GRand Unified Bootloader,
+ a flexible and powerful boot loader program for @sc{pc}s.
+ 
+ This edition documents version @value{VERSION}.
++
++@insertcopying
+ @end ifnottex
+ 
+ @menu
+@@ -124,6 +108,7 @@
+ * Reporting bugs::              Where you should send a bug report
+ * Future::                      Some future plans on GRUB
+ * Internals::                   Hacking GRUB
++* Copying This Manual::         Copying This Manual
+ * Index::
+ @end menu
+ 
+@@ -3965,6 +3950,16 @@
+ @include internals.texi
+ 
+ 
++@node Copying This Manual
++@appendix Copying This Manual
++
++@menu
++* GNU Free Documentation License::  License for copying this manual.
++@end menu
++
++@include fdl.texi
++
++
+ @node Index
+ @unnumbered Index
+ 
+--- a/docs/mbchk.1
++++ b/docs/mbchk.1
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
+-.TH MBCHK "1" "May 2005" "mbchk (GNU GRUB 0.97)" FSF
++.TH MBCHK "1" "June 2006" "mbchk (GNU GRUB 0.97)" FSF
+ .SH NAME
+ mbchk \- check the format of a Multiboot kernel
+ .SH SYNOPSIS
 --- a/docs/multiboot.texi
 +++ b/docs/multiboot.texi
-@@ -25,7 +25,7 @@
- @ifinfo
- Copyright @copyright{} 1995, 96 Bryan Ford <baford@@cs.utah.edu>
- Copyright @copyright{} 1995, 96 Erich Stefan Boleyn <erich@@uruk.org>
--Copyright @copyright{} 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-+Copyright @copyright{} 1999, 2000, 2001, 2002, 2005, 2006 Free Software Foundation, Inc.
+@@ -1,32 +1,28 @@
+ \input texinfo @c -*-texinfo-*-
+-@c -*-texinfo-*-
+ @c %**start of header
+ @setfilename multiboot.info
+-@settitle Multiboot Specification
+-@c %**end of header
+-
++@set VERSION 0.6.95
++@settitle Multiboot Specification version @value{VERSION}
+ @c Unify all our little indices for now.
+ @syncodeindex fn cp
+ @syncodeindex vr cp
+ @syncodeindex ky cp
+ @syncodeindex pg cp
+ @syncodeindex tp cp
++@c %**end of header
  
+ @footnotestyle separate
+ @paragraphindent 3
+ @finalout
+ 
++@copying
++Copyright @copyright{} 1995,96 Bryan Ford <baford@@cs.utah.edu>
+ 
+-@dircategory Kernel
+-@direntry
+-* Multiboot Specification: (multiboot).		Multiboot Specification.
+-@end direntry
++Copyright @copyright{} 1995,96 Erich Stefan Boleyn <erich@@uruk.org>
+ 
+-@ifinfo
+-Copyright @copyright{} 1995, 96 Bryan Ford <baford@@cs.utah.edu>
+-Copyright @copyright{} 1995, 96 Erich Stefan Boleyn <erich@@uruk.org>
+-Copyright @copyright{} 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
++Copyright @copyright{} 1999,2000,2001,2002,2005,2006 Free Software Foundation, Inc.
+ 
++@quotation
  Permission is granted to make and distribute verbatim copies of
  this manual provided the copyright notice and this permission notice
-@@ -57,7 +57,7 @@
+ are preserved on all copies.
+@@ -36,7 +32,6 @@
+ results, provided the printed document carries a copying permission
+ notice identical to this one except for the removal of this paragraph
+ (this paragraph not being relevant to the printed manual).
+-
+ @end ignore
+ 
+ Permission is granted to copy and distribute modified versions of this
+@@ -45,31 +40,23 @@
+ permission notice identical to this one.
+ 
+ Permission is granted to copy and distribute translations of this manual
+-into another language, under the above conditions for modified versions.
+-@end ifinfo
++into another language, under the above conditions for modified
++versions.
++@end quotation
++@end copying
++
++@dircategory Kernel
++@direntry
++* Multiboot Specification: (multiboot).		Multiboot Specification.
++@end direntry
+ 
+ @titlepage
+ @sp 10
+-@title The Multiboot Specification
++@title The Multiboot Specification version @value{VERSION}
+ @author Yoshinori K. Okuji, Bryan Ford, Erich Stefan Boleyn, Kunihiro Ishiguro
+ @page
+-
  @vskip 0pt plus 1filll
- Copyright @copyright{} 1995, 96 Bryan Ford <baford@@cs.utah.edu>
- Copyright @copyright{} 1995, 96 Erich Stefan Boleyn <erich@@uruk.org>
+-Copyright @copyright{} 1995, 96 Bryan Ford <baford@@cs.utah.edu>
+-Copyright @copyright{} 1995, 96 Erich Stefan Boleyn <erich@@uruk.org>
 -Copyright @copyright{} 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
-+Copyright @copyright{} 1999, 2000, 2001, 2002, 2005, 2006 Free Software Foundation, Inc.
+-
+-Permission is granted to make and distribute verbatim copies of
+-this manual provided the copyright notice and this permission notice
+-are preserved on all copies.
+-
+-Permission is granted to copy and distribute modified versions of this
+-manual under the conditions for verbatim copying, provided also that
+-the entire resulting derived work is distributed under the terms of a
+-permission notice identical to this one.
+-
+-Permission is granted to copy and distribute translations of this manual
+-into another language, under the above conditions for modified versions.
++@insertcopying
+ @end titlepage
  
- Permission is granted to make and distribute verbatim copies of
- this manual provided the copyright notice and this permission notice
-@@ -80,7 +80,7 @@
+ @finalout
+@@ -80,7 +67,9 @@
  @top Multiboot Specification
  
  This file documents Multiboot Specification, the proposal for the boot
 -sequence standard. This edition documents version 0.6.93.
-+sequence standard. This edition documents version 0.6.94.
++sequence standard. This edition documents version @value{VERSION}.
++
++@insertcopying
  @end ifnottex
  
  @menu
-@@ -426,7 +426,7 @@
+@@ -426,7 +415,7 @@
  kernel.
  
  If bit 16 in the @samp{flags} word is set, then the fields at offsets
@@ -100,7 +1005,7 @@
  them instead of the fields in the actual executable header to calculate
  where to load the OS image. This information does not need to be
  provided if the kernel image is in @sc{elf} format, but it @emph{must}
-@@ -677,7 +677,7 @@
+@@ -677,7 +666,7 @@
  @example
  @group
  +-------+-------+-------+-------+
@@ -109,10 +1014,11 @@
  +-------+-------+-------+-------+
  @end group
  @end example
-@@ -1199,6 +1199,13 @@
+@@ -1197,6 +1186,17 @@
+ @item
+ The maintainer changes to the GNU GRUB maintainer team
  @email{bug-grub@@gnu.org}, from Bryan Ford and Erich Stefan Boleyn.
- @end itemize
- 
++
 +@item
 +The byte order of the @samp{boot_device} in Multiboot information is
 +reversed. This was a mistake.
@@ -120,9 +1026,12 @@
 +@item
 +The offset of the address fields were wrong.
 +
++@item
++The format is adapted to a newer Texinfo, and the version number is
++specified more explicitly in the title.
+ @end itemize
+ 
  @item 0.6
- @itemize @bullet
- @item
 --- a/grub/asmstub.c
 +++ b/grub/asmstub.c
 @@ -55,6 +55,10 @@
@@ -177,6 +1086,15 @@
  
        if (disks[drive].flags == -1)
  	{
+@@ -926,7 +962,7 @@
+ 
+ int
+ biosdisk (int subfunc, int drive, struct geometry *geometry,
+-	  int sector, int nsec, int segment)
++	  unsigned int sector, int nsec, int segment)
+ {
+   char *buf;
+   int fd = geometry->flags;
 --- a/grub/main.c
 +++ b/grub/main.c
 @@ -32,6 +32,7 @@
@@ -202,6 +1120,42 @@
  	case OPT_NO_CONFIG_FILE:
 --- a/lib/device.c
 +++ b/lib/device.c
+@@ -69,9 +69,9 @@
+ # ifndef CDROM_GET_CAPABILITY
+ #  define CDROM_GET_CAPABILITY	0x5331	/* get capabilities */
+ # endif /* ! CDROM_GET_CAPABILITY */
+-# ifndef BLKGETSIZE
+-#  define BLKGETSIZE	_IO(0x12,96)	/* return device size */
+-# endif /* ! BLKGETSIZE */
++# ifndef BLKGETSIZE64
++#  define BLKGETSIZE64	_IOR(0x12,114,size_t)	/* return device size */
++# endif /* ! BLKGETSIZE64 */
+ #endif /* __linux__ */
+ 
+ /* Use __FreeBSD_kernel__ instead of __FreeBSD__ for compatibility with
+@@ -152,19 +152,19 @@
+   /* Linux */
+   {
+     struct hd_geometry hdg;
+-    unsigned long nr;
++    unsigned long long nr;
+     
+     if (ioctl (fd, HDIO_GETGEO, &hdg))
+       goto fail;
+ 
+-    if (ioctl (fd, BLKGETSIZE, &nr))
++    if (ioctl (fd, BLKGETSIZE64, &nr))
+       goto fail;
+     
+     /* Got the geometry, so save it. */
+     geom->cylinders = hdg.cylinders;
+     geom->heads = hdg.heads;
+     geom->sectors = hdg.sectors;
+-    geom->total_sectors = nr;
++    geom->total_sectors = nr / 512;
+     
+     goto success;
+   }
 @@ -407,6 +407,12 @@
  {
    sprintf (name, "/dev/ataraid/d%c", unit + '0');
@@ -258,6 +1212,157 @@
    sprintf (dev + strlen(dev), "%d", ((partition >> 16) & 0xFF) + 1);
    
    /* Open the partition.  */
+--- a/netboot/cs89x0.c
++++ b/netboot/cs89x0.c
+@@ -1,3 +1,21 @@
++/**
++   Per an email message from Russ Nelson <nelson@crynwr.com> on
++   18 March 2008 this file is now licensed under GPL Version 2.
++
++   From: Russ Nelson <nelson@crynwr.com>
++   Date: Tue, 18 Mar 2008 12:42:00 -0400
++   Subject: Re: [Etherboot-developers] cs89x0 driver in etherboot
++   -- quote from email
++   As copyright holder, if I say it doesn't conflict with the GPL,
++   then it doesn't conflict with the GPL.
++
++   However, there's no point in causing people's brains to overheat,
++   so yes, I grant permission for the code to be relicensed under the
++   GPLv2.  Please make sure that this change in licensing makes its
++   way upstream.  -russ
++   -- quote from email
++**/
++
+ /* cs89x0.c: A Crystal Semiconductor CS89[02]0 driver for etherboot. */
+ /*
+   Permission is granted to distribute the enclosed cs89x0.[ch] driver
+--- a/netboot/cs89x0.h
++++ b/netboot/cs89x0.h
+@@ -1,3 +1,21 @@
++/**
++   Per an email message from Russ Nelson <nelson@crynwr.com> on
++   18 March 2008 this file is now licensed under GPL Version 2.
++
++   From: Russ Nelson <nelson@crynwr.com>
++   Date: Tue, 18 Mar 2008 12:42:00 -0400
++   Subject: Re: [Etherboot-developers] cs89x0 driver in etherboot
++   -- quote from email
++   As copyright holder, if I say it doesn't conflict with the GPL,
++   then it doesn't conflict with the GPL.
++
++   However, there's no point in causing people's brains to overheat,
++   so yes, I grant permission for the code to be relicensed under the
++   GPLv2.  Please make sure that this change in licensing makes its
++   way upstream.  -russ
++   -- quote from email
++**/
++
+ /*  Copyright, 1988-1992, Russell Nelson, Crynwr Software
+ 
+    This program is free software; you can redistribute it and/or modify
+--- a/netboot/etherboot.h
++++ b/netboot/etherboot.h
+@@ -531,9 +531,6 @@
+ extern int network_ready;
+ extern struct rom_info rom;
+ extern struct arptable_t arptable[MAX_ARP];
+-extern struct bootpd_t bootp_data;
+-#define	BOOTP_DATA_ADDR	(&bootp_data)
+-extern unsigned char *end_of_rfc1533;
+ 
+ /* config.c */
+ extern struct nic nic;
+--- a/netboot/main.c
++++ b/netboot/main.c
+@@ -56,7 +56,8 @@
+ static unsigned long netmask;
+ static struct bootpd_t bootp_data;
+ static unsigned long xid;
+-static unsigned char *end_of_rfc1533 = NULL;
++
++#define	BOOTP_DATA_ADDR	(&bootp_data)
+ 
+ #ifndef	NO_DHCP_SUPPORT
+ #endif /* NO_DHCP_SUPPORT */
+@@ -967,7 +968,6 @@
+   
+   if (block == 0)
+     {
+-      end_of_rfc1533 = NULL;
+       vendorext_isvalid = 0;
+       
+       if (grub_memcmp (p, rfc1533_cookie, 4))
+@@ -1021,7 +1021,7 @@
+ 	}
+       else if (c == RFC1533_END)
+ 	{
+-	  end_of_rfc1533 = endp = p;
++	  endp = p;
+ 	  continue;
+ 	}
+       else if (c == RFC1533_NETMASK)
+--- a/netboot/natsemi.c
++++ b/netboot/natsemi.c
+@@ -608,7 +608,7 @@
+ 		 const char  *p)     /* Packet */
+ {
+     u32 status, to, nstype;
+-    u32 tx_status;
++    volatile u32 tx_status;
+     
+     /* Stop the transmitter */
+     outl(TxOff, ioaddr + ChipCmd);
+@@ -647,7 +647,7 @@
+ 
+     to = currticks() + TX_TIMEOUT;
+ 
+-    while ((((volatile u32) tx_status=txd.cmdsts) & OWN) && (currticks() < to))
++    while (((tx_status=txd.cmdsts) & OWN) && (currticks() < to))
+         /* wait */ ;
+ 
+     if (currticks() >= to) {
+--- a/netboot/sis900.c
++++ b/netboot/sis900.c
+@@ -901,7 +901,7 @@
+                 const char  *p)     /* Packet */
+ {
+     u32 status, to, nstype;
+-    u32 tx_status;
++    volatile u32 tx_status;
+     
+     /* Stop the transmitter */
+     outl(TxDIS, ioaddr + cr);
+@@ -940,7 +940,7 @@
+ 
+     to = currticks() + TX_TIMEOUT;
+ 
+-    while ((((volatile u32) tx_status=txd.cmdsts) & OWN) && (currticks() < to))
++    while (((tx_status=txd.cmdsts) & OWN) && (currticks() < to))
+         /* wait */ ;
+ 
+     if (currticks() >= to) {
+--- a/stage1/Makefile.am
++++ b/stage1/Makefile.am
+@@ -5,7 +5,7 @@
+ 
+ # We can't use builtins or standard includes.
+ AM_CCASFLAGS = $(STAGE1_CFLAGS) -fno-builtin -nostdinc
+-LDFLAGS = -nostdlib -Wl,-N,-Ttext,7C00
++stage1_exec_LDFLAGS = -nostdlib -Wl,-N,-Ttext,7C00
+ 
+ noinst_PROGRAMS = stage1.exec
+ stage1_exec_SOURCES = stage1.S stage1.h
+--- a/stage2/bios.c
++++ b/stage2/bios.c
+@@ -47,7 +47,7 @@
+    return the error number. Otherwise, return 0.  */
+ int
+ biosdisk (int read, int drive, struct geometry *geometry,
+-	  int sector, int nsec, int segment)
++	  unsigned int sector, int nsec, int segment)
+ {
+   int err;
+   
 --- a/stage2/boot.c
 +++ b/stage2/boot.c
 @@ -1,7 +1,7 @@
@@ -299,6 +1404,69 @@
      }
    
    int embed_stage1_5 (char *stage1_5, int drive, int partition)
+--- a/stage2/disk_io.c
++++ b/stage2/disk_io.c
+@@ -137,7 +137,7 @@
+ }
+ 
+ int
+-rawread (int drive, int sector, int byte_offset, int byte_len, char *buf)
++rawread (int drive, unsigned int sector, int byte_offset, int byte_len, char *buf)
+ {
+   int slen, sectors_per_vtrack;
+   int sector_size_bits = log2 (buf_geom.sector_size);
+@@ -261,7 +261,7 @@
+        */
+       if (disk_read_func)
+ 	{
+-	  int sector_num = sector;
++	  unsigned int sector_num = sector;
+ 	  int length = buf_geom.sector_size - byte_offset;
+ 	  if (length > size)
+ 	    length = size;
+@@ -291,7 +291,7 @@
+ 
+ 
+ int
+-devread (int sector, int byte_offset, int byte_len, char *buf)
++devread (unsigned int sector, int byte_offset, int byte_len, char *buf)
+ {
+   /*
+    *  Check partition boundaries
+@@ -330,7 +330,7 @@
+ 
+ #ifndef STAGE1_5
+ int
+-rawwrite (int drive, int sector, char *buf)
++rawwrite (int drive, unsigned int sector, char *buf)
+ {
+   if (sector == 0)
+     {
+@@ -363,7 +363,7 @@
+ }
+ 
+ int
+-devwrite (int sector, int sector_count, char *buf)
++devwrite (unsigned int sector, int sector_count, char *buf)
+ {
+ #if defined(GRUB_UTIL) && defined(__linux__)
+   if (current_partition != 0xFFFFFF
+--- a/stage2/iso9660.h
++++ b/stage2/iso9660.h
+@@ -73,11 +73,11 @@
+ 
+ typedef	struct __iso_16bit {
+   u_int16_t l, b;
+-} iso_16bit_t __attribute__ ((packed));
++} iso_16bit_t;
+ 
+ typedef	struct __iso_32bit {
+   u_int32_t l, b;
+-} iso_32bit_t __attribute__ ((packed));
++} iso_32bit_t;
+ 
+ typedef u_int8_t		iso_date_t[7];
+ 
 --- a/stage2/shared.h
 +++ b/stage2/shared.h
 @@ -499,7 +499,11 @@
@@ -314,6 +1482,30 @@
  } __attribute__ ((packed));
  
  
+@@ -807,7 +811,7 @@
+ /* Low-level disk I/O */
+ int get_diskinfo (int drive, struct geometry *geometry);
+ int biosdisk (int subfunc, int drive, struct geometry *geometry,
+-	      int sector, int nsec, int segment);
++	      unsigned int sector, int nsec, int segment);
+ void stop_floppy (void);
+ 
+ /* Command-line interface functions. */
+@@ -920,10 +924,10 @@
+ int gunzip_read (char *buf, int len);
+ #endif /* NO_DECOMPRESSION */
+ 
+-int rawread (int drive, int sector, int byte_offset, int byte_len, char *buf);
+-int devread (int sector, int byte_offset, int byte_len, char *buf);
+-int rawwrite (int drive, int sector, char *buf);
+-int devwrite (int sector, int sector_len, char *buf);
++int rawread (int drive, unsigned int sector, int byte_offset, int byte_len, char *buf);
++int devread (unsigned int sector, int byte_offset, int byte_len, char *buf);
++int rawwrite (int drive, unsigned int sector, char *buf);
++int devwrite (unsigned int sector, int sector_len, char *buf);
+ 
+ /* Parse a device string and initialize the global parameters. */
+ char *set_device (char *device);
 --- a/stage2/stage2.c
 +++ b/stage2/stage2.c
 @@ -651,7 +651,10 @@
@@ -338,17 +1530,6 @@
        
        if (run_script (cur_entry, heap))
  	{
---- /dev/null
-+++ b/stamp-h.in
-@@ -0,0 +1 @@
-+timestamp
---- a/THANKS
-+++ b/THANKS
-@@ -121,3 +121,4 @@
- Yedidyah Bar-David <didi@post.tau.ac.il>
- Yury V. Umanets <umka@namesys.com>
- Yuri Zaporogets <yuriz@ukr.net>
-+Vitaly Fertman <vitaly@namesys.com>
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
 @@ -112,8 +112,8 @@
@@ -362,3 +1543,49 @@
  	tmp_part=`echo "$1" \
  	    | sed "s%.*/r\{0,1\}[saw]d[0-9]\(s[0-9]*[a-h]\)%\1%" \
         	    | sed "s%.*/r\{0,1\}da[0-9]\(s[0-9]*[a-h]\)%\1%"`
+--- a/util/mkbimage
++++ b/util/mkbimage
+@@ -1,7 +1,7 @@
+ #!/bin/sh
+ # MaKe a Bootable IMAGE --- 1.44, 2.88 and El Torito no-emulation mode
+ # C) 2001,2002,2003 Thierry Laronde <tlaronde@polynum.org>
+-# C) 2001,2002,2003 Robert Millan <robertmh@gnu.org>
++# C) 2001,2002,2003 Robert Millan <rmh@aybabtu.com>
+ 
+ 
+ # This program is free software; you can redistribute it and/or modify
+@@ -19,7 +19,7 @@
+ # program's maintainer or write to: The Free Software Foundation,
+ # Inc.; 59 Temple Place, Suite 330; Boston, MA 02111-1307, USA.
+ 
+-# $Id: mkbimage,v 1.19 2004/07/21 14:43:04 robertmh Exp $
++# $Id: mkbimage,v 1.20 2007/02/22 16:01:03 robertmh Exp $
+ 
+ # Global variables
+ tarfile=
+@@ -58,7 +58,7 @@
+ 
+ # Name by which this script was invoked.
+ program=`echo "$0" | sed -e 's/[^\/]*\///g'`
+-version_number='$Revision: 1.19 $'
++version_number='$Revision: 1.20 $'
+ 
+ usage="
+ Usage: $program [-hVF] [-t TYPE] [-d DIRECTORY] [-s FS_TYPE] -f TAR_FILE
+@@ -94,15 +94,13 @@
+ 	    display Version information and exit
+ 
+ Copyright (c) 2001,2002,2003 Thierry Laronde <tlaronde@polynum.org>. 
+-Copyright (c) 2001,2002 Robert Millan <zeratul2@wanadoo.es>.
+ GPLed."
+ 
+ version="mkbimage $version_number
+ 
+-Written by Thierry Laronde and Robert Millan.
++Written by Thierry Laronde.
+ 
+ Copyright (c) 2001,2002,2003 Thierry Laronde <tlaronde@polynum.org>.
+-Copyright (c) 2001,2002,2003 Robert Millan <zeratul2@wanadoo.es>.
+ 
+ This is free software under the GPL version 2 or later; see the source for 
+ copying conditions.  There is NO warranty, not even for MERCHANTABILITY or 

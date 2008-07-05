@@ -1,6 +1,6 @@
 --- a/docs/grub.texi
 +++ b/docs/grub.texi
-@@ -2118,6 +2118,7 @@
+@@ -2103,6 +2103,7 @@
  * default::                     Set the default entry
  * fallback::                    Set the fallback entry
  * hiddenmenu::                  Hide the menu interface
@@ -8,7 +8,7 @@
  * timeout::                     Set the timeout
  * title::                       Start a menu entry
  @end menu
-@@ -2150,6 +2151,15 @@
+@@ -2135,6 +2136,15 @@
  @end deffn
  
  

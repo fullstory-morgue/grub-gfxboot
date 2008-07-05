@@ -28,14 +28,14 @@ abort() {
        message=$@
 
        echo >&2
-       echo -e "$message" >&2
+       printf "$message\n" >&2
        echo >&2
        exit 1
 }
 
 find_grub_dir ()
 {
-	echo  -n "Searching for GRUB installation directory ... " >&2
+	printf "Searching for GRUB installation directory ... " >&2
 
 	for d in $grub_dirs ; do
 		if [ -d "$d" ] ; then
@@ -83,7 +83,7 @@ echo "
 # strongly recommended." >> $default_file
 
 echo
-echo -n "Do you want to reboot now? [y/N] "
+printf "Do you want to reboot now? [y/N] "
 read REBOOT
 case $REBOOT in
   y*|Y*) reboot ;;
