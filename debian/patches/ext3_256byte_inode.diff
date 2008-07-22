@@ -1,5 +1,41 @@
-
 Patch from Red Hat. See #463236, #463123.
+
+update with:
+
+From sandeen@redhat.com Tue Jul 22 17:05:21 2008
+Message-ID: <4885F731.9090805@redhat.com>
+Date: Tue, 22 Jul 2008 10:05:21 -0500
+
+[...]
+
+There was  a bug in the large inode support that I added to grub, which other 
+distros picked up from red hat.  The following patch should fix it:  (apologies
+for likely email patch-mangling)
+
+ -------- Original Message --------
+ Subject: Broken inode_size handling in grub-fedora-9.patch
+ Date: Mon, 21 Jul 2008 01:40:25 -0600
+ From: RB <aoz.syn@gmail.com>
+ To: pjones@redhat.com
+
+ Just thought I'd give you a heads-up: I was working on Gentoo bug
+ #220687 and I ran into an issue with a patch we seem to have gotten
+ from you guys, by way of Debian.
+
+ In stage2/fsys_ext2fs.c (on line 38552 of your patch), you add a macro
+ to find EXT2_INODE_SIZE by just pulling it from the superblock.
+ Unfortunately, in the non-dynamic revision of ext2 that space is
+ zero-padded and the result is a floating-point exception when
+ attempting to boot from any old-style ext2 images.  Boot-time div/0
+ failures are a blast to debug...   :) 
+
+ This is a rough patch against your patch with more code sucked out of
+ linux/ext2_fs.h - I have no way to test it against a fedora system and
+ it's a little chunky/odd, but it should give you an idea of what seems
+ to be the fix.  It compiles and runs happily on my systems.  Thanks
+ for your time!
+
+ RB
 
 --- a/stage2/fsys_ext2fs.c
 +++ b/stage2/fsys_ext2fs.c
@@ -57,17 +93,22 @@ Patch from Red Hat. See #463236, #463123.
    };
  
  struct ext2_group_desc
-@@ -218,6 +263,9 @@
+@@ -218,6 +263,14 @@
  #define EXT2_ADDR_PER_BLOCK(s)          (EXT2_BLOCK_SIZE(s) / sizeof (__u32))
  #define EXT2_ADDR_PER_BLOCK_BITS(s)		(log2(EXT2_ADDR_PER_BLOCK(s)))
  
-+#define EXT2_INODE_SIZE(s)		(SUPERBLOCK->s_inode_size)
++#define EXT2_GOOD_OLD_REV	0	/* The good old (original) format */
++#define EXT2_DYNAMIC_REV	1	/* V2 format w/ dynamic inode sizes */
++#define EXT2_GOOD_OLD_INODE_SIZE 128
++#define EXT2_INODE_SIZE(s)	(((s)->s_rev_level == EXT2_GOOD_OLD_REV) ? \
++				EXT2_GOOD_OLD_INODE_SIZE : \
++				(s)->s_inode_size)
 +#define EXT2_INODES_PER_BLOCK(s)	(EXT2_BLOCK_SIZE(s)/EXT2_INODE_SIZE(s))
 +
  /* linux/ext2_fs.h */
  #define EXT2_BLOCK_SIZE_BITS(s)        ((s)->s_log_block_size + 10)
  /* kind of from ext2/super.c */
-@@ -553,7 +601,7 @@
+@@ -553,7 +606,7 @@
        gdp = GROUP_DESC;
        ino_blk = gdp[desc].bg_inode_table +
  	(((current_ino - 1) % (SUPERBLOCK->s_inodes_per_group))
@@ -76,7 +117,7 @@ Patch from Red Hat. See #463236, #463123.
  #ifdef E2DEBUG
        printf ("inode table fsblock=%d\n", ino_blk);
  #endif /* E2DEBUG */
-@@ -565,13 +613,12 @@
+@@ -565,13 +618,12 @@
        /* reset indirect blocks! */
        mapblock2 = mapblock1 = -1;
  

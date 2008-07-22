@@ -61,7 +61,7 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
  
  /* ext2/super.c */
  #define grub_log2(n) ffz(~(n))
-@@ -327,6 +366,26 @@
+@@ -332,6 +371,26 @@
  		  EXT2_BLOCK_SIZE (SUPERBLOCK), (char *) buffer);
  }
  
@@ -88,7 +88,7 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
  /* from
    ext2/inode.c:ext2_bmap()
  */
-@@ -355,83 +414,106 @@
+@@ -360,83 +419,106 @@
      }
    printf ("logical block %d\n", logical_block);
  #endif /* E2DEBUG */

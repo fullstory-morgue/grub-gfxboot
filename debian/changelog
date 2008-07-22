@@ -1,8 +1,10 @@
-grub-gfxboot (0.97-31) UNRELEASED; urgency=low
+grub-gfxboot (0.97-31) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * add patch to distinguish between old-style ext2 format and dynamic
+    revision ext2 formats, provided by Eric Sandeen <sandeen@redhat.com>.
+  * refresh series.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 06 Jul 2008 01:16:21 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 22 Jul 2008 17:55:48 +0200
 
 grub-gfxboot (0.97-30) unstable; urgency=low
 
