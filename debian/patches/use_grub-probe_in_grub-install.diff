@@ -47,7 +47,7 @@
 -	echo "grub-install does not support your OS yet." 1>&2
 -	exit 1 ;;
 -    esac
- 
+-
 -    # Get the drive name.
 -    tmp_drive=`grep -v '^#' $device_map | grep "$tmp_disk *$" \
 -	| sed 's%.*\(([hf]d[0-9][a-z0-9,]*)\).*%\1%'`
@@ -57,7 +57,7 @@
 -	echo "$1 does not have any corresponding BIOS drive." 1>&2
 -	exit 1
 -    fi
--
+ 
 -    if test "x$tmp_part" != x; then
 -	# If a partition is specified, we need to translate it into the
 -	# GRUB's syntax.
@@ -120,3 +120,27 @@
  
      if test -z "$tmp_fname"; then
  	echo "Could not find device for $1" 2>&1
+@@ -384,22 +288,7 @@
+ if test -f "$device_map"; then
+     :
+ else
+-    # Create a safe temporary file.
+-    test -n "$mklog" && log_file=`$mklog`
+-
+-    # Before all invocations of the grub shell, call sync to make sure
+-    # the raw device is in sync with any bufferring in filesystems.
+-    sync
+- 
+-    $grub_shell --batch $no_floppy --device-map=$device_map <<EOF >$log_file
+-quit
+-EOF
+-    if grep "Error [0-9]*: " $log_file >/dev/null; then
+-	cat $log_file 1>&2
+-	exit 1
+-    fi
+-
+-    rm -f $log_file
++    grub-mkdevicemap $no_floppy --device-map=$device_map
+ fi
+ 
+ # Make sure that there is no duplicated entry.

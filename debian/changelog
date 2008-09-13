@@ -1,8 +1,44 @@
-grub-gfxboot (0.97-32) UNRELEASED; urgency=low
+grub-gfxboot (0.97-32) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * sync with Debian svn r1067 (0.97-51).
+  * add changes from 0.97-47:
+    [ Robert Millan ]
+    - update-grub: Send grub-probe stderr output to /dev/null.
+      (Closes: #495909)
+  * add changes from 0.97-46:
+    [ Robert Millan ]
+    - Bring the rc/pre/etc exceptions back again when comparing versions.
+      (Closes: #493389)
+  * add changes from 0.97-45:
+    [ Felix Zielcke ]
+    - use dpkg --compare-versions in update-grub.  (Closes: #493389)
+  * add changes from 0.97-44:
+    [ Robert Millan ]
+    - Ignore -y option.  When menu.lst doesn't exist, it's always generated.
+      (Closes: #492213)
+    - NEWS: Add note recommending that users update their GRUB installs.
+      (Closes: #451701)
+  * add changes from 0.97-43:
+    [ Felix Zielcke ]
+    - debian/rules: changed cvs rules to svn
+    - Update Standards version to 3.8.0. No changes need.
+    - add 2 overrides to make lintian happy
+    [ Robert Millan ]
+    - Fix regression in patches/ext3_256byte_inode.diff, thanks Eric Sandeen
+      <sandeen@redhat.com>.  (Closes: #491076)
+  * add changes from 0.97-42:
+    [ Robert Millan ]
+    - Avoid passing UUIDs to Linux when "/dev/disk/by-uuid/${root_uuid}" does
+      not exist
+    - control (grub): Add a note in description pointing at GRUB 2.
+      (Closes: #488304)
+    - patches/use_grub-probe_in_grub-install.diff: Use grub-mkdevicemap when
+      device.map needs to be regenerated (this brings in Virtio support, and
+      probably others).
+      (Closes: #491745)
+  * integrate recent Debian changes in grub-gfxboot.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 22 Jul 2008 18:01:03 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 13 Sep 2008 23:49:59 +0200
 
 grub-gfxboot (0.97-31) unstable; urgency=low
 

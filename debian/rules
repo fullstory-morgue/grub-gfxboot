@@ -175,6 +175,14 @@ install-arch:
 	done
 	rm -rf debian/grub-gfxboot/usr/lib/grub/tmp/
 	
+	mkdir -p $(CURDIR)/debian/grub-gfxboot/usr/share/lintian/overrides
+	cd $(CURDIR)/debian/grub-gfxboot && find ./usr/bin/ -name mbchk \
+		| sed -e "s%.*%grub-gfxboot: statically-linked-binary &%g" \
+	> $(CURDIR)/debian/grub-gfxboot/usr/share/lintian/overrides/grub
+	cd $(CURDIR)/debian/grub-gfxboot && find ./usr/sbin/ -name grub \
+		| sed -e "s%.*%grub-gfxboot: statically-linked-binary &%g" \
+	>> $(CURDIR)/debian/grub/usr/share/lintian/overrides/grub
+	
 	dh_install -s
 
 # Must not depend on anything.
@@ -218,15 +226,15 @@ binary-common:
 binary-arch: build-arch install-arch
 	$(MAKE) -f debian/rules DH_OPTIONS=-a binary-common
 
-# Grab fixes from CVS using our version as reference.
-cvs-sync:
-	cvs -d:pserver:anonymous@cvs.savannah.gnu.org:/cvsroot/grub checkout -d grub-cvs grub; \
+# Grab fixes from SVN using our version as reference.
+svn-sync:
+	svn co svn://svn.sv.gnu.org/grub/trunk/grub grub-svn grub; \
 	UVERSION=$$(dpkg-parsechangelog | grep Version | sed 's,Version: ,,g;s,-[0-9]*$$,,g;s,\.,_,g'); \
-	cd grub-cvs && \
-		cvs diff -x configure -x Makefile.in -r release_$$UVERSION -r HEAD \
+	cd grub-svn && \
+	svn diff -uN -x configure -x Makefile.in -r release_$$UVERSION -r HEAD \
 			| sed 's,^\(---\|+++\) \(.*\)$$,\1 foo/\2,g' \
-			| filterdiff -x '*/.cvsignore' -x '*/docs/version.texi' -x '*/docs/stamp-vti' > ../debian/patches/cvs-sync.patch; \
-	cd .. && rm -rf grub-cvs
+			| filterdiff -x '*/.cvsignore' -x '*/docs/version.texi' -x '*/docs/stamp-vti' > ../debian/patches/svn-sync.patch; \
+	cd .. && rm -rf grub-svn
 
 binary: binary-arch
 .PHONY: build clean binary-arch binary install install-arch configure

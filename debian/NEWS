@@ -1,3 +1,28 @@
+grub-gfxboot (0.97-32) unstable; urgency=low
+
+  Versions of the kernel Linux newer than 2.6.23, like the ones included in
+  Debian Lenny, are known to differ slightly in their binary format, in a way
+  that very old versions of GRUB are unable to boot.
+
+  If you're upgrading GRUB in a system that was installed before Debian Etch,
+  and you have never manually updated your GRUB install, it is possible that
+  your system stops booting.
+
+  In order to prevent that, it is recommended that you install the latest GRUB
+  by issuing (as root) the following command after upgrading the grub package:
+
+    grub-install "(hd0)"
+
+  (assuming hd0 is mapped in /boot/grub/device.map to the disk used by your
+  BIOS to boot;  in a multi-disk environment you might need to use a different
+  parameter)
+
+  Note: even if your setup is not affected by this problem, it is always a
+  good idea to keep your GRUB install up-to-date, so if in doubt it's best
+  that you update it anyway.
+
+ -- Robert Millan <rmh@aybabtu.com>  Mon, 28 Jul 2008 20:19:52 +0200
+
 grub-gfxboot (0.97-25) unstable; urgency=low
 
   The following features have been recently added to grub-gfxboot:
