@@ -178,10 +178,10 @@ install-arch:
 	mkdir -p $(CURDIR)/debian/grub-gfxboot/usr/share/lintian/overrides
 	cd $(CURDIR)/debian/grub-gfxboot && find ./usr/bin/ -name mbchk \
 		| sed -e "s%.*%grub-gfxboot: statically-linked-binary &%g" \
-	> $(CURDIR)/debian/grub-gfxboot/usr/share/lintian/overrides/grub
+	> $(CURDIR)/debian/grub-gfxboot/usr/share/lintian/overrides/grub-gfxboot
 	cd $(CURDIR)/debian/grub-gfxboot && find ./usr/sbin/ -name grub \
 		| sed -e "s%.*%grub-gfxboot: statically-linked-binary &%g" \
-	>> $(CURDIR)/debian/grub/usr/share/lintian/overrides/grub
+	>> $(CURDIR)/debian/grub/usr/share/lintian/overrides/grub-gfxboot
 	
 	dh_install -s
 
