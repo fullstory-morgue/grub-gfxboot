@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-34) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 14 Sep 2008 00:04:45 +0200
+
 grub-gfxboot (0.97-33) unstable; urgency=low
 
   * fix bug files.
