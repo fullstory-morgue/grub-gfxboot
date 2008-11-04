@@ -1,8 +1,19 @@
-grub-gfxboot (0.97-34) UNRELEASED; urgency=low
+grub-gfxboot (0.97-34) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * conflict with lilo until the next regular maintainer upload, this is a 
+    pity, but required due to the following reasons:
+    - unconfigured lilo installations are dangerous on upgrades, #504376.
+    - it is broken in combination with a default initramfs-tools setup, 
+      #479607.
+    - grub does not allow bootloader coexistance on the system.
+    - lilo is unlikely to be part of squeeze, cf.
+      http://lists.debian.org/debian-devel/2008/06/msg00400.html
+  * sync with Debian svn r1109:
+    [ Robert Millan ]
+    - update-grub: Try to regenerate device.map when grub-probe fails (and
+      inform the user about it).  Thanks Raphaël Hertzog.  (Closes: #501306).
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 14 Sep 2008 00:04:45 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 04 Nov 2008 01:03:36 +0100
 
 grub-gfxboot (0.97-33) unstable; urgency=low
 

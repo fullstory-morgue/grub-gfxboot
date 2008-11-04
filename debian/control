@@ -12,7 +12,7 @@ Architecture: i386 kfreebsd-i386 hurd-i386 amd64 kfreebsd-amd64
 Depends: ${shlibs:Depends}, grub-common
 Suggests: multiboot-doc, mdadm, gfxboot
 Provides: grub
-Conflicts: grub
+Conflicts: grub, lilo (<< 1:22.8-7)
 Description: GRand Unified Bootloader
  GRUB-gfxboot is a GPLed bootloader with graphical menu patches intended to 
  unify bootloading across x86 operating systems.  In addition to loading the 
