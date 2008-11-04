@@ -1,8 +1,12 @@
-grub-gfxboot (0.97-35) UNRELEASED; urgency=low
+grub-gfxboot (0.97-35) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * drop the conflict with lilo, while this conflict and the arguments taken 
+    below are essentially still true, currently does more harm (by dereffering
+    installing grub/ removing lilo) than good (the device.map changes are 
+    needed for quite some users upgrading from pre-libata setups for the first
+    time since update-grub relies on grub-common).
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 04 Nov 2008 01:06:19 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 04 Nov 2008 01:44:44 +0100
 
 grub-gfxboot (0.97-34) unstable; urgency=low
 
