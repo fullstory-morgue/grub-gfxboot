@@ -1,9 +1,8 @@
-grub-gfxboot (0.97-36) UNRELEASED; urgency=low
+grub-gfxboot (0.97-36) unstable; urgency=low
 
-  * NOT RELEASED YET
   * make lintian happy and depend on ${misc:Depends}.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 08 Dec 2008 02:43:01 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 08 Dec 2008 22:34:24 +0100
 
 grub-gfxboot (0.97-35) unstable; urgency=low
 
