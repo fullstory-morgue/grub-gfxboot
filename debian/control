@@ -2,15 +2,26 @@ Source: grub-gfxboot
 Section: admin
 Priority: optional
 Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-Build-Depends: debhelper (>= 6), quilt, automake1.10, autoconf, autotools-dev, texinfo, libncurses5-dev | libncurses-dev, gcc-multilib [amd64 kfreebsd-amd64]
+Build-Depends: debhelper (>= 6),
+               quilt,
+               automake1.10,
+               autoconf,
+               autotools-dev,
+               texinfo,
+               libncurses5-dev | libncurses-dev,
+               gcc-multilib [amd64 kfreebsd-amd64]
 Standards-Version: 3.8.0
 Vcs-Svn: svn://svn.berlios.de/fullstory/grub-gfxboot/trunk
 Vcs-Browser: http://svn.berlios.de/wsvn/fullstory/grub-gfxboot/trunk/
 
 Package: grub-gfxboot
 Architecture: i386 kfreebsd-i386 hurd-i386 amd64 kfreebsd-amd64
-Depends: ${shlibs:Depends}, grub-common
-Suggests: multiboot-doc, mdadm, gfxboot
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         grub-common
+Suggests: multiboot-doc,
+          mdadm,
+          gfxboot
 Provides: grub
 Conflicts: grub
 Description: GRand Unified Bootloader
