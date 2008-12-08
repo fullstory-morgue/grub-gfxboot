@@ -1,8 +1,12 @@
 grub-gfxboot (0.97-36) unstable; urgency=low
 
   * make lintian happy and depend on ${misc:Depends}.
+  * sync with Debian svn r1124:
+    [ Robert Millan ]
+    - update-grub: Do not attempt to detect CONFIG_PARAVIRT Xen images.
+      Thanks Raphaël Hertzog et al.  (Closes: #500336)
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 08 Dec 2008 22:34:24 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 08 Dec 2008 22:36:53 +0100
 
 grub-gfxboot (0.97-35) unstable; urgency=low
 
