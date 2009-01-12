@@ -130,14 +130,14 @@
  	* configure.ac (AC_INIT): Upgraded to 0.97.
 --- a/THANKS
 +++ b/THANKS
-@@ -121,3 +121,4 @@
+@@ -121,3 +121,4 @@ Vesa Jaaskelainen <jaaskela@tietomyrsky.
  Yedidyah Bar-David <didi@post.tau.ac.il>
  Yury V. Umanets <umka@namesys.com>
  Yuri Zaporogets <yuriz@ukr.net>
 +Vitaly Fertman <vitaly@namesys.com>
 --- a/acinclude.m4
 +++ b/acinclude.m4
-@@ -57,7 +57,7 @@
+@@ -57,7 +57,7 @@ else
  fi
  grub_cv_prog_objcopy_absolute=yes
  for link_addr in 2000 8000 7C00; do
@@ -148,7 +148,7 @@
    fi
 --- a/configure.ac
 +++ b/configure.ac
-@@ -86,13 +86,13 @@
+@@ -86,13 +86,13 @@ if test "x$ac_cv_prog_gcc" = xyes; then
      fi
      STAGE1_CFLAGS="-O2"
      GRUB_CFLAGS="-O2"
@@ -165,7 +165,7 @@
        STAGE2_CFLAGS="-Os"
      else
        STAGE2_CFLAGS="-O2 -fno-strength-reduce -fno-unroll-loops"
-@@ -100,16 +100,16 @@
+@@ -100,16 +100,16 @@ if test "x$ac_cv_prog_gcc" = xyes; then
      # OpenBSD has a GCC extension for protecting applications from
      # stack smashing attacks, but GRUB doesn't want this feature.
      AC_CACHE_CHECK([whether gcc has -fno-stack-protector],
@@ -186,7 +186,7 @@
        STAGE2_CFLAGS="$STAGE2_CFLAGS -fno-stack-protector"
      fi
    fi
-@@ -123,33 +123,44 @@
+@@ -123,33 +123,44 @@ AC_SUBST(GRUB_CFLAGS)
  CPPFLAGS="$CPPFLAGS -Wall -Wmissing-prototypes -Wunused -Wshadow"
  CPPFLAGS="$CPPFLAGS -Wpointer-arith"
  
@@ -841,7 +841,7 @@
  @end titlepage
  
  @c Output the table of contents at the beginning.
-@@ -91,12 +73,14 @@
+@@ -91,12 +73,14 @@ by Free Software Foundation.
  
  @ifnottex
  @node Top
@@ -857,7 +857,7 @@
  @end ifnottex
  
  @menu
-@@ -124,6 +108,7 @@
+@@ -124,6 +108,7 @@ This edition documents version @value{VE
  * Reporting bugs::              Where you should send a bug report
  * Future::                      Some future plans on GRUB
  * Internals::                   Hacking GRUB
@@ -865,7 +865,7 @@
  * Index::
  @end menu
  
-@@ -3965,6 +3950,16 @@
+@@ -3965,6 +3950,16 @@ homepage}.
  @include internals.texi
  
  
@@ -934,7 +934,7 @@
  Permission is granted to make and distribute verbatim copies of
  this manual provided the copyright notice and this permission notice
  are preserved on all copies.
-@@ -36,7 +32,6 @@
+@@ -36,7 +32,6 @@ Permission is granted to process this fi
  results, provided the printed document carries a copying permission
  notice identical to this one except for the removal of this paragraph
  (this paragraph not being relevant to the printed manual).
@@ -942,7 +942,7 @@
  @end ignore
  
  Permission is granted to copy and distribute modified versions of this
-@@ -45,31 +40,23 @@
+@@ -45,31 +40,23 @@ the entire resulting derived work is dis
  permission notice identical to this one.
  
  Permission is granted to copy and distribute translations of this manual
@@ -985,7 +985,7 @@
  @end titlepage
  
  @finalout
-@@ -80,7 +67,9 @@
+@@ -80,7 +67,9 @@ into another language, under the above c
  @top Multiboot Specification
  
  This file documents Multiboot Specification, the proposal for the boot
@@ -996,7 +996,7 @@
  @end ifnottex
  
  @menu
-@@ -426,7 +415,7 @@
+@@ -426,7 +415,7 @@ mode table (@pxref{Boot information form
  kernel.
  
  If bit 16 in the @samp{flags} word is set, then the fields at offsets
@@ -1005,7 +1005,7 @@
  them instead of the fields in the actual executable header to calculate
  where to load the OS image. This information does not need to be
  provided if the kernel image is in @sc{elf} format, but it @emph{must}
-@@ -677,7 +666,7 @@
+@@ -677,7 +666,7 @@ follows:
  @example
  @group
  +-------+-------+-------+-------+
@@ -1014,7 +1014,7 @@
  +-------+-------+-------+-------+
  @end group
  @end example
-@@ -1197,6 +1186,17 @@
+@@ -1197,6 +1186,17 @@ Rewritten, using more strict words.
  @item
  The maintainer changes to the GNU GRUB maintainer team
  @email{bug-grub@@gnu.org}, from Bryan Ford and Erich Stefan Boleyn.
@@ -1034,7 +1034,7 @@
  @item 0.6
 --- a/grub/asmstub.c
 +++ b/grub/asmstub.c
-@@ -55,6 +55,10 @@
+@@ -55,6 +55,10 @@ int grub_stage2 (void);
  # endif /* ! BLKFLSBUF */
  #endif /* __linux__ */
  
@@ -1045,7 +1045,7 @@
  /* We want to prevent any circularararity in our stubs, as well as
     libc name clashes. */
  #define WITHOUT_LIBC_STUBS 1
-@@ -777,7 +781,39 @@
+@@ -777,7 +781,39 @@ get_diskinfo (int drive, struct geometry
  
        /* Open read/write, or read-only if that failed. */
        if (! read_only)
@@ -1086,7 +1086,7 @@
  
        if (disks[drive].flags == -1)
  	{
-@@ -926,7 +962,7 @@
+@@ -926,7 +962,7 @@ hex_dump (void *buf, size_t size)
  
  int
  biosdisk (int subfunc, int drive, struct geometry *geometry,
@@ -1097,7 +1097,7 @@
    int fd = geometry->flags;
 --- a/grub/main.c
 +++ b/grub/main.c
-@@ -32,6 +32,7 @@
+@@ -32,6 +32,7 @@ int grub_stage2 (void);
  #define WITHOUT_LIBC_STUBS 1
  #include <shared.h>
  #include <term.h>
@@ -1105,7 +1105,7 @@
  
  char *program_name = 0;
  int use_config_file = 1;
-@@ -192,6 +193,12 @@
+@@ -192,6 +193,12 @@ main (int argc, char **argv)
  	      perror ("strtoul");
  	      exit (1);
  	    }
@@ -1120,7 +1120,7 @@
  	case OPT_NO_CONFIG_FILE:
 --- a/lib/device.c
 +++ b/lib/device.c
-@@ -69,9 +69,9 @@
+@@ -69,9 +69,9 @@ struct hd_geometry
  # ifndef CDROM_GET_CAPABILITY
  #  define CDROM_GET_CAPABILITY	0x5331	/* get capabilities */
  # endif /* ! CDROM_GET_CAPABILITY */
@@ -1133,7 +1133,7 @@
  #endif /* __linux__ */
  
  /* Use __FreeBSD_kernel__ instead of __FreeBSD__ for compatibility with
-@@ -152,19 +152,19 @@
+@@ -152,19 +152,19 @@ get_drive_geometry (struct geometry *geo
    /* Linux */
    {
      struct hd_geometry hdg;
@@ -1156,7 +1156,7 @@
      
      goto success;
    }
-@@ -407,6 +407,12 @@
+@@ -407,6 +407,12 @@ get_ataraid_disk_name (char *name, int u
  {
    sprintf (name, "/dev/ataraid/d%c", unit + '0');
  }
@@ -1169,7 +1169,7 @@
  #endif
  
  /* Check if DEVICE can be read. If an error occurs, return zero,
-@@ -801,6 +807,29 @@
+@@ -801,6 +807,29 @@ init_device_map (char ***map, const char
  	  }
        }
    }
@@ -1199,7 +1199,7 @@
  #endif /* __linux__ */
    
    /* OK, close the device map file if opened.  */
-@@ -861,6 +890,12 @@
+@@ -861,6 +890,12 @@ write_to_partition (char **map, int driv
        if (strcmp (dev + strlen(dev) - 5, "/disc") == 0)
  	strcpy (dev + strlen(dev) - 5, "/part");
      }
@@ -1262,7 +1262,7 @@
     This program is free software; you can redistribute it and/or modify
 --- a/netboot/etherboot.h
 +++ b/netboot/etherboot.h
-@@ -531,9 +531,6 @@
+@@ -531,9 +531,6 @@ extern int ip_abort;
  extern int network_ready;
  extern struct rom_info rom;
  extern struct arptable_t arptable[MAX_ARP];
@@ -1274,7 +1274,7 @@
  extern struct nic nic;
 --- a/netboot/main.c
 +++ b/netboot/main.c
-@@ -56,7 +56,8 @@
+@@ -56,7 +56,8 @@ static int vendorext_isvalid;
  static unsigned long netmask;
  static struct bootpd_t bootp_data;
  static unsigned long xid;
@@ -1284,7 +1284,7 @@
  
  #ifndef	NO_DHCP_SUPPORT
  #endif /* NO_DHCP_SUPPORT */
-@@ -967,7 +968,6 @@
+@@ -967,7 +968,6 @@ decode_rfc1533 (unsigned char *p, int bl
    
    if (block == 0)
      {
@@ -1292,7 +1292,7 @@
        vendorext_isvalid = 0;
        
        if (grub_memcmp (p, rfc1533_cookie, 4))
-@@ -1021,7 +1021,7 @@
+@@ -1021,7 +1021,7 @@ decode_rfc1533 (unsigned char *p, int bl
  	}
        else if (c == RFC1533_END)
  	{
@@ -1303,7 +1303,7 @@
        else if (c == RFC1533_NETMASK)
 --- a/netboot/natsemi.c
 +++ b/netboot/natsemi.c
-@@ -608,7 +608,7 @@
+@@ -608,7 +608,7 @@ natsemi_transmit(struct nic  *nic,
  		 const char  *p)     /* Packet */
  {
      u32 status, to, nstype;
@@ -1312,7 +1312,7 @@
      
      /* Stop the transmitter */
      outl(TxOff, ioaddr + ChipCmd);
-@@ -647,7 +647,7 @@
+@@ -647,7 +647,7 @@ natsemi_transmit(struct nic  *nic,
  
      to = currticks() + TX_TIMEOUT;
  
@@ -1323,7 +1323,7 @@
      if (currticks() >= to) {
 --- a/netboot/sis900.c
 +++ b/netboot/sis900.c
-@@ -901,7 +901,7 @@
+@@ -901,7 +901,7 @@ sis900_transmit(struct nic  *nic,
                  const char  *p)     /* Packet */
  {
      u32 status, to, nstype;
@@ -1332,7 +1332,7 @@
      
      /* Stop the transmitter */
      outl(TxDIS, ioaddr + cr);
-@@ -940,7 +940,7 @@
+@@ -940,7 +940,7 @@ sis900_transmit(struct nic  *nic,
  
      to = currticks() + TX_TIMEOUT;
  
@@ -1343,7 +1343,7 @@
      if (currticks() >= to) {
 --- a/stage1/Makefile.am
 +++ b/stage1/Makefile.am
-@@ -5,7 +5,7 @@
+@@ -5,7 +5,7 @@ CLEANFILES = $(nodist_pkglib_DATA)
  
  # We can't use builtins or standard includes.
  AM_CCASFLAGS = $(STAGE1_CFLAGS) -fno-builtin -nostdinc
@@ -1354,7 +1354,7 @@
  stage1_exec_SOURCES = stage1.S stage1.h
 --- a/stage2/bios.c
 +++ b/stage2/bios.c
-@@ -47,7 +47,7 @@
+@@ -47,7 +47,7 @@ extern int get_diskinfo_floppy (int driv
     return the error number. Otherwise, return 0.  */
  int
  biosdisk (int read, int drive, struct geometry *geometry,
@@ -1374,7 +1374,7 @@
   *
   *  This program is free software; you can redistribute it and/or modify
   *  it under the terms of the GNU General Public License as published by
-@@ -96,7 +96,7 @@
+@@ -96,7 +96,7 @@ load_image (char *kernel, char *arg, ker
    lh = (struct linux_kernel_header *) buffer;
    
    /* ELF loading supported if multiboot, FreeBSD and NetBSD.  */
@@ -1385,7 +1385,7 @@
         || suggested_type == KERNEL_TYPE_NETBSD)
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -3830,15 +3830,15 @@
+@@ -3830,15 +3830,15 @@ setup_func (char *arg, int flags)
  	{
  	  char tmp[16];
  	  grub_sprintf (tmp, ",%d", (partition >> 16) & 0xFF);
@@ -1406,7 +1406,7 @@
    int embed_stage1_5 (char *stage1_5, int drive, int partition)
 --- a/stage2/disk_io.c
 +++ b/stage2/disk_io.c
-@@ -137,7 +137,7 @@
+@@ -137,7 +137,7 @@ log2 (unsigned long word)
  }
  
  int
@@ -1415,7 +1415,7 @@
  {
    int slen, sectors_per_vtrack;
    int sector_size_bits = log2 (buf_geom.sector_size);
-@@ -261,7 +261,7 @@
+@@ -261,7 +261,7 @@ rawread (int drive, int sector, int byte
         */
        if (disk_read_func)
  	{
@@ -1424,7 +1424,7 @@
  	  int length = buf_geom.sector_size - byte_offset;
  	  if (length > size)
  	    length = size;
-@@ -291,7 +291,7 @@
+@@ -291,7 +291,7 @@ rawread (int drive, int sector, int byte
  
  
  int
@@ -1433,7 +1433,7 @@
  {
    /*
     *  Check partition boundaries
-@@ -330,7 +330,7 @@
+@@ -330,7 +330,7 @@ devread (int sector, int byte_offset, in
  
  #ifndef STAGE1_5
  int
@@ -1442,7 +1442,7 @@
  {
    if (sector == 0)
      {
-@@ -363,7 +363,7 @@
+@@ -363,7 +363,7 @@ rawwrite (int drive, int sector, char *b
  }
  
  int
@@ -1453,7 +1453,7 @@
    if (current_partition != 0xFFFFFF
 --- a/stage2/iso9660.h
 +++ b/stage2/iso9660.h
-@@ -73,11 +73,11 @@
+@@ -73,11 +73,11 @@ typedef	union {
  
  typedef	struct __iso_16bit {
    u_int16_t l, b;
@@ -1469,7 +1469,7 @@
  
 --- a/stage2/shared.h
 +++ b/stage2/shared.h
-@@ -499,7 +499,11 @@
+@@ -499,7 +499,11 @@ struct vbe_mode
    unsigned char linear_reserved_field_position;
    unsigned long max_pixel_clock;
  
@@ -1482,7 +1482,7 @@
  } __attribute__ ((packed));
  
  
-@@ -807,7 +811,7 @@
+@@ -807,7 +811,7 @@ int checkkey (void);
  /* Low-level disk I/O */
  int get_diskinfo (int drive, struct geometry *geometry);
  int biosdisk (int subfunc, int drive, struct geometry *geometry,
@@ -1491,7 +1491,7 @@
  void stop_floppy (void);
  
  /* Command-line interface functions. */
-@@ -920,10 +924,10 @@
+@@ -920,10 +924,10 @@ int gunzip_test_header (void);
  int gunzip_read (char *buf, int len);
  #endif /* NO_DECOMPRESSION */
  
@@ -1508,7 +1508,7 @@
  char *set_device (char *device);
 --- a/stage2/stage2.c
 +++ b/stage2/stage2.c
-@@ -651,7 +651,10 @@
+@@ -651,7 +651,10 @@ restart:
  		  *(new_heap++) = 0;
  
  		  if (config_entries)
@@ -1520,7 +1520,7 @@
  		  else
  		    {
  		      cls ();
-@@ -727,7 +730,8 @@
+@@ -727,7 +730,8 @@ restart:
  	cur_entry = get_entry (config_entries, first_entry + entryno, 1);
  
        /* Set CURRENT_ENTRYNO for the command "savedefault".  */
@@ -1532,7 +1532,7 @@
  	{
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
-@@ -112,8 +112,8 @@
+@@ -112,8 +112,8 @@ convert () {
  	tmp_disk=`echo "$1" | sed 's%\([sh]d[0-9]*\).*%\1%'`
  	tmp_part=`echo "$1" | sed "s%$tmp_disk%%"` ;;
      freebsd* | kfreebsd*-gnu)
@@ -1563,7 +1563,7 @@
  
  # Global variables
  tarfile=
-@@ -58,7 +58,7 @@
+@@ -58,7 +58,7 @@ stage2_os_name=
  
  # Name by which this script was invoked.
  program=`echo "$0" | sed -e 's/[^\/]*\///g'`
@@ -1572,7 +1572,7 @@
  
  usage="
  Usage: $program [-hVF] [-t TYPE] [-d DIRECTORY] [-s FS_TYPE] -f TAR_FILE
-@@ -94,15 +94,13 @@
+@@ -94,15 +94,13 @@ Options:
  	    display Version information and exit
  
  Copyright (c) 2001,2002,2003 Thierry Laronde <tlaronde@polynum.org>. 

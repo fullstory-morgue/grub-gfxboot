@@ -31,7 +31,7 @@ or something like that.
 
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
-@@ -384,6 +384,10 @@
+@@ -384,6 +384,10 @@ else
      # Create a safe temporary file.
      test -n "$mklog" && log_file=`$mklog`
  
@@ -42,7 +42,7 @@ or something like that.
      $grub_shell --batch $no_floppy --device-map=$device_map <<EOF >$log_file
  quit
  EOF
-@@ -512,6 +516,10 @@
+@@ -512,6 +516,10 @@ EOF
    if xfs_freeze -f ${grubdir} ; then xfs_frozen=true ; fi
  fi
  

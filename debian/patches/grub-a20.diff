@@ -1,6 +1,6 @@
 --- a/stage2/asm.S
 +++ b/stage2/asm.S
-@@ -1900,42 +1900,83 @@
+@@ -1900,42 +1900,83 @@ ENTRY(gfx_setup_menu)
   *
   * Gate address-line 20 for high memory.
   *
@@ -105,7 +105,7 @@
  	pushl	%eax
  
  	call    gloop1
-@@ -1949,11 +1990,7 @@
+@@ -1949,11 +1990,7 @@ gloopint1:
  	jnz	gloopint1
  
  	movb	$KB_OUTPUT_MASK, %al

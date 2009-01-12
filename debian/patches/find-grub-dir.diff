@@ -1,6 +1,6 @@
 --- a/util/grub-set-default.in
 +++ b/util/grub-set-default.in
-@@ -74,18 +74,45 @@
+@@ -74,18 +74,45 @@ if test "x$entry" = x; then
      exit 1
  fi
  

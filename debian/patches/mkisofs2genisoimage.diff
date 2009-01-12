@@ -1,6 +1,6 @@
 --- a/docs/grub.texi
 +++ b/docs/grub.texi
-@@ -702,12 +702,12 @@
+@@ -702,12 +702,12 @@ directory @file{iso/}.
  Finally, make a ISO9660 image file like this:
  
  @example
@@ -17,7 +17,7 @@
  required for compatibility with the BIOS on many older machines.)
 --- a/util/mkbimage
 +++ b/util/mkbimage
-@@ -401,11 +401,11 @@
+@@ -401,11 +401,11 @@ using \`superformat' to be found in \`fd
  
  For El Torito floppy emulation :
  

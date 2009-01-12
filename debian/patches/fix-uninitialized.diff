@@ -1,6 +1,6 @@
 --- a/netboot/i82586.c
 +++ b/netboot/i82586.c
-@@ -735,7 +735,7 @@
+@@ -735,7 +735,7 @@ static unsigned char exos_i186_init[] =
  static int exos205_probe2(void)
  {
  	unsigned short		i;

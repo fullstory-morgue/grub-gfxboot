@@ -6,7 +6,7 @@
 
 --- a/stage2/boot.c
 +++ b/stage2/boot.c
-@@ -29,6 +29,8 @@
+@@ -29,6 +29,8 @@ static int cur_addr;
  entry_func entry_addr;
  static struct mod_list mll[99];
  static int linux_mem_size;
@@ -15,7 +15,7 @@
  
  /*
   *  The next two functions, 'load_image' and 'load_module', are the building
-@@ -594,6 +596,7 @@
+@@ -594,6 +596,7 @@ load_image (char *kernel, char *arg, ker
  
        /* reset this to zero for now */
        cur_addr = 0;
@@ -23,7 +23,7 @@
  
        /* scan for program segments */
        for (i = 0; i < pu.elf->e_phnum; i++)
-@@ -630,6 +633,8 @@
+@@ -630,6 +633,8 @@ load_image (char *kernel, char *arg, ker
  	      /* mark memory as used */
  	      if (cur_addr < memaddr + memsiz)
  		cur_addr = memaddr + memsiz;
@@ -32,7 +32,7 @@
  	      printf (", <0x%x:0x%x:0x%x>", memaddr, filesiz,
  		      memsiz - filesiz);
  	      /* increment number of segments */
-@@ -647,6 +652,8 @@
+@@ -647,6 +652,8 @@ load_image (char *kernel, char *arg, ker
  	    }
  	}
  
@@ -41,7 +41,7 @@
        if (! errnum)
  	{
  	  if (! loaded)
-@@ -864,6 +871,129 @@
+@@ -864,6 +871,129 @@ bsd_boot_entry (int flags, int bootdev, 
  }
  #endif
  
@@ -171,7 +171,7 @@
  
  /*
   *  All "*_boot" commands depend on the images being loaded into memory
-@@ -877,7 +1007,10 @@
+@@ -877,7 +1007,10 @@ void
  bsd_boot (kernel_t type, int bootdev, char *arg)
  {
    char *str;
@@ -183,7 +183,7 @@
    struct bootinfo bi;
  
  #ifdef GRUB_UTIL
-@@ -886,8 +1019,21 @@
+@@ -886,8 +1019,21 @@ bsd_boot (kernel_t type, int bootdev, ch
    stop_floppy ();
  #endif
  
@@ -205,7 +205,7 @@
    while (*str)
      {
        if (*str == '-')
-@@ -910,6 +1056,8 @@
+@@ -910,6 +1056,8 @@ bsd_boot (kernel_t type, int bootdev, ch
  		clval |= RB_GDB;
  	      if (*str == 'h')
  		clval |= RB_SERIAL;
@@ -214,7 +214,7 @@
  	      if (*str == 'm')
  		clval |= RB_MUTE;
  	      if (*str == 'r')
-@@ -927,14 +1075,17 @@
+@@ -927,14 +1075,17 @@ bsd_boot (kernel_t type, int bootdev, ch
  
    if (type == KERNEL_TYPE_FREEBSD)
      {
@@ -236,7 +236,7 @@
        else
  	bi.bi_kernelname = 0;
  
-@@ -961,6 +1112,30 @@
+@@ -961,6 +1112,30 @@ bsd_boot (kernel_t type, int bootdev, ch
        bi.bi_basemem = mbi.mem_lower;
        bi.bi_extmem = extended_memory;
  
@@ -267,7 +267,7 @@
        if (mbi.flags & MB_INFO_AOUT_SYMS)
  	{
  	  bi.bi_symtab = mbi.syms.a.addr;
-@@ -970,8 +1145,9 @@
+@@ -970,8 +1145,9 @@ bsd_boot (kernel_t type, int bootdev, ch
  #if 0
        else if (mbi.flags & MB_INFO_ELF_SHDR)
  	{

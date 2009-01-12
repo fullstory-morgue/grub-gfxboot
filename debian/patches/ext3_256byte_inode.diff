@@ -3,7 +3,7 @@ Patch from Red Hat. See #463236, #463123 (and #491076 for the reviewed version)
 
 --- a/stage2/fsys_ext2fs.c
 +++ b/stage2/fsys_ext2fs.c
-@@ -79,7 +79,52 @@
+@@ -79,7 +79,52 @@ struct ext2_super_block
      __u32 s_rev_level;		/* Revision level */
      __u16 s_def_resuid;		/* Default uid for reserved blocks */
      __u16 s_def_resgid;		/* Default gid for reserved blocks */
@@ -57,7 +57,7 @@ Patch from Red Hat. See #463236, #463123 (and #491076 for the reviewed version)
    };
  
  struct ext2_group_desc
-@@ -218,6 +263,14 @@
+@@ -218,6 +263,14 @@ struct ext2_dir_entry
  #define EXT2_ADDR_PER_BLOCK(s)          (EXT2_BLOCK_SIZE(s) / sizeof (__u32))
  #define EXT2_ADDR_PER_BLOCK_BITS(s)		(log2(EXT2_ADDR_PER_BLOCK(s)))
  
@@ -72,7 +72,7 @@ Patch from Red Hat. See #463236, #463123 (and #491076 for the reviewed version)
  /* linux/ext2_fs.h */
  #define EXT2_BLOCK_SIZE_BITS(s)        ((s)->s_log_block_size + 10)
  /* kind of from ext2/super.c */
-@@ -553,7 +606,7 @@
+@@ -553,7 +606,7 @@ ext2fs_dir (char *dirname)
        gdp = GROUP_DESC;
        ino_blk = gdp[desc].bg_inode_table +
  	(((current_ino - 1) % (SUPERBLOCK->s_inodes_per_group))
@@ -81,7 +81,7 @@ Patch from Red Hat. See #463236, #463123 (and #491076 for the reviewed version)
  #ifdef E2DEBUG
        printf ("inode table fsblock=%d\n", ino_blk);
  #endif /* E2DEBUG */
-@@ -565,13 +618,12 @@
+@@ -565,13 +618,12 @@ ext2fs_dir (char *dirname)
        /* reset indirect blocks! */
        mapblock2 = mapblock1 = -1;
  

@@ -1,6 +1,6 @@
 --- a/docs/help2man
 +++ b/docs/help2man
-@@ -455,7 +455,9 @@
+@@ -455,7 +455,9 @@ unless ($opt_no_info)
      $include{$sect} .= <<EOT;
  The full documentation for
  .B $program
@@ -13,7 +13,7 @@
  .B $program
 --- a/docs/Makefile.am
 +++ b/docs/Makefile.am
-@@ -37,14 +37,14 @@
+@@ -37,14 +37,14 @@ CLEANFILES = $(noinst_PROGRAMS)
  	$(SHELL) $(srcdir)/$(SRC2TEXI) $(srcdir) $< $@
  
  if MAINTAINER_MODE

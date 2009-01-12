@@ -1,6 +1,6 @@
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -82,6 +82,10 @@
+@@ -82,6 +82,10 @@ static unsigned short bios_drive_map[DRI
     inside other functions.  */
  static int configfile_func (char *arg, int flags);
  
@@ -11,7 +11,7 @@
  /* Initialize the data for builtins.  */
  void
  init_builtins (void)
-@@ -3240,7 +3244,109 @@
+@@ -3240,7 +3244,109 @@ static struct builtin builtin_rootnoveri
  static int
  savedefault_func (char *arg, int flags)
  {
@@ -122,7 +122,7 @@
    unsigned long tmp_drive = saved_drive;
    unsigned long tmp_partition = saved_partition;
    char *default_file = (char *) DEFAULT_FILE_BUF;
-@@ -3316,22 +3422,26 @@
+@@ -3316,22 +3422,26 @@ savedefault_func (char *arg, int flags)
        
        disk_read_hook = disk_read_savesect_func;
        len = grub_read (buf, sizeof (buf));
@@ -158,7 +158,7 @@
        grub_memset (buf, '\n', sizeof (buf));
 --- a/stage2/stage2.c
 +++ b/stage2/stage2.c
-@@ -895,8 +895,16 @@
+@@ -895,8 +895,16 @@ cmain (void)
  	      len = grub_read (buf, sizeof (buf));
  	      if (len > 0)
  		{

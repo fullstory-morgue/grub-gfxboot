@@ -5,7 +5,7 @@
 
 --- a/stage2/char_io.c
 +++ b/stage2/char_io.c
-@@ -1175,13 +1175,13 @@
+@@ -1175,13 +1175,13 @@ grub_strlen (const char *str)
  #endif /* ! STAGE1_5 */
  
  int
@@ -23,7 +23,7 @@
      {
        int ret;
  # if defined(HAVE_START_SYMBOL)
-@@ -1192,7 +1192,7 @@
+@@ -1192,7 +1192,7 @@ memcheck (int addr, int len)
        return ret;
      }
  
@@ -34,7 +34,7 @@
  # if defined(HAVE_END_SYMBOL)
 --- a/stage2/shared.h
 +++ b/stage2/shared.h
-@@ -915,7 +915,7 @@
+@@ -915,7 +915,7 @@ int substring (const char *s1, const cha
  int nul_terminate (char *str);
  int get_based_digit (int c, int base);
  int safe_parse_maxint (char **str_ptr, int *myint_ptr);

@@ -1,14 +1,6 @@
-Beginning with kernel version 2.6.23, extents are by default enabled when
-mounting ext4 filesystem, which makes grub unable to read any new file
-created since the mount.
-
-The following patch adds support for ext4 extents.
-
-Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
-
 --- a/stage2/fsys_ext2fs.c
 +++ b/stage2/fsys_ext2fs.c
-@@ -51,6 +51,9 @@
+@@ -51,6 +51,9 @@ typedef unsigned int __u32;
  #define EXT2_TIND_BLOCK                 (EXT2_DIND_BLOCK + 1)
  #define EXT2_N_BLOCKS                   (EXT2_TIND_BLOCK + 1)
  
@@ -18,7 +10,7 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
  /* include/linux/ext2_fs.h */
  struct ext2_super_block
    {
-@@ -236,6 +239,42 @@
+@@ -236,6 +239,42 @@ struct ext2_dir_entry
  #define EXT2_DIR_REC_LEN(name_len)      (((name_len) + 8 + EXT2_DIR_ROUND) & \
                                           ~EXT2_DIR_ROUND)
  
@@ -61,12 +53,12 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
  
  /* ext2/super.c */
  #define grub_log2(n) ffz(~(n))
-@@ -332,6 +371,26 @@
+@@ -332,6 +371,27 @@ ext2_rdfsb (int fsblock, int buffer)
  		  EXT2_BLOCK_SIZE (SUPERBLOCK), (char *) buffer);
  }
  
 +/* Walk through extents index tree to find the good leaf */
-+static struct ext4_extent_header * 
++static struct ext4_extent_header *
 +ext4_recurse_extent_index(struct ext4_extent_header *extent_block, int logical_block)
 +{
 +  int i;
@@ -85,17 +77,26 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
 +  return (ext4_recurse_extent_index((struct ext4_extent_header *) DATABLOCK1, logical_block));
 +}
 +
++
  /* from
    ext2/inode.c:ext2_bmap()
  */
-@@ -360,83 +419,106 @@
-     }
+@@ -340,7 +400,6 @@ ext2_rdfsb (int fsblock, int buffer)
+ static int
+ ext2fs_block_map (int logical_block)
+ {
+-
+ #ifdef E2DEBUG
+   unsigned char *i;
+   for (i = (unsigned char *) INODE;
+@@ -361,82 +420,106 @@ ext2fs_block_map (int logical_block)
    printf ("logical block %d\n", logical_block);
  #endif /* E2DEBUG */
--
+ 
 -  /* if it is directly pointed to by the inode, return that physical addr */
 -  if (logical_block < EXT2_NDIR_BLOCKS)
--    {
++  if (!(INODE->i_flags & EXT4_EXTENTS_FL))
+     {
 -#ifdef E2DEBUG
 -      printf ("returning %d\n", (unsigned char *) (INODE->i_block[logical_block]));
 -      printf ("returning %d\n", INODE->i_block[logical_block]);
@@ -106,9 +107,7 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
 -  logical_block -= EXT2_NDIR_BLOCKS;
 -  /* try the indirect block */
 -  if (logical_block < EXT2_ADDR_PER_BLOCK (SUPERBLOCK))
-+  /* standard ext2 inode */
-+  if (!(INODE->i_flags & EXT4_EXTENTS_FL))
-     {
+-    {
 -      if (mapblock1 != 1
 -	  && !ext2_rdfsb (INODE->i_block[EXT2_IND_BLOCK], DATABLOCK1))
 -	{
@@ -154,12 +153,11 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
 +      /* try the indirect block */
 +      if (logical_block < EXT2_ADDR_PER_BLOCK (SUPERBLOCK))
 +        {
-+          if (mapblock1 != 1
-+    	  && !ext2_rdfsb (INODE->i_block[EXT2_IND_BLOCK], DATABLOCK1))
-+    	{
-+    	  errnum = ERR_FSYS_CORRUPT;
-+    	  return -1;
-+    	}
++          if (mapblock1 != 1 && !ext2_rdfsb (INODE->i_block[EXT2_IND_BLOCK], DATABLOCK1))
++            {
++              errnum = ERR_FSYS_CORRUPT;
++              return -1;
++            }
 +          mapblock1 = 1;
 +          return ((__u32 *) DATABLOCK1)[logical_block];
 +        }
@@ -169,21 +167,20 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
 +      if (logical_block < (1 << (EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK) * 2)))
 +        {
 +          int bnum;
-+          if (mapblock1 != 2
-+    	  && !ext2_rdfsb (INODE->i_block[EXT2_DIND_BLOCK], DATABLOCK1))
-+    	{
-+    	  errnum = ERR_FSYS_CORRUPT;
-+    	  return -1;
-+    	}
++          if (mapblock1 != 2 && !ext2_rdfsb (INODE->i_block[EXT2_DIND_BLOCK], DATABLOCK1))
++            {
++              errnum = ERR_FSYS_CORRUPT;
++              return -1;
++            }
 +          mapblock1 = 2;
 +          if ((bnum = (((__u32 *) DATABLOCK1)
-+    		   [logical_block >> EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK)]))
-+    	  != mapblock2
-+    	  && !ext2_rdfsb (bnum, DATABLOCK2))
-+    	{
-+    	  errnum = ERR_FSYS_CORRUPT;
-+    	  return -1;
-+    	}
++                  [logical_block >> EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK)]))
++         != mapblock2
++         && !ext2_rdfsb (bnum, DATABLOCK2))
++           {
++             errnum = ERR_FSYS_CORRUPT;
++             return -1;
++           }
 +          mapblock2 = bnum;
 +          return ((__u32 *) DATABLOCK2)
 +            [logical_block & (EXT2_ADDR_PER_BLOCK (SUPERBLOCK) - 1)];
@@ -199,24 +196,26 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
 +        }
 +      mapblock1 = 3;
 +      if (!ext2_rdfsb (((__u32 *) DATABLOCK1)
-+    		   [logical_block >> (EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK)
-+    				      * 2)],
-+    		   DATABLOCK2))
++                  [logical_block >> (EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK)
++                                     * 2)],
++                  DATABLOCK2))
 +        {
 +          errnum = ERR_FSYS_CORRUPT;
 +          return -1;
 +        }
 +      if (!ext2_rdfsb (((__u32 *) DATABLOCK2)
-+    		   [(logical_block >> EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK))
-+    		    & (EXT2_ADDR_PER_BLOCK (SUPERBLOCK) - 1)],
-+    		   DATABLOCK2))
++                  [(logical_block >> EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK))
++                   & (EXT2_ADDR_PER_BLOCK (SUPERBLOCK) - 1)],
++                  DATABLOCK2))
 +        {
 +          errnum = ERR_FSYS_CORRUPT;
 +          return -1;
 +        }
++
        return ((__u32 *) DATABLOCK2)
 -	[logical_block & (EXT2_ADDR_PER_BLOCK (SUPERBLOCK) - 1)];
--    }
++       [logical_block & (EXT2_ADDR_PER_BLOCK (SUPERBLOCK) - 1)];
+     }
 -  /* else */
 -  mapblock2 = -1;
 -  logical_block -= (1 << (EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK) * 2));
@@ -225,8 +224,7 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
 -    {
 -      errnum = ERR_FSYS_CORRUPT;
 -      return -1;
-+      	[logical_block & (EXT2_ADDR_PER_BLOCK (SUPERBLOCK) - 1)];
-     }
+-    }
 -  mapblock1 = 3;
 -  if (!ext2_rdfsb (((__u32 *) DATABLOCK1)
 -		   [logical_block >> (EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK)
@@ -240,23 +238,25 @@ Signed-Off-By: Quentin Godfroy <godfroy@clipper.ens.fr>
 -		   [(logical_block >> EXT2_ADDR_PER_BLOCK_BITS (SUPERBLOCK))
 -		    & (EXT2_ADDR_PER_BLOCK (SUPERBLOCK) - 1)],
 -		   DATABLOCK2))
-+  /* inode is in extents format */
-+  else
++    /* inode is in extents format */
++    else
      {
 +      int i;
-+      struct ext4_extent_header *extent_hdr = ext4_recurse_extent_index((struct ext4_extent_header *) INODE->i_block, logical_block);
++      struct ext4_extent_header *extent_hdr =
++         ext4_recurse_extent_index((struct ext4_extent_header *) INODE->i_block, logical_block);
 +      struct ext4_extent *extent = (struct ext4_extent *) (extent_hdr + 1);
 +      if ( extent_hdr == NULL || extent_hdr->eh_magic != EXT4_EXT_MAGIC)
-+      {
-+        errnum = ERR_FSYS_CORRUPT;
-+        return -1;
-+      }
++        {
++          errnum = ERR_FSYS_CORRUPT;
++          return -1;
++        }
 +      for (i = 0; i<extent_hdr->eh_entries; i++)
 +        {
 +          if (extent[i].ee_block <= logical_block && logical_block < extent[i].ee_block + extent[i].ee_len && !(extent[i].ee_len>>15))
 +            return (logical_block - extent[i].ee_block + extent[i].ee_start);
 +        }
 +      /* We should not arrive here */
++
        errnum = ERR_FSYS_CORRUPT;
        return -1;
      }

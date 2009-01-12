@@ -4,7 +4,7 @@ Upstream: waiting to commit untill known to work
 
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
-@@ -498,6 +498,20 @@
+@@ -498,6 +498,20 @@ rm -f $log_file
  # Create a safe temporary file.
  test -n "$mklog" && log_file=`$mklog`
  
@@ -25,7 +25,7 @@ Upstream: waiting to commit untill known to work
  # Now perform the installation.
  $grub_shell --batch $no_floppy --device-map=$device_map <<EOF >$log_file
  root $root_drive
-@@ -505,6 +519,10 @@
+@@ -505,6 +519,10 @@ setup $force_lba --stage2=$grubdir/stage
  quit
  EOF
  

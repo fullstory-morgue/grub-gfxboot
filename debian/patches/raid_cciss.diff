@@ -1,6 +1,6 @@
 --- a/lib/device.c
 +++ b/lib/device.c
-@@ -403,6 +403,18 @@
+@@ -403,6 +403,18 @@ get_dac960_disk_name (char *name, int co
  }
  
  static void
@@ -19,7 +19,7 @@
  get_ataraid_disk_name (char *name, int unit)
  {
    sprintf (name, "/dev/ataraid/d%c", unit + '0');
-@@ -830,6 +842,74 @@
+@@ -830,6 +842,74 @@ init_device_map (char ***map, const char
            }
        }
    }

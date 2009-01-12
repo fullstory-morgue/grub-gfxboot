@@ -1,6 +1,6 @@
 --- a/docs/grub.texi
 +++ b/docs/grub.texi
-@@ -2103,6 +2103,7 @@
+@@ -2103,6 +2103,7 @@ These commands can only be used in the m
  * default::                     Set the default entry
  * fallback::                    Set the fallback entry
  * hiddenmenu::                  Hide the menu interface
@@ -8,7 +8,7 @@
  * timeout::                     Set the timeout
  * title::                       Start a menu entry
  @end menu
-@@ -2135,6 +2136,15 @@
+@@ -2135,6 +2136,15 @@ fallback entry numbers.
  @end deffn
  
  
@@ -26,7 +26,7 @@
  
 --- a/grub/asmstub.c
 +++ b/grub/asmstub.c
-@@ -506,6 +506,32 @@
+@@ -506,6 +506,32 @@ set_vbe_mode (int mode_number)
    return 0;
  }
  
@@ -61,7 +61,7 @@
  getrtsecs (void)
 --- a/stage2/asm.S
 +++ b/stage2/asm.S
-@@ -1610,6 +1610,286 @@
+@@ -1610,6 +1610,286 @@ ENTRY(set_vbe_mode)
  	popl	%ebp
  	ret
  
@@ -350,7 +350,7 @@
   * gateA20(int linear)
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -63,6 +63,8 @@
+@@ -63,6 +63,8 @@ int fallback_entryno;
  int fallback_entries[MAX_FALLBACK_ENTRIES];
  /* The number of current entry.  */
  int current_entryno;
@@ -359,7 +359,7 @@
  /* The address for Multiboot command-line buffer.  */
  static char *mb_cmdline;
  /* The password.  */
-@@ -1335,6 +1337,26 @@
+@@ -1335,6 +1337,26 @@ static struct builtin builtin_fstest =
  };
  
  
@@ -386,7 +386,7 @@
  /* geometry */
  static int
  geometry_func (char *arg, int flags)
-@@ -4952,6 +4974,7 @@
+@@ -4952,6 +4974,7 @@ struct builtin *builtin_table[] =
    &builtin_find,
    &builtin_fstest,
    &builtin_geometry,
@@ -396,7 +396,7 @@
    &builtin_hiddenmenu,
 --- a/stage2/shared.h
 +++ b/stage2/shared.h
-@@ -374,6 +374,22 @@
+@@ -374,6 +374,22 @@ extern char *grub_scratch_mem;
  #endif /* WITHOUT_LIBC_STUBS */
  
  
@@ -419,7 +419,7 @@
  #ifndef ASM_FILE
  /*
   *  Below this should be ONLY defines and other constructs for C code.
-@@ -599,6 +615,38 @@
+@@ -599,6 +615,38 @@ extern int fallback_entryno;
  extern int default_entry;
  extern int current_entryno;
  
@@ -469,7 +469,7 @@
  #if defined(PRESET_MENU_STRING) || defined(SUPPORT_DISKLESS)
  
  # if defined(PRESET_MENU_STRING)
-@@ -310,6 +312,12 @@
+@@ -310,6 +312,12 @@ restart:
        
        if (! auth && password)
  	{
@@ -482,7 +482,7 @@
  	  printf ("\
        Press enter to boot the selected OS or \'p\' to enter a\n\
        password to unlock the next set of features.");
-@@ -757,6 +765,496 @@
+@@ -757,6 +765,496 @@ restart:
  }
  
  
@@ -979,7 +979,7 @@
  static int
  get_line_from_config (char *cmdline, int maxlen, int read_from_file)
  {
-@@ -1071,9 +1569,12 @@
+@@ -1071,9 +1569,12 @@ cmain (void)
  	}
        else
  	{

@@ -15,7 +15,7 @@ Debian Status Following:
 
 --- a/docs/grub.texi
 +++ b/docs/grub.texi
-@@ -2670,6 +2670,7 @@
+@@ -2670,6 +2670,7 @@ you forget a command, you can run the co
  * module::                      Load a module
  * modulenounzip::               Load a module without decompression
  * pause::                       Wait for a key press
@@ -23,7 +23,7 @@ Debian Status Following:
  * quit::                        Exit from the grub shell
  * reboot::                      Reboot your computer
  * read::                        Read data from memory
-@@ -3076,6 +3077,16 @@
+@@ -3076,6 +3077,16 @@ change floppies.
  @end deffn
  
  
@@ -42,7 +42,7 @@ Debian Status Following:
  
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -2323,6 +2323,25 @@
+@@ -2323,6 +2323,25 @@ static struct builtin builtin_ioprobe =
    "Probe I/O ports used for the drive DRIVE."
  };
  
@@ -68,7 +68,7 @@ Debian Status Following:
  
  /* kernel */
  static int
-@@ -4848,6 +4867,7 @@
+@@ -4848,6 +4867,7 @@ struct builtin *builtin_table[] =
    &builtin_parttype,
    &builtin_password,
    &builtin_pause,

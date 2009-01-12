@@ -1,6 +1,6 @@
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
-@@ -137,106 +137,12 @@
+@@ -137,106 +137,12 @@ convert () {
  	exit 1
      fi
  
@@ -109,7 +109,7 @@
  }
  
  # Usage: resolve_symlink file
-@@ -265,9 +171,7 @@
+@@ -265,9 +171,7 @@ resolve_symlink () {
  # Usage: find_device file
  # Find block device on which the file resides.
  find_device () {
@@ -120,7 +120,7 @@
  
      if test -z "$tmp_fname"; then
  	echo "Could not find device for $1" 2>&1
-@@ -384,22 +288,7 @@
+@@ -384,22 +288,7 @@ fi
  if test -f "$device_map"; then
      :
  else

@@ -1,6 +1,6 @@
 --- a/configure.ac
 +++ b/configure.ac
-@@ -17,7 +17,7 @@
+@@ -17,7 +17,7 @@ AC_INIT([GRUB], [0.97], [bug-grub@gnu.or
  AC_CONFIG_SRCDIR([stage2/stage2.c])
  AC_CONFIG_HEADER([config.h])
  AM_INIT_AUTOMAKE

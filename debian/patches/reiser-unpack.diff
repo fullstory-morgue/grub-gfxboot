@@ -1,6 +1,6 @@
 --- a/stage2/filesys.h
 +++ b/stage2/filesys.h
-@@ -73,6 +73,16 @@
+@@ -73,6 +73,16 @@ int reiserfs_mount (void);
  int reiserfs_read (char *buf, int len);
  int reiserfs_dir (char *dirname);
  int reiserfs_embed (int *start_sector, int needed_sectors);
@@ -19,7 +19,7 @@
  #endif
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -1873,9 +1873,23 @@
+@@ -1873,9 +1873,23 @@ install_func (char *arg, int flags)
  #ifdef GRUB_UTIL
        else if (grub_memcmp ("--stage2=", arg, sizeof ("--stage2=") - 1) == 0)
  	{

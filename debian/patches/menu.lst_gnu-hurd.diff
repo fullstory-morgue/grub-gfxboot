@@ -1,6 +1,6 @@
 --- a/docs/menu.lst
 +++ b/docs/menu.lst
-@@ -11,11 +11,12 @@
+@@ -11,11 +11,12 @@ default 0
  # Fallback to the second entry.
  fallback 1
  

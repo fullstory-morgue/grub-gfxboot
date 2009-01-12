@@ -1,6 +1,6 @@
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
-@@ -179,7 +179,7 @@
+@@ -179,7 +179,7 @@ convert () {
  
      # Get the drive name.
      tmp_drive=`grep -v '^#' $device_map | grep "$tmp_disk *$" \
@@ -9,7 +9,7 @@
  
      # If not found, print an error message and exit.
      if test "x$tmp_drive" = x; then
-@@ -196,13 +196,13 @@
+@@ -196,13 +196,13 @@ convert () {
  	gnu*)
  	    if echo $tmp_part | grep "^s" >/dev/null; then
  		tmp_pc_slice=`echo $tmp_part \

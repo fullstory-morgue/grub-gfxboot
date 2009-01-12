@@ -48,4 +48,4 @@ grub-a20.diff
 # custom patches
 grub-0.96-noemul.diff
 mkisofs2genisoimage.diff
-grub-0.97_support-ext4-extents.diff
+ext4_support.diff

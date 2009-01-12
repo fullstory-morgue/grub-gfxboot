@@ -1,6 +1,6 @@
 --- a/docs/grub.texi
 +++ b/docs/grub.texi
-@@ -2905,7 +2905,7 @@
+@@ -2905,7 +2905,7 @@ appropriate parameters in the Linux setu
  @node install
  @subsection install
  
@@ -9,7 +9,7 @@
  This command is fairly complex, and you should not use this command
  unless you are familiar with GRUB. Use @command{setup} (@pxref{setup})
  instead.
-@@ -2952,6 +2952,13 @@
+@@ -2952,6 +2952,13 @@ HP Vectra XU 6/200 BIOS version GG.06.11
  bitmap even if they do have the support. So GRUB provides a solution to
  ignore the wrong bitmap, that is, the option @option{--force-lba}. Don't
  use this option if you know that your BIOS doesn't have LBA support.
@@ -25,7 +25,7 @@
  grub shell, if you cannot unmount the filesystem where your stage2 file
 --- a/stage1/stage1.S
 +++ b/stage1/stage1.S
-@@ -177,7 +177,11 @@
+@@ -177,7 +177,11 @@ real_start:	
  	/* check if AH=0x42 is supported if FORCE_LBA is zero */
  	MOV_MEM_TO_AL(ABS(force_lba))	/* movb	ABS(force_lba), %al */
  	testb	%al, %al
@@ -39,7 +39,7 @@
  	
 --- a/stage2/asm.S
 +++ b/stage2/asm.S
-@@ -1091,7 +1091,11 @@
+@@ -1091,7 +1091,11 @@ ENTRY(check_int13_extensions)
  	/* check if AH=0x42 is supported if FORCE_LBA is zero */
  	movb	EXT_C(force_lba), %al
  	testb	%al, %al
@@ -53,7 +53,7 @@
  	
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -1860,7 +1860,12 @@
+@@ -1860,7 +1860,12 @@ install_func (char *arg, int flags)
    /* First, check the GNU-style long option.  */
    while (1)
      {
@@ -67,7 +67,7 @@
  	{
  	  is_force_lba = 1;
  	  arg = skip_to (0, arg);
-@@ -2289,7 +2294,7 @@
+@@ -2289,7 +2294,7 @@ static struct builtin builtin_install =
    "install",
    install_func,
    BUILTIN_CMDLINE,
@@ -76,7 +76,7 @@
    "Install STAGE1 on DEVICE, and install a blocklist for loading STAGE2"
    " as a Stage 2. If the option `d' is present, the Stage 1 will always"
    " look for the disk where STAGE2 was installed, rather than using"
-@@ -2302,8 +2307,9 @@
+@@ -2302,8 +2307,9 @@ static struct builtin builtin_install =
    " 1.5 and REAL_CONFIG_FILE is present, then the Stage 2 CONFIG_FILE is"
    " patched with the configuration filename REAL_CONFIG_FILE."
    " If the option `--force-lba' is specified, disable some sanity checks"
@@ -88,7 +88,7 @@
  };
  
  
-@@ -4041,7 +4047,12 @@
+@@ -4041,7 +4047,12 @@ setup_func (char *arg, int flags)
    /* Check if the user specifies --force-lba.  */
    while (1)
      {
@@ -102,7 +102,7 @@
  	{
  	  is_force_lba = 1;
  	  arg = skip_to (0, arg);
-@@ -4169,7 +4180,9 @@
+@@ -4169,7 +4180,9 @@ setup_func (char *arg, int flags)
  #if 1
    /* Don't embed a drive number unnecessarily.  */
    grub_sprintf (cmd_arg, "%s%s%s%s %s%s %s p %s %s",
@@ -113,7 +113,7 @@
  		stage2_arg? stage2_arg : "",
  		stage2_arg? " " : "",
  		stage1,
-@@ -4222,17 +4235,18 @@
+@@ -4222,17 +4235,18 @@ static struct builtin builtin_setup =
    "setup",
    setup_func,
    BUILTIN_CMDLINE | BUILTIN_HELP_LIST,

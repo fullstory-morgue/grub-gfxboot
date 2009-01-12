@@ -1,6 +1,6 @@
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -772,11 +772,11 @@
+@@ -772,11 +772,11 @@ static int
  default_func (char *arg, int flags)
  {
  #ifndef SUPPORT_DISKLESS
@@ -15,7 +15,7 @@
  #endif /* SUPPORT_DISKLESS */
    
    if (! safe_parse_maxint (&arg, &default_entry))
-@@ -797,6 +797,22 @@
+@@ -797,6 +797,22 @@ static struct builtin builtin_default =
  #endif
  };
  
@@ -40,7 +40,7 @@
  /* device */
 --- a/stage2/stage2.c
 +++ b/stage2/stage2.c
-@@ -1329,6 +1329,7 @@
+@@ -1329,6 +1329,7 @@ get_line_from_config (char *cmdline, int
    return pos;
  }
  
@@ -48,7 +48,7 @@
  
  /* This is the starting function in C.  */
  void
-@@ -1559,7 +1560,9 @@
+@@ -1559,7 +1560,9 @@ cmain (void)
  	    }
  	  while (is_preset);
  	}

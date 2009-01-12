@@ -1,6 +1,6 @@
 --- a/grub/asmstub.c
 +++ b/grub/asmstub.c
-@@ -42,6 +42,12 @@
+@@ -42,6 +42,12 @@ int grub_stage2 (void);
  #include <sys/time.h>
  #include <termios.h>
  #include <signal.h>
@@ -13,7 +13,7 @@
  
  #ifdef __linux__
  # include <sys/ioctl.h>		/* ioctl */
-@@ -148,6 +154,22 @@
+@@ -148,6 +154,22 @@ grub_stage2 (void)
    assert (grub_scratch_mem == 0);
    scratch = malloc (0x100000 + EXTENDED_MEMSIZE + 15);
    assert (scratch);

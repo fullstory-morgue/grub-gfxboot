@@ -1,6 +1,6 @@
 --- a/stage2/bios.c
 +++ b/stage2/bios.c
-@@ -147,6 +147,7 @@
+@@ -147,6 +147,7 @@ get_cdinfo (int drive, struct geometry *
    grub_memset (&cdrp, 0, sizeof (cdrp));
    cdrp.size = sizeof (cdrp) - sizeof (cdrp.dummy);
    err = biosdisk_int13_extensions (0x4B01, drive, &cdrp);

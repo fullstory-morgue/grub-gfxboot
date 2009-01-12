@@ -7,7 +7,7 @@
 
 --- a/lib/device.c
 +++ b/lib/device.c
-@@ -131,6 +131,152 @@
+@@ -131,6 +131,152 @@ get_kfreebsd_version ()
  #include <shared.h>
  #include <device.h>
  
@@ -160,7 +160,7 @@
  /* Get the geometry of a drive DRIVE.  */
  void
  get_drive_geometry (struct geometry *geom, char **map, int drive)
-@@ -151,19 +297,15 @@
+@@ -151,19 +297,15 @@ get_drive_geometry (struct geometry *geo
  #if defined(__linux__)
    /* Linux */
    {
@@ -183,7 +183,7 @@
      geom->total_sectors = nr / 512;
      
      goto success;
-@@ -984,6 +1126,7 @@
+@@ -984,6 +1126,7 @@ write_to_partition (char **map, int driv
  {
    char dev[PATH_MAX];	/* XXX */
    int fd;
@@ -191,7 +191,7 @@
    
    if ((partition & 0x00FF00) != 0x00FF00)
      {
-@@ -1018,35 +1161,13 @@
+@@ -1018,35 +1161,13 @@ write_to_partition (char **map, int driv
        errnum = ERR_NO_PART;
        return 0;
      }

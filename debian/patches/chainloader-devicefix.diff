@@ -1,6 +1,6 @@
 --- a/stage2/builtins.c
 +++ b/stage2/builtins.c
-@@ -461,6 +461,10 @@
+@@ -461,6 +461,10 @@ chainloader_func (char *arg, int flags)
      *((unsigned long *) (BOOTSEC_LOCATION + BOOTSEC_BPB_HIDDEN_SECTORS))
        = part_start;
  

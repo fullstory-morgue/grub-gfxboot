@@ -1,6 +1,6 @@
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
-@@ -148,13 +148,16 @@
+@@ -148,13 +148,16 @@ convert () {
  				  -e 's%\(d[0-9]*\)p[0-9]*$%\1%' \
  				  -e 's%\(fd[0-9]*\)$%\1%' \
  				  -e 's%/part[0-9]*$%/disc%' \

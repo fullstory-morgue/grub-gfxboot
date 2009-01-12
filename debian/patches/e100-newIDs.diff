@@ -1,6 +1,6 @@
 --- a/netboot/config.c
 +++ b/netboot/config.c
-@@ -122,6 +122,14 @@
+@@ -122,6 +122,14 @@ static struct pci_device pci_nic_list[] 
      "Intel EtherExpressPro100 ID1029", 0, 0, 0, 0},
    { PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_ID1030,
      "Intel Corporation 82559 InBusiness 10/100", 0, 0, 0, 0},
@@ -15,7 +15,7 @@
    { PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_82562,
      "Intel EtherExpressPro100 82562EM", 0, 0, 0, 0},
  #endif
-@@ -281,6 +289,10 @@
+@@ -281,6 +289,10 @@ static struct pci_dispatch_table PCI_NIC
    { PCI_VENDOR_ID_INTEL,    PCI_DEVICE_ID_INTEL_82559ER,   eepro100_probe },
    { PCI_VENDOR_ID_INTEL,    PCI_DEVICE_ID_INTEL_ID1029,    eepro100_probe },
    { PCI_VENDOR_ID_INTEL,    PCI_DEVICE_ID_INTEL_ID1030,    eepro100_probe },
@@ -28,7 +28,7 @@
  # ifdef	INCLUDE_EPIC100
 --- a/netboot/pci.h
 +++ b/netboot/pci.h
-@@ -129,6 +129,10 @@
+@@ -129,6 +129,10 @@ __asm__ __volatile__("pushl %0 ; popfl":
  #define PCI_DEVICE_ID_INTEL_82559ER	0x1209
  #define PCI_DEVICE_ID_INTEL_ID1029	0x1029
  #define PCI_DEVICE_ID_INTEL_ID1030	0x1030

@@ -1,6 +1,6 @@
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
-@@ -104,7 +104,7 @@
+@@ -104,7 +104,7 @@ getraid_mdadm() {
  	)"
  
  	# Convert RAID devices list into a list of disks
