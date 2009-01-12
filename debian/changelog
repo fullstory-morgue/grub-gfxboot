@@ -1,8 +1,10 @@
-grub-gfxboot (0.97-38) UNRELEASED; urgency=low
+grub-gfxboot (0.97-38) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * update gfxmenu patches from SuSE grub 0.97-156.13:
+    [ Steffen Winterfeldt <snwint@suse.de> ]
+    - gfxmenu: increase usable mem size to 8MB
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 12 Jan 2009 22:52:20 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 12 Jan 2009 23:10:24 +0100
 
 grub-gfxboot (0.97-37) unstable; urgency=low
 
