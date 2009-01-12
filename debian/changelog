@@ -1,7 +1,14 @@
+grub-gfxboot (0.97-38) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 12 Jan 2009 22:52:20 +0100
+
 grub-gfxboot (0.97-37) unstable; urgency=low
 
   * drop obsolete support-ext4-extents patch.
-  * add ext4_support patch from Colin King and Ubuntu.
+  * add ext4_support patch from Colin King and Ubuntu, written by Quentin 
+    Godfroy <godfroy@clipper.ens.fr>.
   * refresh patch series.
 
  -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 12 Jan 2009 22:49:44 +0100
