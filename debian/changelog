@@ -1,8 +1,14 @@
-grub-gfxboot (0.97-39) UNRELEASED; urgency=low
+grub-gfxboot (0.97-39) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * sync with Debian svn r1153:
+    [ Robert Millan ]
+    - patches/xfs_freeze.diff: Replace with a new patch, which thaws XFS 
+      immediately after freezing it.  (Closes: #239111, #243835, #246111, 
+      #309218, #425367) hopefully for good this time.  Thanks everyone who 
+      sent their feedback, too many to list them here.
+  * refresh series.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 12 Jan 2009 23:11:56 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 17 Jan 2009 00:24:23 +0100
 
 grub-gfxboot (0.97-38) unstable; urgency=low
 

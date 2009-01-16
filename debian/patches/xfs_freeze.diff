@@ -1,38 +1,20 @@
-
-Copyright: rmh
-Upstream: waiting to commit untill known to work
-
 --- a/util/grub-install.in
 +++ b/util/grub-install.in
-@@ -498,6 +498,20 @@ rm -f $log_file
- # Create a safe temporary file.
+@@ -470,6 +470,17 @@ ${grub_set_default} --root-directory=${r
+ test -n "$mkimg" && img_file=`$mkimg`
  test -n "$mklog" && log_file=`$mklog`
  
-+# Sync to prevent GRUB from not finding stage files (notably, on XFS)
++# GRUB will try to verify that stage2 is accessible using its own
++# filesystem drivers.  Make sure it's committed to disk.
 +sync
 +
-+# XFS needs special magic
-+xfs_frozen=false
-+if which xfs_freeze > /dev/null ; then
-+  cat << EOF
-+Due to a bug in xfs_freeze, the following command might produce a segmentation
-+fault when ${grubdir} is not in an XFS filesystem. This error is harmless and
-+can be ignored.
-+EOF
-+  if xfs_freeze -f ${grubdir} ; then xfs_frozen=true ; fi
++# On XFS, sync() is not enough.
++if [ `grub-probe -t fs ${grubdir}` = "xfs" ] ; then
++  xfs_freeze -f ${grubdir} && xfs_freeze -u ${grubdir}
++  # We don't have set -e.  If xfs_freeze failed, it's worth trying anyway,
++  # maybe we're lucky.
 +fi
 +
- # Now perform the installation.
- $grub_shell --batch $no_floppy --device-map=$device_map <<EOF >$log_file
- root $root_drive
-@@ -505,6 +519,10 @@ setup $force_lba --stage2=$grubdir/stage
- quit
- EOF
- 
-+if ${xfs_frozen} ; then
-+  xfs_freeze -u ${grubdir}
-+fi
-+
- if grep "Error [0-9]*: " $log_file >/dev/null || test $debug = yes; then
-     cat $log_file 1>&2
-     exit 1
+ for file in ${grubdir}/stage1 ${grubdir}/stage2 ${grubdir}/*stage1_5; do
+     count=5
+     tmp=`echo $file | sed "s|^${grubdir}|${grub_prefix}|"`

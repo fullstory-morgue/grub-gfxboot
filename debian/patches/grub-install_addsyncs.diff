@@ -42,9 +42,9 @@ or something like that.
      $grub_shell --batch $no_floppy --device-map=$device_map <<EOF >$log_file
  quit
  EOF
-@@ -512,6 +516,10 @@ EOF
-   if xfs_freeze -f ${grubdir} ; then xfs_frozen=true ; fi
- fi
+@@ -509,6 +513,10 @@ rm -f $log_file
+ # Create a safe temporary file.
+ test -n "$mklog" && log_file=`$mklog`
  
 +# Before all invocations of the grub shell, call sync to make sure
 +# the raw device is in sync with any bufferring in filesystems.
