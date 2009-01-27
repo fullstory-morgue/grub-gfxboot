@@ -1,8 +1,9 @@
-grub-gfxboot (0.97-40) UNRELEASED; urgency=low
+grub-gfxboot (0.97-40) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * switch from dh_clean -k to dh_prep, to become compliant with debhelper 7
+    and to make lintian happy.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 17 Jan 2009 00:30:09 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 27 Jan 2009 17:22:19 +0100
 
 grub-gfxboot (0.97-39) unstable; urgency=low
 
