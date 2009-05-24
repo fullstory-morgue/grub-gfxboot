@@ -1,8 +1,16 @@
-grub-gfxboot (0.97-41) UNRELEASED; urgency=low
+grub-gfxboot (0.97-42) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 27 Jan 2009 17:25:06 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 24 May 2009 18:57:57 +0200
+
+grub-gfxboot (0.97-41) unstable; urgency=low
+
+  * fetch ext4_fix_variable_sized_inodes by Colin Watson <cjwatson@ubuntu.com>
+    from Ubuntu: Add support for ext4 variable sized inodes (LP: #345488). 
+    This is backwardly compatible with ext2 ext3 fixed sized inodes.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 24 May 2009 18:53:42 +0200
 
 grub-gfxboot (0.97-40) unstable; urgency=low
 
