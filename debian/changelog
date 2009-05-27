@@ -1,3 +1,12 @@
+grub-gfxboot (0.97-42) unstable; urgency=low
+
+  * sync with Debian svn r1212 (grub 0.97-53):
+    [ Robert Millan ]
+    - update my email address.
+    - upload to unstable.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 28 May 2009 00:59:53 +0200
+
 grub-gfxboot (0.97-41) unstable; urgency=low
 
   * fetch ext4_fix_variable_sized_inodes by Colin Watson <cjwatson@ubuntu.com>
