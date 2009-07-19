@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-44) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 19 Jul 2009 16:54:02 +0200
+
 grub-gfxboot (0.97-43) unstable; urgency=low
 
   * provide and conflict with the newly renamed grub-legacy package in Debian,
