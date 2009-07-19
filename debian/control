@@ -22,8 +22,8 @@ Depends: ${misc:Depends},
 Suggests: multiboot-doc,
           mdadm,
           gfxboot
-Provides: grub
-Conflicts: grub
+Provides: grub, grub-legacy
+Conflicts: grub, grub-legacy
 Description: GRand Unified Bootloader
  GRUB-gfxboot is a GPLed bootloader with graphical menu patches intended to 
  unify bootloading across x86 operating systems.  In addition to loading the 

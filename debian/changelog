@@ -1,8 +1,9 @@
-grub-gfxboot (0.97-43) UNRELEASED; urgency=low
+grub-gfxboot (0.97-43) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * provide and conflict with the newly renamed grub-legacy package in Debian,
+    this takes care of Debian svn r1333 (grub 0.97-54).
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Thu, 28 May 2009 01:03:21 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 19 Jul 2009 16:46:24 +0200
 
 grub-gfxboot (0.97-42) unstable; urgency=low
 
