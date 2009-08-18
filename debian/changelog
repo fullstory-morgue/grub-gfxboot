@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-46) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 19 Aug 2009 01:15:36 +0200
+
 grub-gfxboot (0.97-45) unstable; urgency=low
 
   * refer to GPL-2 license text explicitly to make lintian happy, furthermore
