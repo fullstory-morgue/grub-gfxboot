@@ -52,12 +52,6 @@ endif
 ifeq ($(DEB_BUILD_GNU_SYSTEM),gnu)
 filesystems=e2fs ffs minix
 endif
-ifeq ($(DEB_BUILD_GNU_SYSTEM),kfreebsd-gnu)
-filesystems=e2fs ffs ufs2
-endif
-ifeq ($(DEB_BUILD_GNU_SYSTEM),knetbsd-gnu)
-filesystems=e2fs ffs ufs2
-endif
 
 ifeq ($(DEB_BUILD_GNU_CPU),x86_64)
   LDFLAGS=-static

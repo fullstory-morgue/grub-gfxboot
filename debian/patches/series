@@ -7,7 +7,6 @@ raid.diff
 raid_cciss.diff
 xfs_freeze.diff
 2gb_limit.diff
-kfreebsd.diff
 grub-special_device_names.diff
 grub-xvd_drives.diff
 initrd_max_address.diff

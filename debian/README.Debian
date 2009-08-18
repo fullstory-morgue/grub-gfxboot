@@ -126,13 +126,5 @@ http://ruslug.rutgers.edu/~mcgrof/grub-images/
 
 netbsd/freebsd/*bsd
 -------------------
-From http://www.gnu.org/software/grub/#bsd :
-
-"We really need help by BSD hackers. Currently, almost nobody works for
-BSD-based operating systems, such as FreeBSD, NetBSD, and OpenBSD. So we have
-critical problems in booting later versions of NetBSD and OpenBSD.  FreeBSD is
-not a big problem, because GRUB can boot it via /boot/loader for now.
-
-If you're willing to give help to us, please contact us."
-
- -- Otavio Salvador <otavio@debian.org>, Thu, 14 Sep 2006 23:27:33 -0300
+Loading kernels from *BSD systems is supported in GRUB 2.  You can upgrade to
+GRUB 2 by installing the `grub-pc' package.

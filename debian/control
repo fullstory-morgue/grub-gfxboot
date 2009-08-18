@@ -9,13 +9,13 @@ Build-Depends: debhelper (>= 7),
                autotools-dev,
                texinfo,
                libncurses5-dev | libncurses-dev,
-               gcc-multilib [amd64 kfreebsd-amd64]
-Standards-Version: 3.8.0
+               gcc-multilib [amd64]
+Standards-Version: 3.8.3
 Vcs-Svn: svn://svn.berlios.de/fullstory/grub-gfxboot/trunk
 Vcs-Browser: http://svn.berlios.de/wsvn/fullstory/grub-gfxboot/trunk/
 
 Package: grub-gfxboot
-Architecture: i386 kfreebsd-i386 hurd-i386 amd64 kfreebsd-amd64
+Architecture: i386 hurd-i386 amd64
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          grub-common
