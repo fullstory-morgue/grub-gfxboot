@@ -1,3 +1,11 @@
+grub-gfxboot (0.97-45) unstable; urgency=low
+
+  * refer to GPL-2 license text explicitly to make lintian happy, furthermore
+    grub is licensed under the GPL-2+.
+  * add Homepage tag for debian/control.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 19 Aug 2009 01:14:05 +0200
+
 grub-gfxboot (0.97-44) unstable; urgency=low
 
   * sync with Debian svn r1212 (grub 0.97-56):
