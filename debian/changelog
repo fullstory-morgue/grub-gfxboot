@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-47) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 06 Sep 2009 21:41:03 +0200
+
 grub-gfxboot (0.97-46) unstable; urgency=low
 
   * sync with Debian svn r1521 (grub 0.97-58):
