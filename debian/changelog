@@ -1,8 +1,14 @@
-grub-gfxboot (0.97-46) UNRELEASED; urgency=low
+grub-gfxboot (0.97-46) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * sync with Debian svn r1521 (grub 0.97-58):
+    [ Felix Zielcke ]
+    - Remove the /sbin/grub-install wrapper.
+    - Remove the /sbin/grub-install and update-grub wrappers.
+    - Build depend on lib32ncurses5-dev on amd64. (Closes: #423273)
+    - remove sbin/ from grub-legacy.dirs
+  * bump compat level to 7.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 19 Aug 2009 01:15:36 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 06 Sep 2009 21:31:30 +0200
 
 grub-gfxboot (0.97-45) unstable; urgency=low
 
@@ -14,7 +20,7 @@ grub-gfxboot (0.97-45) unstable; urgency=low
 
 grub-gfxboot (0.97-44) unstable; urgency=low
 
-  * sync with Debian svn r1212 (grub 0.97-56):
+  * sync with Debian svn r1420 (grub 0.97-56):
     [ Robert Millan ]
     - Remove GNU/kFreeBSD support, since it can't be used without an external
       loader that is not in Debian.  GNU/kFreeBSD users should upgrade to

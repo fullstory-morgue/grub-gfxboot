@@ -182,12 +182,6 @@ install-arch:
 # Must not depend on anything.
 binary-common:
 binary-common:
-	# Add a wrapper for update-grub. Remove it post-etch
-	cp debian/update-grub.wrapper debian/grub-gfxboot/sbin/update-grub
-	
-	# Add a wrapper for grub-install. Remove it post-etch
-	cp debian/grub-install.wrapper debian/grub-gfxboot/sbin/grub-install
-	
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs ChangeLog

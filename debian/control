@@ -3,13 +3,14 @@ Section: admin
 Priority: optional
 Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
 Build-Depends: debhelper (>= 7),
-               quilt,
-               automake1.10,
-               autoconf,
-               autotools-dev,
-               texinfo,
-               libncurses5-dev | libncurses-dev,
-               gcc-multilib [amd64]
+ quilt,
+ automake1.10,
+ autoconf,
+ autotools-dev,
+ texinfo,
+ libncurses5-dev | libncurses-dev,
+ lib32ncurses5-dev [amd64],
+ gcc-multilib [amd64]
 Standards-Version: 3.8.3
 Vcs-Svn: svn://svn.berlios.de/fullstory/grub-gfxboot/trunk
 Vcs-Browser: http://svn.berlios.de/wsvn/fullstory/grub-gfxboot/trunk/
@@ -18,13 +19,15 @@ Homepage: http://www.gnu.org/software/grub/
 Package: grub-gfxboot
 Architecture: i386 hurd-i386 amd64
 Depends: ${misc:Depends},
-         ${shlibs:Depends},
-         grub-common
+ ${shlibs:Depends},
+ grub-common
 Suggests: multiboot-doc,
-          mdadm,
-          gfxboot
-Provides: grub, grub-legacy
-Conflicts: grub, grub-legacy
+ mdadm,
+ gfxboot
+Provides: grub,
+ grub-legacy
+Conflicts: grub,
+ grub-legacy
 Description: GRand Unified Bootloader
  GRUB-gfxboot is a GPLed bootloader with graphical menu patches intended to 
  unify bootloading across x86 operating systems.  In addition to loading the 
