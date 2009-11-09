@@ -1,8 +1,11 @@
 grub-gfxboot (0.97-47) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * drop watch file, grub(-legacy) has been abandoned upstream and there will
+    be no new upstream versions anymore - subsequently uscan starts to report
+    grub2 releases.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 06 Sep 2009 21:41:03 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 09 Nov 2009 23:18:01 +0100
 
 grub-gfxboot (0.97-46) unstable; urgency=low
 
