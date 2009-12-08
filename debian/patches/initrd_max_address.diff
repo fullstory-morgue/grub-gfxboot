@@ -7,7 +7,7 @@
 
 --- a/stage2/boot.c
 +++ b/stage2/boot.c
-@@ -831,8 +831,11 @@ load_initrd (char *initrd)
+@@ -824,8 +824,11 @@ load_initrd (char *initrd)
      moveto = (mbi.mem_upper + 0x400) << 10;
    
    moveto = (moveto - len) & 0xfffff000;

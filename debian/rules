@@ -9,9 +9,6 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-# Include quilt support.
-include /usr/share/quilt/quilt.make
-
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
@@ -60,7 +57,7 @@ endif
 CC=gcc
 
 configure: configure-stamp
-configure-stamp: $(QUILT_STAMPFN)
+configure-stamp:
 	dh_testdir
 	
 	# Add here commands to configure the package.
@@ -117,7 +114,7 @@ build-arch-stamp: configure-stamp
 	
 	touch build-arch-stamp
 
-clean: unpatch
+clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-arch-stamp configure-stamp config.log
