@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
 Build-Depends: debhelper (>= 7),
- automake1.10,
+ automake,
  autoconf,
  autotools-dev,
  texinfo,

@@ -61,7 +61,7 @@ configure-stamp:
 	dh_testdir
 	
 	# Add here commands to configure the package.
-	aclocal-1.10 && automake-1.10 && autoconf
+	aclocal && automake && autoconf
 	CC=$(CC) LDFLAGS=$(LDFLAGS) ./configure \
 		--host=$(DEB_HOST_GNU_TYPE) \
 		--build=$(DEB_BUILD_GNU_TYPE) \

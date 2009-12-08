@@ -1,8 +1,8 @@
-grub-gfxboot (0.97-48) UNRELEASED; urgency=low
+grub-gfxboot (0.97-48) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * use the default automake version.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 08 Dec 2009 18:42:14 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 08 Dec 2009 18:48:06 +0100
 
 grub-gfxboot (0.97-47) unstable; urgency=low
 
