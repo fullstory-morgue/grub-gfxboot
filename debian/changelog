@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-52) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 04 Aug 2010 17:47:06 +0200
+
 grub-gfxboot (0.97-51) unstable; urgency=low
 
   * clarify that grub-gfxboot is deprecated and should be replaced by grub2 or
