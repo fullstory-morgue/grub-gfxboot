@@ -1,0 +1,15 @@
+#/bin/sh
+set -e
+
+case "$1" in
+	install|upgrade)
+		if dpkg --compare-versions "$2" lt 0.97-52 && \
+		   test -h /etc/kernel/postrm.d/zz-update-grub-gfxboot; then
+			rm -f /etc/kernel/postrm.d/zz-update-grub-gfxboot
+		fi
+		;;
+esac
+
+#DEBHELPER#
+
+exit 0

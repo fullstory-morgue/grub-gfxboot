@@ -1,4 +1,5 @@
 debian/kernel/zz-update-grub-gfxboot	etc/kernel/postinst.d
+debian/kernel/zz-update-grub-gfxboot	etc/kernel/postrm.d
 debian/update-grub	usr/sbin
 debian/grub-floppy	usr/sbin
 debian/grub-reboot	usr/sbin

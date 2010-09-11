@@ -2,7 +2,7 @@ Source: grub-gfxboot
 Section: admin
 Priority: optional
 Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-Build-Depends: debhelper (>= 7),
+Build-Depends: debhelper (>= 7.9.3),
  automake,
  autoconf,
  autotools-dev,

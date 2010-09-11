@@ -1,8 +1,19 @@
-grub-gfxboot (0.97-52) UNRELEASED; urgency=low
+grub-gfxboot (0.97-52) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * switch to compat level 8.
+  * sync with Debian grub-legacy 0.97-62:
+    [ Colin Watson ]
+    - Lower priority to extra (also done in archive overrides).
+    - Add kernel hook scripts and remove any uses of update-grub as a
+      postinst_hook or postrm_hook in /etc/kernel-img.conf (closes: #587266).
+      Thanks to Ben Hutchings for advice and to Harald Braumann for an early
+      implementation.
+  * adapt kernel hook scripts from grub2 (1.98+20100804-2):
+    [ Colin Watson ]
+    - Make /etc/kernel/postrm.d/zz-update-grub a real file rather than a
+      symlink (closes: #592076).
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 04 Aug 2010 17:47:06 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 08 Aug 2010 04:24:37 +0200
 
 grub-gfxboot (0.97-51) unstable; urgency=low
 
