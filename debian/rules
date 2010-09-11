@@ -120,7 +120,7 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-arch-stamp configure-stamp config.log
-	chmod +x debian/script
+	chmod +x debian/script debian/kernel/zz-update-grub-gfxboot
 	
 	# Add here commands to clean up after the build process.
 	[ ! -f Makefile ] || $(MAKE) distclean

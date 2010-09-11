@@ -1,8 +1,13 @@
-grub-gfxboot (0.97-50) UNRELEASED; urgency=low
+grub-gfxboot (0.97-50) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * adapt kernel hook scripts from grub2 (1.98+20100804-1):
+    [ Colin Watson ]
+    - Add kernel hook scripts and remove any uses of update-grub as a
+      postinst_hook or postrm_hook in /etc/kernel-img.conf (closes: #554175).
+      Thanks to Ben Hutchings for advice and to Harald Braumann for an early
+      implementation.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 03 Aug 2010 20:29:57 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 04 Aug 2010 16:08:58 +0200
 
 grub-gfxboot (0.97-49) unstable; urgency=low
 
