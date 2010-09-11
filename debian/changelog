@@ -111,7 +111,7 @@ grub-gfxboot (0.97-42) unstable; urgency=low
 grub-gfxboot (0.97-41) unstable; urgency=low
 
   * fetch ext4_fix_variable_sized_inodes by Colin Watson <cjwatson@ubuntu.com>
-    from Ubuntu: Add support for ext4 variable sized inodes (LP: #345488). 
+    from Ubuntu: Add support for ext4 variable sized inodes (LP: #345488).
     This is backwardly compatible with ext2 ext3 fixed sized inodes.
 
  -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sun, 24 May 2009 18:53:42 +0200
@@ -127,9 +127,9 @@ grub-gfxboot (0.97-39) unstable; urgency=low
 
   * sync with Debian svn r1153:
     [ Robert Millan ]
-    - patches/xfs_freeze.diff: Replace with a new patch, which thaws XFS 
-      immediately after freezing it.  (Closes: #239111, #243835, #246111, 
-      #309218, #425367) hopefully for good this time.  Thanks everyone who 
+    - patches/xfs_freeze.diff: Replace with a new patch, which thaws XFS
+      immediately after freezing it.  (Closes: #239111, #243835, #246111,
+      #309218, #425367) hopefully for good this time.  Thanks everyone who
       sent their feedback, too many to list them here.
   * refresh series.
 
@@ -146,7 +146,7 @@ grub-gfxboot (0.97-38) unstable; urgency=low
 grub-gfxboot (0.97-37) unstable; urgency=low
 
   * drop obsolete support-ext4-extents patch.
-  * add ext4_support patch from Colin King and Ubuntu, written by Quentin 
+  * add ext4_support patch from Colin King and Ubuntu, written by Quentin
     Godfroy <godfroy@clipper.ens.fr>.
   * refresh patch series.
 
@@ -164,9 +164,9 @@ grub-gfxboot (0.97-36) unstable; urgency=low
 
 grub-gfxboot (0.97-35) unstable; urgency=low
 
-  * drop the conflict with lilo, while this conflict and the arguments taken 
+  * drop the conflict with lilo, while this conflict and the arguments taken
     below are essentially still true, currently does more harm (by dereffering
-    installing grub/ removing lilo) than good (the device.map changes are 
+    installing grub/ removing lilo) than good (the device.map changes are
     needed for quite some users upgrading from pre-libata setups for the first
     time since update-grub relies on grub-common).
 
@@ -174,10 +174,10 @@ grub-gfxboot (0.97-35) unstable; urgency=low
 
 grub-gfxboot (0.97-34) unstable; urgency=low
 
-  * conflict with lilo until the next regular maintainer upload, this is a 
+  * conflict with lilo until the next regular maintainer upload, this is a
     pity, but required due to the following reasons:
     - unconfigured lilo installations are dangerous on upgrades, #504376.
-    - it is broken in combination with a default initramfs-tools setup, 
+    - it is broken in combination with a default initramfs-tools setup,
       #479607.
     - grub does not allow bootloader coexistance on the system.
     - lilo is unlikely to be part of squeeze, cf.
@@ -312,8 +312,8 @@ grub-gfxboot (0.97-30) unstable; urgency=low
 
 grub-gfxboot (0.97-29) unstable; urgency=low
 
-  * drop use_grub-probe_in_grub-install.diff and revert modifications for 
-    update-grub from 0.97-33, the changes to grub-install don't work with 
+  * drop use_grub-probe_in_grub-install.diff and revert modifications for
+    update-grub from 0.97-33, the changes to grub-install don't work with
     --root-directory yet.
   * drop dependency on grub-common.
 
@@ -788,7 +788,7 @@ grub-gfxboot (0.97-6) unstable; urgency=low
 grub-gfxboot (0.97-5) unstable; urgency=high
 
   [ Urgency set to HIGH since it broke LVM installations ]
-  
+
   * add changes from grub 0.97-5 by Otavio Salvador <otavio@debian.org>:
     - Applied patch from David Golombek <daveg@permabit.com> to handle
       DEB_BUILD_GNU_SYSTEM definition while building in sarge.
@@ -1158,7 +1158,7 @@ grub (0.95+cvs20040624-18) unstable; urgency=low
 
 grub (0.95+cvs20040624-17) unstable; urgency=low
 
-  * update-grub: fix sort order of new 4 digit kernel versions. 
+  * update-grub: fix sort order of new 4 digit kernel versions.
     (closes: #304841)
 
  -- Jason Thomas <jason@debian.org>  Tue, 19 Apr 2005 09:38:07 +1000
@@ -1372,7 +1372,7 @@ grub (0.93+cvs20031021-8) unstable; urgency=high
 
 grub (0.93+cvs20031021-7) unstable; urgency=low
 
-  * debian/update-grub: more missing quotes in get_kernel_opt func 
+  * debian/update-grub: more missing quotes in get_kernel_opt func
 
  -- Jason Thomas <jason@debian.org>  Thu, 11 Dec 2003 11:26:51 +1100
 
@@ -1404,7 +1404,7 @@ grub (0.93+cvs20031021-4) unstable; urgency=low
     dh_install
   * debian/rules: updated to closely match what dh_make produces for multi
     binary packages. so added binary-common target and install-arch targets.
-  * debian/control: updated standards-version to 3.6.1.0 
+  * debian/control: updated standards-version to 3.6.1.0
 
  -- Jason Thomas <jason@debian.org>  Tue, 18 Nov 2003 14:04:01 +1100
 
@@ -1521,7 +1521,7 @@ grub (0.93+cvs20030813-3) unstable; urgency=low
 grub (0.93+cvs20030813-2) unstable; urgency=low
 
   * update-grub: we need to have initial values for menu.lst in case they
-    where accidentally removed from the menu.lst 
+    where accidentally removed from the menu.lst
     (closes: #188084)
 
  -- Jason Thomas <jason@debian.org>  Wed, 13 Aug 2003 14:41:24 +1000
@@ -1576,7 +1576,7 @@ grub (0.93+cvs20030624-3) unstable; urgency=low
 
 grub (0.93+cvs20030624-2) unstable; urgency=low
 
-  * debian/control: added freebsd and netbsd arches 
+  * debian/control: added freebsd and netbsd arches
   * docs/menu.lst: added patch to update this with examples for freebsd and
     netbsd.
     (closes: #199301)
@@ -1585,7 +1585,7 @@ grub (0.93+cvs20030624-2) unstable; urgency=low
 
 grub (0.93+cvs20030624-1) unstable; urgency=low
 
-  * New CVS snapshot. 
+  * New CVS snapshot.
   * Fixes FTBFS with gcc-3.3
     (closes: #195234)
 
@@ -1704,7 +1704,7 @@ grub (0.92-1) unstable; urgency=low
 
 grub (0.91-6) unstable; urgency=low
 
-  * patch from upstream for xfs and jfs savedefault.  Thanks to Ian Cumming. 
+  * patch from upstream for xfs and jfs savedefault.  Thanks to Ian Cumming.
 
  -- Jason Thomas <jason@debian.org>  Tue, 23 Apr 2002 11:33:51 +1000
 
@@ -1854,7 +1854,7 @@ grub (0.90-12) unstable; urgency=low
   * changed naming scheme for debian/patchs/* so they can be applied and
     reversed safely.
   * added patch to fsys_reiserfs.c which enables booting on newer reiserfs
-    partitions. 
+    partitions.
 
  -- Jason Thomas <jason@debian.org>  Sun, 21 Oct 2001 11:27:02 +1000
 
@@ -1862,7 +1862,7 @@ grub (0.90-11) unstable; urgency=low
 
   * fixed update-grub to sort kernels better. Thanks to Matthew Mueller
     (closes: #113460)
-  * added a mention about grub-doc package in README.Debian (closes: #116095) 
+  * added a mention about grub-doc package in README.Debian (closes: #116095)
 
  -- Jason Thomas <jason@debian.org>  Fri, 19 Oct 2001 07:51:53 +1000
 
@@ -1972,7 +1972,7 @@ grub (0.5.96.1.cvs20010530-7) unstable; urgency=low
 
   * patched update-grub to detect /boot on seperate partition
     thanks to Aaron Schrab (closes: #103082, #103662)
-  * patched update-grub to support loading of ramdisks, 
+  * patched update-grub to support loading of ramdisks,
     thanks to Francis J. Lacoste (closes: #103498)
 
  -- Jason Thomas <jason@debian.org>  Tue, 10 Jul 2001 12:53:19 +1000
@@ -2012,7 +2012,7 @@ grub (0.5.96.1.cvs20010530-2) unstable; urgency=low
 
   * moved html doco in grub-doc from /usr/share/doc/grub-doc/ to
     /usr/share/doc/grub-doc/html/
-  * added support for doc-base 
+  * added support for doc-base
   * moved the info files from grub to grub-doc.
   * use dh_installinfo so that info files are registered (closes: #100484)
   * added example menu generation script, thanks to
@@ -2047,7 +2047,7 @@ grub (0.5.96.1.cvs20010528-1) unstable; urgency=low
   * Changed dir of architecture specific files to /usr/lib (closes: #72311)
   * texi2html problem fixed in previous NMU (closes: #80422)
   * kernel-package supports kernel images in /boot (closes: #74429)
-  * the current method for a temporary modification of a menu option is 
+  * the current method for a temporary modification of a menu option is
     to press 'e' for edit. I think this is satisfactory. (closes: #35849)
   * update-grub is in the progeny package of grub
     please contact them (closes: #92269)
@@ -2058,7 +2058,7 @@ grub (0.5.96.1-0.1) unstable; urgency=low
 
   * Non Maintainer Update by Ralf Treinen <treinen@debian.org>
   * added build-dependencies: texi2html (bug #80394)
-  * applied patch of bug report # 80394: insert blank after "-I" option 
+  * applied patch of bug report # 80394: insert blank after "-I" option
     to texi2html in rules file (thanks to Matt Zimmerman <mdz@debian.org>)
 
  --  Ralf Treinen <treinen@debian.org>  Sat, 24 Feb 2001 23:09:55 +0100
@@ -2101,7 +2101,7 @@ grub (0.5.94) unstable; urgency=low
   * Fix /usr/doc symlink. (closes:bug#50932)
   * Better testing for BIOS LBA support. (closes:bug#53507)
   * New installation script. (closes:bug#48755)
-  
+
  -- Gordon Matzigkeit <gord@debian.org>  Fri, 10 Mar 2000 14:55:02 -0600
 
 grub (0.5.93.1) unstable; urgency=low
