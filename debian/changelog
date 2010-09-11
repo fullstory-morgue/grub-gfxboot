@@ -1,3 +1,9 @@
+grub-gfxboot (0.97-51) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 04 Aug 2010 16:31:50 +0200
+
 grub-gfxboot (0.97-50) unstable; urgency=low
 
   * adapt kernel hook scripts from grub2 (1.98+20100804-1):
