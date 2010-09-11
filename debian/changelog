@@ -4,8 +4,9 @@ grub-gfxboot (0.97-51) unstable; urgency=low
     extlinux instead.
   * bail out early, if grub-gfxboot has been removed and left kernel hooks as
     stale config file.
+  * call dh_link, to create kernel/postrm.d symlink.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 04 Aug 2010 17:41:34 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 04 Aug 2010 17:44:14 +0200
 
 grub-gfxboot (0.97-50) unstable; urgency=low
 
