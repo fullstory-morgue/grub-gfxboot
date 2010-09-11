@@ -1,6 +1,6 @@
 --- a/netboot/config.c
 +++ b/netboot/config.c
-@@ -122,6 +122,14 @@ static struct pci_device pci_nic_list[] 
+@@ -122,6 +122,14 @@ static struct pci_device pci_nic_list[]
      "Intel EtherExpressPro100 ID1029", 0, 0, 0, 0},
    { PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_ID1030,
      "Intel Corporation 82559 InBusiness 10/100", 0, 0, 0, 0},

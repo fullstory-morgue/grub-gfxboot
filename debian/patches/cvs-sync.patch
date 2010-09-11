@@ -1,6 +1,140 @@
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -57,7 +57,7 @@ else
+ fi
+ grub_cv_prog_objcopy_absolute=yes
+ for link_addr in 2000 8000 7C00; do
+-  if AC_TRY_COMMAND([${CC-cc} ${CFLAGS} -nostdlib -Wl,-N -Wl,-Ttext -Wl,$link_addr conftest.o -o conftest.exec]); then :
++  if AC_TRY_COMMAND([${CC-cc} ${CFLAGS} ${LDFLAGS} -nostdlib -Wl,-N -Wl,-Ttext -Wl,$link_addr conftest.o -o conftest.exec]); then :
+   else
+     AC_MSG_ERROR([${CC-cc} cannot link at address $link_addr])
+   fi
+--- a/configure.ac
++++ b/configure.ac
+@@ -86,13 +86,13 @@ if test "x$ac_cv_prog_gcc" = xyes; then
+     fi
+     STAGE1_CFLAGS="-O2"
+     GRUB_CFLAGS="-O2"
+-    AC_CACHE_CHECK([whether optimization for size works], size_flag, [
++    AC_CACHE_CHECK([whether optimization for size works], grub_cv_cc_Os, [
+       saved_CFLAGS=$CFLAGS
+       CFLAGS="-Os -g"
+-      AC_TRY_COMPILE(, , size_flag=yes, size_flag=no)
++      AC_TRY_COMPILE(, , grub_cv_cc_Os=yes, grub_cv_cc_Os=no)
+       CFLAGS=$saved_CFLAGS
+     ])
+-    if test "x$size_flag" = xyes; then
++    if test "x$grub_cv_cc_Os" = xyes; then
+       STAGE2_CFLAGS="-Os"
+     else
+       STAGE2_CFLAGS="-O2 -fno-strength-reduce -fno-unroll-loops"
+@@ -100,16 +100,16 @@ if test "x$ac_cv_prog_gcc" = xyes; then
+     # OpenBSD has a GCC extension for protecting applications from
+     # stack smashing attacks, but GRUB doesn't want this feature.
+     AC_CACHE_CHECK([whether gcc has -fno-stack-protector],
+-		   no_stack_protector_flag, [
++		   grub_cv_cc_no_stack_protector, [
+       saved_CFLAGS=$CFLAGS
+       CFLAGS="-fno-stack-protector"
+       AC_TRY_COMPILE(,
+ 		     ,
+-		     no_stack_protector_flag=yes,
+-		     no_stack_protector_flag=no)
++		     grub_cv_cc_no_stack_protector=yes,
++		     grub_cv_cc_no_stack_protector=no)
+       CFLAGS=$saved_CFLAGS
+     ])
+-    if test "x$no_stack_protector_flag" = xyes; then
++    if test "x$grub_cv_cc_no_stack_protector" = xyes; then
+       STAGE2_CFLAGS="$STAGE2_CFLAGS -fno-stack-protector"
+     fi
+   fi
+@@ -123,33 +123,44 @@ AC_SUBST(GRUB_CFLAGS)
+ CPPFLAGS="$CPPFLAGS -Wall -Wmissing-prototypes -Wunused -Wshadow"
+ CPPFLAGS="$CPPFLAGS -Wpointer-arith"
+ 
+-AC_CACHE_CHECK([whether -Wundef works], undef_flag, [
++AC_CACHE_CHECK([whether -Wundef works], grub_cv_cc_Wundef, [
+   saved_CPPFLAGS="$CPPFLAGS"
+   CPPFLAGS="-Wundef"
+-  AC_TRY_COMPILE(, , undef_flag=yes, undef_flag=no)
++  AC_TRY_COMPILE(, , grub_cv_cc_Wundef=yes, grub_cv_cc_Wundef=no)
+   CPPFLAGS="$saved_CPPFLAGS"
+ ])
+ 
+ # The options `-falign-*' are supported by gcc 3.0 or later.
+ # Probably it is sufficient to only check for -falign-loops.
+-AC_CACHE_CHECK([whether -falign-loops works], [falign_loop_flag], [
++AC_CACHE_CHECK([whether -falign-loops works], [grub_cv_cc_falign_loop], [
+   saved_CPPFLAGS="$CPPFLAGS"
+   CPPFLAGS="-falign-loops=1"
+-  AC_TRY_COMPILE(, , [falign_loop_flag=yes], [falign_loop_flag=no])
++  AC_TRY_COMPILE(, , [grub_cv_cc_falign_loop=yes], [grub_cv_cc_falign_loop=no])
+   CPPFLAGS="$saved_CPPFLAGS"
+ ])
+ 
+ # Force no alignment to save space.
+-if test "x$falign_loop_flag" = xyes; then
++if test "x$grub_cv_cc_falign_loop" = xyes; then
+   CPPFLAGS="$CPPFLAGS -falign-jumps=1 -falign-loops=1 -falign-functions=1"
+ else
+   CPPFLAGS="$CPPFLAGS -malign-jumps=1 -malign-loops=1 -malign-functions=1"
+ fi
+ 
+-if test "x$undef_flag" = xyes; then
++if test "x$grub_cv_cc_Wundef" = xyes; then
+   CPPFLAGS="$CPPFLAGS -Wundef"
+ fi
+ 
++# Check if build ID can be disabled in the linker
++AC_MSG_CHECKING([whether linker accepts `--build-id=none'])
++save_LDFLAGS="$LDFLAGS"
++LDFLAGS="$LDFLAGS -Wl,--build-id=none"
++AC_TRY_LINK(, , build_id_flag=yes, build_id_flag=no)
++AC_MSG_RESULT([$build_id_flag])
++LDFLAGS="$save_LDFLAGS"
++if test "x$build_id_flag" = xyes; then
++  LDFLAGS="$LDFLAGS -Wl,--build-id=none"
++fi
++
+ if test "x$with_binutils" != x; then
+ dnl  AC_PATH_TOOL(OBJCOPY, objcopy, , "$with_binutils:$PATH")
+   AC_PATH_PROG(OBJCOPY, objcopy, , "$with_binutils:$PATH")
+--- a/THANKS
++++ b/THANKS
+@@ -92,7 +92,7 @@ NATORI Shin <natori@adm.s.u-tokyo.ac.jp>
+ Neal H Walfield <neal@walfield.org>
+ Neelkanth Natu <neelnatu@yahoo.com>
+ OKUJI Yoshinori <okuji@kuicr.kyoto-u.ac.jp>
+-Pavel Roskin <pavel_roskin@geocities.com>
++Pavel Roskin <proski@gnu.org>
+ Per Lundberg <plundis@byggdok.se>
+ Peter Astrand <altic@lysator.liu.se>
+ Ralf Medow <ralf.medow@t-online.de>
+@@ -121,3 +121,4 @@ Vesa Jaaskelainen <jaaskela@tietomyrsky.
+ Yedidyah Bar-David <didi@post.tau.ac.il>
+ Yury V. Umanets <umka@namesys.com>
+ Yuri Zaporogets <yuriz@ukr.net>
++Vitaly Fertman <vitaly@namesys.com>
+--- /dev/null
++++ b/stamp-h.in
+@@ -0,0 +1 @@
++timestamp
 --- a/ChangeLog
 +++ b/ChangeLog
-@@ -1,3 +1,127 @@
+@@ -1,3 +1,139 @@
++2009-07-02  Pavel Roskin  <proski@gnu.org>
++
++	* docs/boot.S: Fix missing newline at the end.
++	* docs/boot.S.texi: Regenerate.
++
++2008-09-03  Felix Zielcke  <fzielcke@z-51.de>
++
++	Based on patch from Ville Skyttä <ville.skytta@iki.fi>
++	* docs/multiboot.texi: Fix some spelling.
++	* docs/internals.texi: Likewise.
++	* docs/grub.texi: Likewise.
++
 +2008-05-20  Robert Millan  <rmh@aybabtu.com>
 +
 +	* netboot/cs89x0.c: Fix license violation.
@@ -128,124 +262,14 @@
  2005-05-08  Yoshinori K. Okuji  <okuji@enbug.org>
  
  	* configure.ac (AC_INIT): Upgraded to 0.97.
---- a/THANKS
-+++ b/THANKS
-@@ -121,3 +121,4 @@ Vesa Jaaskelainen <jaaskela@tietomyrsky.
- Yedidyah Bar-David <didi@post.tau.ac.il>
- Yury V. Umanets <umka@namesys.com>
- Yuri Zaporogets <yuriz@ukr.net>
-+Vitaly Fertman <vitaly@namesys.com>
---- a/acinclude.m4
-+++ b/acinclude.m4
-@@ -57,7 +57,7 @@ else
- fi
- grub_cv_prog_objcopy_absolute=yes
- for link_addr in 2000 8000 7C00; do
--  if AC_TRY_COMMAND([${CC-cc} ${CFLAGS} -nostdlib -Wl,-N -Wl,-Ttext -Wl,$link_addr conftest.o -o conftest.exec]); then :
-+  if AC_TRY_COMMAND([${CC-cc} ${CFLAGS} ${LDFLAGS} -nostdlib -Wl,-N -Wl,-Ttext -Wl,$link_addr conftest.o -o conftest.exec]); then :
-   else
-     AC_MSG_ERROR([${CC-cc} cannot link at address $link_addr])
-   fi
---- a/configure.ac
-+++ b/configure.ac
-@@ -86,13 +86,13 @@ if test "x$ac_cv_prog_gcc" = xyes; then
-     fi
-     STAGE1_CFLAGS="-O2"
-     GRUB_CFLAGS="-O2"
--    AC_CACHE_CHECK([whether optimization for size works], size_flag, [
-+    AC_CACHE_CHECK([whether optimization for size works], grub_cv_cc_Os, [
-       saved_CFLAGS=$CFLAGS
-       CFLAGS="-Os -g"
--      AC_TRY_COMPILE(, , size_flag=yes, size_flag=no)
-+      AC_TRY_COMPILE(, , grub_cv_cc_Os=yes, grub_cv_cc_Os=no)
-       CFLAGS=$saved_CFLAGS
-     ])
--    if test "x$size_flag" = xyes; then
-+    if test "x$grub_cv_cc_Os" = xyes; then
-       STAGE2_CFLAGS="-Os"
-     else
-       STAGE2_CFLAGS="-O2 -fno-strength-reduce -fno-unroll-loops"
-@@ -100,16 +100,16 @@ if test "x$ac_cv_prog_gcc" = xyes; then
-     # OpenBSD has a GCC extension for protecting applications from
-     # stack smashing attacks, but GRUB doesn't want this feature.
-     AC_CACHE_CHECK([whether gcc has -fno-stack-protector],
--		   no_stack_protector_flag, [
-+		   grub_cv_cc_no_stack_protector, [
-       saved_CFLAGS=$CFLAGS
-       CFLAGS="-fno-stack-protector"
-       AC_TRY_COMPILE(,
- 		     ,
--		     no_stack_protector_flag=yes,
--		     no_stack_protector_flag=no)
-+		     grub_cv_cc_no_stack_protector=yes,
-+		     grub_cv_cc_no_stack_protector=no)
-       CFLAGS=$saved_CFLAGS
-     ])
--    if test "x$no_stack_protector_flag" = xyes; then
-+    if test "x$grub_cv_cc_no_stack_protector" = xyes; then
-       STAGE2_CFLAGS="$STAGE2_CFLAGS -fno-stack-protector"
-     fi
-   fi
-@@ -123,33 +123,44 @@ AC_SUBST(GRUB_CFLAGS)
- CPPFLAGS="$CPPFLAGS -Wall -Wmissing-prototypes -Wunused -Wshadow"
- CPPFLAGS="$CPPFLAGS -Wpointer-arith"
+--- a/docs/boot.S.texi
++++ b/docs/boot.S.texi
+@@ -77,4 +77,3 @@ halt_message:
  
--AC_CACHE_CHECK([whether -Wundef works], undef_flag, [
-+AC_CACHE_CHECK([whether -Wundef works], grub_cv_cc_Wundef, [
-   saved_CPPFLAGS="$CPPFLAGS"
-   CPPFLAGS="-Wundef"
--  AC_TRY_COMPILE(, , undef_flag=yes, undef_flag=no)
-+  AC_TRY_COMPILE(, , grub_cv_cc_Wundef=yes, grub_cv_cc_Wundef=no)
-   CPPFLAGS="$saved_CPPFLAGS"
- ])
- 
- # The options `-falign-*' are supported by gcc 3.0 or later.
- # Probably it is sufficient to only check for -falign-loops.
--AC_CACHE_CHECK([whether -falign-loops works], [falign_loop_flag], [
-+AC_CACHE_CHECK([whether -falign-loops works], [grub_cv_cc_falign_loop], [
-   saved_CPPFLAGS="$CPPFLAGS"
-   CPPFLAGS="-falign-loops=1"
--  AC_TRY_COMPILE(, , [falign_loop_flag=yes], [falign_loop_flag=no])
-+  AC_TRY_COMPILE(, , [grub_cv_cc_falign_loop=yes], [grub_cv_cc_falign_loop=no])
-   CPPFLAGS="$saved_CPPFLAGS"
- ])
- 
- # Force no alignment to save space.
--if test "x$falign_loop_flag" = xyes; then
-+if test "x$grub_cv_cc_falign_loop" = xyes; then
-   CPPFLAGS="$CPPFLAGS -falign-jumps=1 -falign-loops=1 -falign-functions=1"
- else
-   CPPFLAGS="$CPPFLAGS -malign-jumps=1 -malign-loops=1 -malign-functions=1"
- fi
- 
--if test "x$undef_flag" = xyes; then
-+if test "x$grub_cv_cc_Wundef" = xyes; then
-   CPPFLAGS="$CPPFLAGS -Wundef"
- fi
- 
-+# Check if build ID can be disabled in the linker
-+AC_MSG_CHECKING([whether linker accepts `--build-id=none'])
-+save_LDFLAGS="$LDFLAGS"
-+LDFLAGS="$LDFLAGS -Wl,--build-id=none"
-+AC_TRY_LINK(, , build_id_flag=yes, build_id_flag=no)
-+AC_MSG_RESULT([$build_id_flag])
-+LDFLAGS="$save_LDFLAGS"
-+if test "x$build_id_flag" = xyes; then
-+  LDFLAGS="$LDFLAGS -Wl,--build-id=none"
-+fi
-+
- if test "x$with_binutils" != x; then
- dnl  AC_PATH_TOOL(OBJCOPY, objcopy, , "$with_binutils:$PATH")
-   AC_PATH_PROG(OBJCOPY, objcopy, , "$with_binutils:$PATH")
---- a/docs/Makefile.am
-+++ b/docs/Makefile.am
-@@ -1,5 +1,5 @@
- info_TEXINFOS = grub.texi multiboot.texi
--grub_TEXINFOS = internals.texi
-+grub_TEXINFOS = internals.texi fdl.texi
- EXAMPLES = boot.S kernel.c multiboot.h
- multiboot_TEXINFOS = boot.S.texi kernel.c.texi multiboot.h.texi
- man_MANS = grub.8 mbchk.1 grub-install.8 grub-md5-crypt.8 grub-terminfo.8
+         /* @r{Our stack area.} */
+         .comm   stack, STACK_SIZE
+-        
+\ No newline at end of file
 --- /dev/null
 +++ b/docs/fdl.texi
 @@ -0,0 +1,452 @@
@@ -701,32 +725,14 @@
 +@c ispell-local-pdict: "ispell-dict"
 +@c End:
 +
---- a/docs/grub-install.8
-+++ b/docs/grub-install.8
+--- a/docs/mbchk.1
++++ b/docs/mbchk.1
 @@ -1,5 +1,5 @@
  .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
--.TH GRUB-INSTALL "8" "May 2005" "grub-install (GNU GRUB 0.97)" FSF
-+.TH GRUB-INSTALL "8" "June 2006" "grub-install (GNU GRUB 0.97)" FSF
+-.TH MBCHK "1" "May 2005" "mbchk (GNU GRUB 0.97)" FSF
++.TH MBCHK "1" "June 2006" "mbchk (GNU GRUB 0.97)" FSF
  .SH NAME
- grub-install \- install GRUB on your drive
- .SH SYNOPSIS
---- a/docs/grub-md5-crypt.8
-+++ b/docs/grub-md5-crypt.8
-@@ -1,5 +1,5 @@
- .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
--.TH GRUB-MD5-CRYPT "8" "May 2005" "grub-md5-crypt (GNU GRUB )" FSF
-+.TH GRUB-MD5-CRYPT "8" "June 2006" "grub-md5-crypt (GNU GRUB )" FSF
- .SH NAME
- grub-md5-crypt \- Encrypt a password in MD5 format
- .SH SYNOPSIS
---- a/docs/grub-terminfo.8
-+++ b/docs/grub-terminfo.8
-@@ -1,5 +1,5 @@
- .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
--.TH GRUB-TERMINFO "8" "May 2005" "grub-terminfo (GNU GRUB 0.97)" FSF
-+.TH GRUB-TERMINFO "8" "June 2006" "grub-terminfo (GNU GRUB 0.97)" FSF
- .SH NAME
- grub-terminfo \- Generate a terminfo command from a terminfo name
+ mbchk \- check the format of a Multiboot kernel
  .SH SYNOPSIS
 --- a/docs/grub.8
 +++ b/docs/grub.8
@@ -736,6 +742,23 @@
 +.TH GRUB "8" "June 2006" "grub (GNU GRUB 0.97)" FSF
  .SH NAME
  grub \- the grub shell
+ .SH SYNOPSIS
+--- a/docs/boot.S
++++ b/docs/boot.S
+@@ -77,4 +77,3 @@ halt_message:
+ 
+ 	/* Our stack area.  */
+ 	.comm	stack, STACK_SIZE
+-	
+\ No newline at end of file
+--- a/docs/grub-install.8
++++ b/docs/grub-install.8
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
+-.TH GRUB-INSTALL "8" "May 2005" "grub-install (GNU GRUB 0.97)" FSF
++.TH GRUB-INSTALL "8" "June 2006" "grub-install (GNU GRUB 0.97)" FSF
+ .SH NAME
+ grub-install \- install GRUB on your drive
  .SH SYNOPSIS
 --- a/docs/grub.texi
 +++ b/docs/grub.texi
@@ -857,6 +880,15 @@
  @end ifnottex
  
  @menu
+@@ -112,7 +96,7 @@ This edition documents version @value{VE
+ * Images::                      GRUB image files
+ * Filesystem::                  Filesystem syntax and semantics
+ * Interface::                   The menu and the command-line
+-* Commands::                    The list of available builtin commands
++* Commands::                    The list of available built-in commands
+ * Troubleshooting::             Error messages produced by GRUB
+ * Invoking the grub shell::     How to use the grub shell
+ * Invoking grub-install::       How to use the GRUB installer
 @@ -124,6 +108,7 @@ This edition documents version @value{VE
  * Reporting bugs::              Where you should send a bug report
  * Future::                      Some future plans on GRUB
@@ -865,6 +897,185 @@
  * Index::
  @end menu
  
+@@ -251,7 +236,7 @@ Support many of the various free 32-bit
+ compliance (primarily FreeBSD, NetBSD, OpenBSD, and
+ Linux). Chain-loading of other boot loaders is also supported.
+ 
+-@item Load multiples modules
++@item Load multiple modules
+ Fully support the Multiboot feature of loading multiple modules.
+ 
+ @item Load a configuration file
+@@ -531,7 +516,7 @@ The device file name may be different. C
+ @section Installing GRUB natively
+ 
+ @strong{Caution:} Installing GRUB's stage1 in this manner will erase the
+-normal boot-sector used by an OS.
++normal boot sector used by an OS.
+ 
+ GRUB can currently boot GNU Mach, Linux, FreeBSD, NetBSD, and OpenBSD
+ directly, so using it on a boot sector (the first sector of a
+@@ -653,7 +638,7 @@ boot floppy with a filesystem. Here is a
+ 
+ Another example is when you have a separate boot partition
+ which is mounted at @file{/boot}. Since GRUB is a boot loader, it
+-doesn't know anything about mountpoints at all. Thus, you need to run
++doesn't know anything about mount points at all. Thus, you need to run
+ @command{grub-install} like this:
+ 
+ @example
+@@ -837,7 +822,7 @@ grub> @kbd{chainloader +1}
+ 
+ @samp{+1} indicates that GRUB should read one sector from the start of
+ the partition. The complete description about this syntax can be found
+-in @ref{Block list syntax}.
++in @ref{blocklist syntax}.
+ 
+ @item
+ Run the command @command{boot} (@pxref{boot}).
+@@ -1302,7 +1287,7 @@ timeout 30
+ @end example
+ 
+ As the comment says, GRUB will boot automatically in 30 seconds, unless
+-interrupted with a keypress.
++interrupted with a key press.
+ 
+ @example
+ @group
+@@ -1474,7 +1459,7 @@ Otherwise, run @command{ifconfig}, like
+ grub> @kbd{ifconfig --address=192.168.110.23 --server=192.168.110.14}
+ @end example
+ 
+-You can also use @command{ifconfig} in conjuction with @command{bootp},
++You can also use @command{ifconfig} in conjunction with @command{bootp},
+ @command{dhcp} or @command{rarp} (e.g. to reassign the server address
+ manually). @xref{ifconfig}, for more details.
+ 
+@@ -1763,7 +1748,7 @@ sector is 512 bytes, the size of this im
+ 
+ All @file{stage1} must do is to load Stage 2 or Stage 1.5 from a local
+ disk. Because of the size restriction, @file{stage1} encodes the
+-location of Stage 2 (or Stage 1.5) in a block list format, so it never
++location of Stage 2 (or Stage 1.5) in a blocklist format, so it never
+ understand any filesystem structure.
+ 
+ @item stage2
+@@ -1823,7 +1808,7 @@ you see the files in a device or use the
+ @menu
+ * Device syntax::               How to specify devices
+ * File name syntax::            How to specify files
+-* Block list syntax::           How to specify block lists
++* blocklist syntax::           How to specify blocklists
+ @end menu
+ 
+ 
+@@ -1878,7 +1863,7 @@ a GRUB bootable CD-ROM}, for details.
+ @section How to specify files
+ 
+ There are two ways to specify files, by @dfn{absolute file name} and by
+-@dfn{block list}.
++@dfn{blocklist}.
+ 
+ An absolute file name resembles a Unix absolute file name, using
+ @samp{/} for the directory separator (not @samp{\} as in DOS). One
+@@ -1890,10 +1875,10 @@ say, @samp{(hd1,0)} by the command @comm
+ @code{/boot/kernel} is the same as @code{(hd1,0)/boot/kernel}.
+ 
+ 
+-@node Block list syntax
+-@section How to specify block lists
++@node blocklist syntax
++@section How to specify blocklists
+ 
+-A block list is used for specifying a file that doesn't appear in the
++A blocklist is used for specifying a file that doesn't appear in the
+ filesystem, like a chainloader. The syntax is
+ @code{[@var{offset}]+@var{length}[,[@var{offset}]+@var{length}]@dots{}}.
+ Here is an example:
+@@ -2658,7 +2643,7 @@ you forget a command, you can run the co
+ (@pxref{help}).
+ 
+ @menu
+-* blocklist::                   Get the block list notation of a file
++* blocklist::                   Get the blocklist notation of a file
+ * boot::                        Start up your operating system
+ * cat::                         Show the contents of a file
+ * chainloader::                 Chain-load another boot loader
+@@ -2693,9 +2678,9 @@ you forget a command, you can run the co
+ * savedefault::                 Save current entry as the default entry
+ * setup::                       Set up GRUB's installation automatically
+ * testload::                    Load a file for testing a filesystem
+-* testvbe::                     Test VESA BIOS EXTENSION
++* testvbe::                     Test VESA BIOS Extension
+ * uppermem::                    Set the upper memory size
+-* vbeprobe::                    Probe VESA BIOS EXTENSION
++* vbeprobe::                    Probe VESA BIOS Extension
+ @end menu
+ 
+ 
+@@ -2703,7 +2688,7 @@ you forget a command, you can run the co
+ @subsection blocklist
+ 
+ @deffn Command blocklist file
+-Print the block list notation of the file @var{file}. @xref{Block list
++Print the blocklist notation of the file @var{file}. @xref{blocklist
+ syntax}.
+ @end deffn
+ 
+@@ -2875,7 +2860,7 @@ is shut down using APM.
+ @subsection help
+ 
+ @deffn Command help @option{--all} [pattern @dots{}]
+-Display helpful information about builtin commands. If you do not
++Display helpful information about built-in commands. If you do not
+ specify @var{pattern}, this command shows short descriptions of most of
+ available commands. If you specify the option @option{--all} to this
+ command, short descriptions of rarely used commands (such as
+@@ -3124,7 +3109,7 @@ hex format.
+ Set the current @dfn{root device} to the device @var{device}, then
+ attempt to mount it to get the partition size (for passing the partition
+ descriptor in @code{ES:ESI}, used by some chain-loaded boot loaders), the
+-BSD drive-type (for booting BSD kernels using their native boot format),
++BSD drive type (for booting BSD kernels using their native boot format),
+ and correctly determine the PC partition where a BSD sub-partition is
+ located. The optional @var{hdbias} parameter is a number to tell a BSD
+ kernel how many BIOS drive numbers are on controllers before the current
+@@ -3225,7 +3210,7 @@ to try loading a kernel.
+ @subsection testvbe
+ 
+ @deffn Command testvbe mode
+-Test the VESA BIOS EXTENSION mode @var{mode}. This command will switch
++Test the VESA BIOS Extension mode @var{mode}. This command will switch
+ your video card to the graphics mode, and show an endless animation. Hit
+ any key to return. See also @ref{vbeprobe}.
+ @end deffn
+@@ -3249,7 +3234,7 @@ also be used for debugging purposes to l
+ @subsection vbeprobe
+ 
+ @deffn Command vbeprobe [mode]
+-Probe VESA BIOS EXTENSION information. If the mode @var{mode} is
++Probe VESA BIOS Extension information. If the mode @var{mode} is
+ specified, show only the information about @var{mode}. Otherwise, this
+ command lists up available VBE modes on the screen. See also
+ @ref{testvbe}.
+@@ -3711,7 +3696,7 @@ into/from your computer.
+ @chapter Invoking grub-md5-crypt
+ 
+ The program @command{grub-md5-crypt} encrypts a password in MD5 format.
+-This is just a frontend of the grub shell (@pxref{Invoking the grub
++This is just a front-end of the grub shell (@pxref{Invoking the grub
+ shell}). Passwords encrypted by this program can be used with the
+ command @command{password} (@pxref{password}).
+ 
+@@ -3933,7 +3918,7 @@ for.
+ 
+ @item
+ Write down anything that you think might be related. Please understand
+-that we often need to reproduce the same problem you encounterred in our
++that we often need to reproduce the same problem you encountered in our
+ environment. So your information should be sufficient for us to do the
+ same thing---Don't forget that we cannot see your computer directly. If
+ you are not sure whether to state a fact or leave it out, state it!
 @@ -3965,6 +3950,16 @@ homepage}.
  @include internals.texi
  
@@ -882,15 +1093,92 @@
  @node Index
  @unnumbered Index
  
---- a/docs/mbchk.1
-+++ b/docs/mbchk.1
+--- a/docs/grub-md5-crypt.8
++++ b/docs/grub-md5-crypt.8
 @@ -1,5 +1,5 @@
  .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
--.TH MBCHK "1" "May 2005" "mbchk (GNU GRUB 0.97)" FSF
-+.TH MBCHK "1" "June 2006" "mbchk (GNU GRUB 0.97)" FSF
+-.TH GRUB-MD5-CRYPT "8" "May 2005" "grub-md5-crypt (GNU GRUB )" FSF
++.TH GRUB-MD5-CRYPT "8" "June 2006" "grub-md5-crypt (GNU GRUB )" FSF
  .SH NAME
- mbchk \- check the format of a Multiboot kernel
+ grub-md5-crypt \- Encrypt a password in MD5 format
  .SH SYNOPSIS
+--- a/docs/grub-terminfo.8
++++ b/docs/grub-terminfo.8
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.23.
+-.TH GRUB-TERMINFO "8" "May 2005" "grub-terminfo (GNU GRUB 0.97)" FSF
++.TH GRUB-TERMINFO "8" "June 2006" "grub-terminfo (GNU GRUB 0.97)" FSF
+ .SH NAME
+ grub-terminfo \- Generate a terminfo command from a terminfo name
+ .SH SYNOPSIS
+--- a/docs/internals.texi
++++ b/docs/internals.texi
+@@ -120,18 +120,18 @@ The signature (@code{0xAA55}).
+ 
+ See the file @file{stage1/stage1.S}, for more information.
+ 
+-In the first sector of Stage 1.5 and Stage 2, the block lists are
++In the first sector of Stage 1.5 and Stage 2, the blocklists are
+ recorded between @code{firstlist} and @code{lastlist}. The address of
+ @code{lastlist} is determined when assembling the file
+ @file{stage2/start.S}.
+ 
+ The trick here is that it is actually read backward, and the first
+-8-byte block list is not read here, but after the pointer is decremented
++8-byte blocklist is not read here, but after the pointer is decremented
+ 8 bytes, then after reading it, it decrements again, reads, and so on,
+ until it is finished. The terminating condition is when the number of
+-sectors to be read in the next block list is zero.
++sectors to be read in the next blocklist is zero.
+ 
+-The format of a block list can be seen from the example in the code just
++The format of a blocklist can be seen from the example in the code just
+ before the @code{firstlist} label. Note that it is always from the
+ beginning of the disk, but @emph{not} relative to the partition 
+ boundaries.
+@@ -173,10 +173,10 @@ there is a switch table managed by the f
+ @file{disk_io.c}. The notation is that you can only @dfn{mount} one at a
+ time.
+ 
+-The block list filesystem has a special place in the system. In addition
++The blocklist filesystem has a special place in the system. In addition
+ to the @dfn{normal} filesystem (or even without one mounted), you can
+ access disk blocks directly (in the indicated partition) via the block
+-list notation. Using the block list filesystem doesn't effect any other
++list notation. Using the blocklist filesystem doesn't effect any other
+ filesystem mounts.
+ 
+ The variables which can be read by the filesystem backend are:
+@@ -243,7 +243,7 @@ Only read sectors from within a partitio
+ in the partition.
+ 
+ @item grub_read
+-If the backend uses the block list code, then @code{grub_read} can be
++If the backend uses the blocklist code, then @code{grub_read} can be
+ used, after setting @var{block_file} to 1.
+ 
+ @item print_a_completion
+@@ -267,9 +267,9 @@ done with only one mount if in the same
+ @node Command interface
+ @section The generic interface for built-ins
+ 
+-GRUB built-in commands are defined in a uniformal interface, whether
++GRUB built-in commands are defined in a uniform interface, whether
+ they are menu-specific or can be used anywhere. The definition of a
+-builtin command consists of two parts: the code itself and the table of
++built-in command consists of two parts: the code itself and the table of
+ the information.
+ 
+ The code must be a function which takes two arguments, a command-line
+@@ -339,7 +339,7 @@ The flow of Stage 2 (and Stage 1.5) is:
+ @enumerate
+ @item
+ Load the rest of itself to the real starting address, that is, the
+-starting address plus 512 bytes. The block lists are stored in the last
++starting address plus 512 bytes. The blocklists are stored in the last
+ part of the first sector.
+ 
+ @item
 --- a/docs/multiboot.texi
 +++ b/docs/multiboot.texi
 @@ -1,32 +1,28 @@
@@ -996,6 +1284,24 @@
  @end ifnottex
  
  @menu
+@@ -169,7 +158,7 @@ across a network.
+ Disk-based boot loaders may use a variety of techniques to find the
+ relevant OS image and boot module data on disk, such as by
+ interpretation of specific file systems (e.g. the BSD/Mach boot loader),
+-using precalculated @dfn{block lists} (e.g. LILO), loading from a
++using precalculated @dfn{blocklists} (e.g. LILO), loading from a
+ special @dfn{boot partition} (e.g. OS/2), or even loading from within
+ another operating system (e.g. the VSTa boot code, which loads from
+ DOS). Similarly, network-based boot loaders could use a variety of
+@@ -386,7 +375,7 @@ The fields @samp{magic}, @samp{flags} an
+ @samp{load_addr}, @samp{load_end_addr}, @samp{bss_end_addr} and
+ @samp{entry_addr} are defined in @ref{Header address fields}, and the
+ fields @samp{mode_type}, @samp{width}, @samp{height} and @samp{depth} are
+-defind in @ref{Header graphics fields}.
++defined in @ref{Header graphics fields}.
+ 
+ 
+ @node Header magic fields
 @@ -426,7 +415,7 @@ mode table (@pxref{Boot information form
  kernel.
  
@@ -1032,6 +1338,226 @@
  @end itemize
  
  @item 0.6
+@@ -1208,7 +1208,7 @@ A few wording changes.
+ Header checksum.
+ 
+ @item
+-Clasification of machine state passed to an operating system.
++Classification of machine state passed to an operating system.
+ @end itemize
+ 
+ @item 0.5
+--- a/docs/Makefile.am
++++ b/docs/Makefile.am
+@@ -1,5 +1,5 @@
+ info_TEXINFOS = grub.texi multiboot.texi
+-grub_TEXINFOS = internals.texi
++grub_TEXINFOS = internals.texi fdl.texi
+ EXAMPLES = boot.S kernel.c multiboot.h
+ multiboot_TEXINFOS = boot.S.texi kernel.c.texi multiboot.h.texi
+ man_MANS = grub.8 mbchk.1 grub-install.8 grub-md5-crypt.8 grub-terminfo.8
+--- a/netboot/cs89x0.h
++++ b/netboot/cs89x0.h
+@@ -1,3 +1,21 @@
++/**
++   Per an email message from Russ Nelson <nelson@crynwr.com> on
++   18 March 2008 this file is now licensed under GPL Version 2.
++
++   From: Russ Nelson <nelson@crynwr.com>
++   Date: Tue, 18 Mar 2008 12:42:00 -0400
++   Subject: Re: [Etherboot-developers] cs89x0 driver in etherboot
++   -- quote from email
++   As copyright holder, if I say it doesn't conflict with the GPL,
++   then it doesn't conflict with the GPL.
++
++   However, there's no point in causing people's brains to overheat,
++   so yes, I grant permission for the code to be relicensed under the
++   GPLv2.  Please make sure that this change in licensing makes its
++   way upstream.  -russ
++   -- quote from email
++**/
++
+ /*  Copyright, 1988-1992, Russell Nelson, Crynwr Software
+ 
+    This program is free software; you can redistribute it and/or modify
+--- a/netboot/3c509.c
++++ b/netboot/3c509.c
+@@ -18,7 +18,7 @@ Author: Martin Renters.
+ 
+ 3c509 support added by Serge Babkin (babkin@hq.icb.chel.su)
+ 
+-$Id: 3c509.c,v 1.4 2002/01/02 21:56:40 okuji Exp $
++$Id$
+ 
+ ***************************************************************************/
+ 
+--- a/netboot/etherboot.h
++++ b/netboot/etherboot.h
+@@ -531,9 +531,6 @@ extern int ip_abort;
+ extern int network_ready;
+ extern struct rom_info rom;
+ extern struct arptable_t arptable[MAX_ARP];
+-extern struct bootpd_t bootp_data;
+-#define	BOOTP_DATA_ADDR	(&bootp_data)
+-extern unsigned char *end_of_rfc1533;
+ 
+ /* config.c */
+ extern struct nic nic;
+--- a/netboot/cs89x0.c
++++ b/netboot/cs89x0.c
+@@ -1,3 +1,21 @@
++/**
++   Per an email message from Russ Nelson <nelson@crynwr.com> on
++   18 March 2008 this file is now licensed under GPL Version 2.
++
++   From: Russ Nelson <nelson@crynwr.com>
++   Date: Tue, 18 Mar 2008 12:42:00 -0400
++   Subject: Re: [Etherboot-developers] cs89x0 driver in etherboot
++   -- quote from email
++   As copyright holder, if I say it doesn't conflict with the GPL,
++   then it doesn't conflict with the GPL.
++
++   However, there's no point in causing people's brains to overheat,
++   so yes, I grant permission for the code to be relicensed under the
++   GPLv2.  Please make sure that this change in licensing makes its
++   way upstream.  -russ
++   -- quote from email
++**/
++
+ /* cs89x0.c: A Crystal Semiconductor CS89[02]0 driver for etherboot. */
+ /*
+   Permission is granted to distribute the enclosed cs89x0.[ch] driver
+--- a/netboot/sk_g16.c
++++ b/netboot/sk_g16.c
+@@ -13,12 +13,12 @@ Changes to make it work with Etherboot b
+  *
+  * Module         : sk_g16.c
+  *
+- * Version        : $Revision: 1.4 $
++ * Version        : $Revision$
+  *
+  * Author         : Patrick J.D. Weichmann
+  *
+  * Date Created   : 94/05/26
+- * Last Updated   : $Date: 2002/01/02 21:56:40 $
++ * Last Updated   : $Date$
+  *
+  * Description    : Schneider & Koch G16 Ethernet Device Driver for
+  *                  Linux Kernel >= 1.1.22
+--- a/netboot/sk_g16.h
++++ b/netboot/sk_g16.h
+@@ -4,7 +4,7 @@
+  * of the GNU Public License, incorporated herein by reference.
+  *
+  * Module         : sk_g16.h
+- * Version        : $Revision: 1.3 $
++ * Version        : $Revision$
+  *
+  * Author         : M.Hipp (mhipp@student.uni-tuebingen.de)
+  * changes by     : Patrick J.D. Weichmann
+@@ -15,8 +15,8 @@
+  *                  the am7990 (LANCE) chip used for writing a
+  *                  network device driver which uses this chip
+  *
+- * $Log: sk_g16.h,v $
+- * Revision 1.3  2000/07/29 19:22:54  okuji
++ * $Log$
++ * Revision 1.3  2000-07-29 19:22:54  okuji
+  * update the network support to etherboot-4.6.4.
+  *
+ -*/
+--- a/netboot/natsemi.c
++++ b/netboot/natsemi.c
+@@ -608,7 +608,7 @@ natsemi_transmit(struct nic  *nic,
+ 		 const char  *p)     /* Packet */
+ {
+     u32 status, to, nstype;
+-    u32 tx_status;
++    volatile u32 tx_status;
+     
+     /* Stop the transmitter */
+     outl(TxOff, ioaddr + ChipCmd);
+@@ -647,7 +647,7 @@ natsemi_transmit(struct nic  *nic,
+ 
+     to = currticks() + TX_TIMEOUT;
+ 
+-    while ((((volatile u32) tx_status=txd.cmdsts) & OWN) && (currticks() < to))
++    while (((tx_status=txd.cmdsts) & OWN) && (currticks() < to))
+         /* wait */ ;
+ 
+     if (currticks() >= to) {
+--- a/netboot/main.c
++++ b/netboot/main.c
+@@ -56,7 +56,8 @@ static int vendorext_isvalid;
+ static unsigned long netmask;
+ static struct bootpd_t bootp_data;
+ static unsigned long xid;
+-static unsigned char *end_of_rfc1533 = NULL;
++
++#define	BOOTP_DATA_ADDR	(&bootp_data)
+ 
+ #ifndef	NO_DHCP_SUPPORT
+ #endif /* NO_DHCP_SUPPORT */
+@@ -967,7 +968,6 @@ decode_rfc1533 (unsigned char *p, int bl
+   
+   if (block == 0)
+     {
+-      end_of_rfc1533 = NULL;
+       vendorext_isvalid = 0;
+       
+       if (grub_memcmp (p, rfc1533_cookie, 4))
+@@ -1021,7 +1021,7 @@ decode_rfc1533 (unsigned char *p, int bl
+ 	}
+       else if (c == RFC1533_END)
+ 	{
+-	  end_of_rfc1533 = endp = p;
++	  endp = p;
+ 	  continue;
+ 	}
+       else if (c == RFC1533_NETMASK)
+--- a/netboot/sis900.c
++++ b/netboot/sis900.c
+@@ -901,7 +901,7 @@ sis900_transmit(struct nic  *nic,
+                 const char  *p)     /* Packet */
+ {
+     u32 status, to, nstype;
+-    u32 tx_status;
++    volatile u32 tx_status;
+     
+     /* Stop the transmitter */
+     outl(TxDIS, ioaddr + cr);
+@@ -940,7 +940,7 @@ sis900_transmit(struct nic  *nic,
+ 
+     to = currticks() + TX_TIMEOUT;
+ 
+-    while ((((volatile u32) tx_status=txd.cmdsts) & OWN) && (currticks() < to))
++    while (((tx_status=txd.cmdsts) & OWN) && (currticks() < to))
+         /* wait */ ;
+ 
+     if (currticks() >= to) {
+--- a/grub/main.c
++++ b/grub/main.c
+@@ -32,6 +32,7 @@ int grub_stage2 (void);
+ #define WITHOUT_LIBC_STUBS 1
+ #include <shared.h>
+ #include <term.h>
++#include <device.h>
+ 
+ char *program_name = 0;
+ int use_config_file = 1;
+@@ -192,6 +193,12 @@ main (int argc, char **argv)
+ 	      perror ("strtoul");
+ 	      exit (1);
+ 	    }
++	  if (boot_drive >= NUM_DISKS)
++	    {
++	      fprintf (stderr, "boot_drive should be from 0 to %d\n",
++		       NUM_DISKS - 1);
++	      exit (1);
++	    }
+ 	  break;
+ 
+ 	case OPT_NO_CONFIG_FILE:
 --- a/grub/asmstub.c
 +++ b/grub/asmstub.c
 @@ -55,6 +55,10 @@ int grub_stage2 (void);
@@ -1095,29 +1621,6 @@
  {
    char *buf;
    int fd = geometry->flags;
---- a/grub/main.c
-+++ b/grub/main.c
-@@ -32,6 +32,7 @@ int grub_stage2 (void);
- #define WITHOUT_LIBC_STUBS 1
- #include <shared.h>
- #include <term.h>
-+#include <device.h>
- 
- char *program_name = 0;
- int use_config_file = 1;
-@@ -192,6 +193,12 @@ main (int argc, char **argv)
- 	      perror ("strtoul");
- 	      exit (1);
- 	    }
-+	  if (boot_drive >= NUM_DISKS)
-+	    {
-+	      fprintf (stderr, "boot_drive should be from 0 to %d\n",
-+		       NUM_DISKS - 1);
-+	      exit (1);
-+	    }
- 	  break;
- 
- 	case OPT_NO_CONFIG_FILE:
 --- a/lib/device.c
 +++ b/lib/device.c
 @@ -69,9 +69,9 @@ struct hd_geometry
@@ -1212,146 +1715,6 @@
    sprintf (dev + strlen(dev), "%d", ((partition >> 16) & 0xFF) + 1);
    
    /* Open the partition.  */
---- a/netboot/cs89x0.c
-+++ b/netboot/cs89x0.c
-@@ -1,3 +1,21 @@
-+/**
-+   Per an email message from Russ Nelson <nelson@crynwr.com> on
-+   18 March 2008 this file is now licensed under GPL Version 2.
-+
-+   From: Russ Nelson <nelson@crynwr.com>
-+   Date: Tue, 18 Mar 2008 12:42:00 -0400
-+   Subject: Re: [Etherboot-developers] cs89x0 driver in etherboot
-+   -- quote from email
-+   As copyright holder, if I say it doesn't conflict with the GPL,
-+   then it doesn't conflict with the GPL.
-+
-+   However, there's no point in causing people's brains to overheat,
-+   so yes, I grant permission for the code to be relicensed under the
-+   GPLv2.  Please make sure that this change in licensing makes its
-+   way upstream.  -russ
-+   -- quote from email
-+**/
-+
- /* cs89x0.c: A Crystal Semiconductor CS89[02]0 driver for etherboot. */
- /*
-   Permission is granted to distribute the enclosed cs89x0.[ch] driver
---- a/netboot/cs89x0.h
-+++ b/netboot/cs89x0.h
-@@ -1,3 +1,21 @@
-+/**
-+   Per an email message from Russ Nelson <nelson@crynwr.com> on
-+   18 March 2008 this file is now licensed under GPL Version 2.
-+
-+   From: Russ Nelson <nelson@crynwr.com>
-+   Date: Tue, 18 Mar 2008 12:42:00 -0400
-+   Subject: Re: [Etherboot-developers] cs89x0 driver in etherboot
-+   -- quote from email
-+   As copyright holder, if I say it doesn't conflict with the GPL,
-+   then it doesn't conflict with the GPL.
-+
-+   However, there's no point in causing people's brains to overheat,
-+   so yes, I grant permission for the code to be relicensed under the
-+   GPLv2.  Please make sure that this change in licensing makes its
-+   way upstream.  -russ
-+   -- quote from email
-+**/
-+
- /*  Copyright, 1988-1992, Russell Nelson, Crynwr Software
- 
-    This program is free software; you can redistribute it and/or modify
---- a/netboot/etherboot.h
-+++ b/netboot/etherboot.h
-@@ -531,9 +531,6 @@ extern int ip_abort;
- extern int network_ready;
- extern struct rom_info rom;
- extern struct arptable_t arptable[MAX_ARP];
--extern struct bootpd_t bootp_data;
--#define	BOOTP_DATA_ADDR	(&bootp_data)
--extern unsigned char *end_of_rfc1533;
- 
- /* config.c */
- extern struct nic nic;
---- a/netboot/main.c
-+++ b/netboot/main.c
-@@ -56,7 +56,8 @@ static int vendorext_isvalid;
- static unsigned long netmask;
- static struct bootpd_t bootp_data;
- static unsigned long xid;
--static unsigned char *end_of_rfc1533 = NULL;
-+
-+#define	BOOTP_DATA_ADDR	(&bootp_data)
- 
- #ifndef	NO_DHCP_SUPPORT
- #endif /* NO_DHCP_SUPPORT */
-@@ -967,7 +968,6 @@ decode_rfc1533 (unsigned char *p, int bl
-   
-   if (block == 0)
-     {
--      end_of_rfc1533 = NULL;
-       vendorext_isvalid = 0;
-       
-       if (grub_memcmp (p, rfc1533_cookie, 4))
-@@ -1021,7 +1021,7 @@ decode_rfc1533 (unsigned char *p, int bl
- 	}
-       else if (c == RFC1533_END)
- 	{
--	  end_of_rfc1533 = endp = p;
-+	  endp = p;
- 	  continue;
- 	}
-       else if (c == RFC1533_NETMASK)
---- a/netboot/natsemi.c
-+++ b/netboot/natsemi.c
-@@ -608,7 +608,7 @@ natsemi_transmit(struct nic  *nic,
- 		 const char  *p)     /* Packet */
- {
-     u32 status, to, nstype;
--    u32 tx_status;
-+    volatile u32 tx_status;
-     
-     /* Stop the transmitter */
-     outl(TxOff, ioaddr + ChipCmd);
-@@ -647,7 +647,7 @@ natsemi_transmit(struct nic  *nic,
- 
-     to = currticks() + TX_TIMEOUT;
- 
--    while ((((volatile u32) tx_status=txd.cmdsts) & OWN) && (currticks() < to))
-+    while (((tx_status=txd.cmdsts) & OWN) && (currticks() < to))
-         /* wait */ ;
- 
-     if (currticks() >= to) {
---- a/netboot/sis900.c
-+++ b/netboot/sis900.c
-@@ -901,7 +901,7 @@ sis900_transmit(struct nic  *nic,
-                 const char  *p)     /* Packet */
- {
-     u32 status, to, nstype;
--    u32 tx_status;
-+    volatile u32 tx_status;
-     
-     /* Stop the transmitter */
-     outl(TxDIS, ioaddr + cr);
-@@ -940,7 +940,7 @@ sis900_transmit(struct nic  *nic,
- 
-     to = currticks() + TX_TIMEOUT;
- 
--    while ((((volatile u32) tx_status=txd.cmdsts) & OWN) && (currticks() < to))
-+    while (((tx_status=txd.cmdsts) & OWN) && (currticks() < to))
-         /* wait */ ;
- 
-     if (currticks() >= to) {
---- a/stage1/Makefile.am
-+++ b/stage1/Makefile.am
-@@ -5,7 +5,7 @@ CLEANFILES = $(nodist_pkglib_DATA)
- 
- # We can't use builtins or standard includes.
- AM_CCASFLAGS = $(STAGE1_CFLAGS) -fno-builtin -nostdinc
--LDFLAGS = -nostdlib -Wl,-N,-Ttext,7C00
-+stage1_exec_LDFLAGS = -nostdlib -Wl,-N,-Ttext,7C00
- 
- noinst_PROGRAMS = stage1.exec
- stage1_exec_SOURCES = stage1.S stage1.h
 --- a/stage2/bios.c
 +++ b/stage2/bios.c
 @@ -47,7 +47,7 @@ extern int get_diskinfo_floppy (int driv
@@ -1363,47 +1726,129 @@
  {
    int err;
    
---- a/stage2/boot.c
-+++ b/stage2/boot.c
-@@ -1,7 +1,7 @@
- /* boot.c - load and bootstrap a kernel */
+--- a/stage2/iso9660.h
++++ b/stage2/iso9660.h
+@@ -73,11 +73,11 @@ typedef	union {
+ 
+ typedef	struct __iso_16bit {
+   u_int16_t l, b;
+-} iso_16bit_t __attribute__ ((packed));
++} iso_16bit_t;
+ 
+ typedef	struct __iso_32bit {
+   u_int32_t l, b;
+-} iso_32bit_t __attribute__ ((packed));
++} iso_32bit_t;
+ 
+ typedef u_int8_t		iso_date_t[7];
+ 
+--- a/stage2/tparm.c
++++ b/stage2/tparm.c
+@@ -63,7 +63,7 @@ typedef char grub_bool;
+ #define MAX_FORMAT_LEN 256
+ #define max(a,b) ((a) > (b) ? (a) : (b))
+ 
+-//MODULE_ID("$Id: tparm.c,v 1.1 2002/11/29 20:39:24 okuji Exp $")
++//MODULE_ID("$Id$")
+ 
  /*
-  *  GRUB  --  GRand Unified Bootloader
-- *  Copyright (C) 1999,2000,2001,2002,2003,2004  Free Software Foundation, Inc.
-+ *  Copyright (C) 1999,2000,2001,2002,2003,2004,2005  Free Software Foundation, Inc.
+  *	char *
+--- a/stage2/fsys_ufs2.c
++++ b/stage2/fsys_ufs2.c
+@@ -51,7 +51,7 @@
+  * the rights to redistribute these changes.
   *
-  *  This program is free software; you can redistribute it and/or modify
-  *  it under the terms of the GNU General Public License as published by
-@@ -96,7 +96,7 @@ load_image (char *kernel, char *arg, ker
-   lh = (struct linux_kernel_header *) buffer;
-   
-   /* ELF loading supported if multiboot, FreeBSD and NetBSD.  */
--  if ((type == KERNEL_TYPE_MULTIBOOT
-+  if (((type == KERNEL_TYPE_MULTIBOOT && ! (flags & MULTIBOOT_AOUT_KLUDGE))
-        || pu.elf->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
-        || grub_strcmp (pu.elf->e_ident + EI_BRAND, "FreeBSD") == 0
-        || suggested_type == KERNEL_TYPE_NETBSD)
---- a/stage2/builtins.c
-+++ b/stage2/builtins.c
-@@ -3830,15 +3830,15 @@ setup_func (char *arg, int flags)
+  *	from: Mach, Revision 2.2  92/04/04  11:35:49  rpd
+- *	$Id: fsys_ufs2.c,v 1.2 2004/06/19 12:17:52 okuji Exp $
++ *	$Id$
+  */
+ 
+ #ifdef FSYS_UFS2
+--- a/stage2/imgact_aout.h
++++ b/stage2/imgact_aout.h
+@@ -32,7 +32,7 @@
+  * SUCH DAMAGE.
+  *
+  *	from: @(#)exec.h	8.1 (Berkeley) 6/11/93
+- *	$Id: imgact_aout.h,v 1.1 1999/06/24 00:03:22 okuji Exp $
++ *	$Id$
+  */
+ /*
+  *  11/23/95 - Kludge to get "ntohl" null macro added.  -- ESB
+--- a/stage2/shared.h
++++ b/stage2/shared.h
+@@ -499,7 +499,11 @@ struct vbe_mode
+   unsigned char linear_reserved_field_position;
+   unsigned long max_pixel_clock;
+ 
+-  unsigned char reserved3[189];
++  /* Reserved field to make structure to be 256 bytes long, VESA BIOS 
++     Extension 3.0 Specification says to reserve 189 bytes here but 
++     that doesn't make structure to be 256 bytes.  So additional one is 
++     added here.  */
++  unsigned char reserved3[189 + 1];
+ } __attribute__ ((packed));
+ 
+ 
+@@ -807,7 +811,7 @@ int checkkey (void);
+ /* Low-level disk I/O */
+ int get_diskinfo (int drive, struct geometry *geometry);
+ int biosdisk (int subfunc, int drive, struct geometry *geometry,
+-	      int sector, int nsec, int segment);
++	      unsigned int sector, int nsec, int segment);
+ void stop_floppy (void);
+ 
+ /* Command-line interface functions. */
+@@ -920,10 +924,10 @@ int gunzip_test_header (void);
+ int gunzip_read (char *buf, int len);
+ #endif /* NO_DECOMPRESSION */
+ 
+-int rawread (int drive, int sector, int byte_offset, int byte_len, char *buf);
+-int devread (int sector, int byte_offset, int byte_len, char *buf);
+-int rawwrite (int drive, int sector, char *buf);
+-int devwrite (int sector, int sector_len, char *buf);
++int rawread (int drive, unsigned int sector, int byte_offset, int byte_len, char *buf);
++int devread (unsigned int sector, int byte_offset, int byte_len, char *buf);
++int rawwrite (int drive, unsigned int sector, char *buf);
++int devwrite (unsigned int sector, int sector_len, char *buf);
+ 
+ /* Parse a device string and initialize the global parameters. */
+ char *set_device (char *device);
+--- a/stage2/fsys_ffs.c
++++ b/stage2/fsys_ffs.c
+@@ -50,7 +50,7 @@
+  * the rights to redistribute these changes.
+  *
+  *	from: Mach, Revision 2.2  92/04/04  11:35:49  rpd
+- *	$Id: fsys_ffs.c,v 1.10 2001/11/12 06:57:29 okuji Exp $
++ *	$Id$
+  */
+ 
+ #ifdef FSYS_FFS
+--- a/stage2/stage2.c
++++ b/stage2/stage2.c
+@@ -651,7 +651,10 @@ restart:
+ 		  *(new_heap++) = 0;
+ 
+ 		  if (config_entries)
+-		    run_menu (heap, NULL, new_num_entries, new_heap, 0);
++		    {
++		      current_entryno = first_entry + entryno;
++		      run_menu (heap, NULL, new_num_entries, new_heap, 0);
++		    }
+ 		  else
+ 		    {
+ 		      cls ();
+@@ -727,7 +730,8 @@ restart:
+ 	cur_entry = get_entry (config_entries, first_entry + entryno, 1);
+ 
+       /* Set CURRENT_ENTRYNO for the command "savedefault".  */
+-      current_entryno = first_entry + entryno;
++      if (config_entries)
++	current_entryno = first_entry + entryno;
+       
+       if (run_script (cur_entry, heap))
  	{
- 	  char tmp[16];
- 	  grub_sprintf (tmp, ",%d", (partition >> 16) & 0xFF);
--	  grub_strncat (device, tmp, 256);
-+	  grub_strncat (device, tmp, sizeof (device));
- 	}
-       if ((partition & 0x00FF00) != 0x00FF00)
- 	{
- 	  char tmp[16];
- 	  grub_sprintf (tmp, ",%c", 'a' + ((partition >> 8) & 0xFF));
--	  grub_strncat (device, tmp, 256);
-+	  grub_strncat (device, tmp, sizeof (device));
- 	}
--      grub_strncat (device, ")", 256);
-+      grub_strncat (device, ")", sizeof (device));
-     }
-   
-   int embed_stage1_5 (char *stage1_5, int drive, int partition)
 --- a/stage2/disk_io.c
 +++ b/stage2/disk_io.c
 @@ -137,7 +137,7 @@ log2 (unsigned long word)
@@ -1451,98 +1896,58 @@
  {
  #if defined(GRUB_UTIL) && defined(__linux__)
    if (current_partition != 0xFFFFFF
---- a/stage2/iso9660.h
-+++ b/stage2/iso9660.h
-@@ -73,11 +73,11 @@ typedef	union {
- 
- typedef	struct __iso_16bit {
-   u_int16_t l, b;
--} iso_16bit_t __attribute__ ((packed));
-+} iso_16bit_t;
- 
- typedef	struct __iso_32bit {
-   u_int32_t l, b;
--} iso_32bit_t __attribute__ ((packed));
-+} iso_32bit_t;
- 
- typedef u_int8_t		iso_date_t[7];
- 
---- a/stage2/shared.h
-+++ b/stage2/shared.h
-@@ -499,7 +499,11 @@ struct vbe_mode
-   unsigned char linear_reserved_field_position;
-   unsigned long max_pixel_clock;
- 
--  unsigned char reserved3[189];
-+  /* Reserved field to make structure to be 256 bytes long, VESA BIOS 
-+     Extension 3.0 Specification says to reserve 189 bytes here but 
-+     that doesn't make structure to be 256 bytes.  So additional one is 
-+     added here.  */
-+  unsigned char reserved3[189 + 1];
- } __attribute__ ((packed));
- 
- 
-@@ -807,7 +811,7 @@ int checkkey (void);
- /* Low-level disk I/O */
- int get_diskinfo (int drive, struct geometry *geometry);
- int biosdisk (int subfunc, int drive, struct geometry *geometry,
--	      int sector, int nsec, int segment);
-+	      unsigned int sector, int nsec, int segment);
- void stop_floppy (void);
- 
- /* Command-line interface functions. */
-@@ -920,10 +924,10 @@ int gunzip_test_header (void);
- int gunzip_read (char *buf, int len);
- #endif /* NO_DECOMPRESSION */
- 
--int rawread (int drive, int sector, int byte_offset, int byte_len, char *buf);
--int devread (int sector, int byte_offset, int byte_len, char *buf);
--int rawwrite (int drive, int sector, char *buf);
--int devwrite (int sector, int sector_len, char *buf);
-+int rawread (int drive, unsigned int sector, int byte_offset, int byte_len, char *buf);
-+int devread (unsigned int sector, int byte_offset, int byte_len, char *buf);
-+int rawwrite (int drive, unsigned int sector, char *buf);
-+int devwrite (unsigned int sector, int sector_len, char *buf);
- 
- /* Parse a device string and initialize the global parameters. */
- char *set_device (char *device);
---- a/stage2/stage2.c
-+++ b/stage2/stage2.c
-@@ -651,7 +651,10 @@ restart:
- 		  *(new_heap++) = 0;
- 
- 		  if (config_entries)
--		    run_menu (heap, NULL, new_num_entries, new_heap, 0);
-+		    {
-+		      current_entryno = first_entry + entryno;
-+		      run_menu (heap, NULL, new_num_entries, new_heap, 0);
-+		    }
- 		  else
- 		    {
- 		      cls ();
-@@ -727,7 +730,8 @@ restart:
- 	cur_entry = get_entry (config_entries, first_entry + entryno, 1);
- 
-       /* Set CURRENT_ENTRYNO for the command "savedefault".  */
--      current_entryno = first_entry + entryno;
-+      if (config_entries)
-+	current_entryno = first_entry + entryno;
-       
-       if (run_script (cur_entry, heap))
+--- a/stage2/boot.c
++++ b/stage2/boot.c
+@@ -1,7 +1,7 @@
+ /* boot.c - load and bootstrap a kernel */
+ /*
+  *  GRUB  --  GRand Unified Bootloader
+- *  Copyright (C) 1999,2000,2001,2002,2003,2004  Free Software Foundation, Inc.
++ *  Copyright (C) 1999,2000,2001,2002,2003,2004,2005  Free Software Foundation, Inc.
+  *
+  *  This program is free software; you can redistribute it and/or modify
+  *  it under the terms of the GNU General Public License as published by
+@@ -96,7 +96,7 @@ load_image (char *kernel, char *arg, ker
+   lh = (struct linux_kernel_header *) buffer;
+   
+   /* ELF loading supported if multiboot, FreeBSD and NetBSD.  */
+-  if ((type == KERNEL_TYPE_MULTIBOOT
++  if (((type == KERNEL_TYPE_MULTIBOOT && ! (flags & MULTIBOOT_AOUT_KLUDGE))
+        || pu.elf->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
+        || grub_strcmp (pu.elf->e_ident + EI_BRAND, "FreeBSD") == 0
+        || suggested_type == KERNEL_TYPE_NETBSD)
+--- a/stage2/builtins.c
++++ b/stage2/builtins.c
+@@ -3830,15 +3830,15 @@ setup_func (char *arg, int flags)
  	{
---- a/util/grub-install.in
-+++ b/util/grub-install.in
-@@ -112,8 +112,8 @@ convert () {
- 	tmp_disk=`echo "$1" | sed 's%\([sh]d[0-9]*\).*%\1%'`
- 	tmp_part=`echo "$1" | sed "s%$tmp_disk%%"` ;;
-     freebsd* | kfreebsd*-gnu)
--	tmp_disk=`echo "$1" | sed 's%r\{0,1\}\([saw]d[0-9]*\).*$%r\1%' \
--			    | sed 's%r\{0,1\}\(da[0-9]*\).*$%r\1%'`
-+	tmp_disk=`echo "$1" | sed 's%r\{0,1\}\([saw]d[0-9]*\).*$%\1%' \
-+			    | sed 's%r\{0,1\}\(da[0-9]*\).*$%\1%'`
- 	tmp_part=`echo "$1" \
- 	    | sed "s%.*/r\{0,1\}[saw]d[0-9]\(s[0-9]*[a-h]\)%\1%" \
-        	    | sed "s%.*/r\{0,1\}da[0-9]\(s[0-9]*[a-h]\)%\1%"`
+ 	  char tmp[16];
+ 	  grub_sprintf (tmp, ",%d", (partition >> 16) & 0xFF);
+-	  grub_strncat (device, tmp, 256);
++	  grub_strncat (device, tmp, sizeof (device));
+ 	}
+       if ((partition & 0x00FF00) != 0x00FF00)
+ 	{
+ 	  char tmp[16];
+ 	  grub_sprintf (tmp, ",%c", 'a' + ((partition >> 8) & 0xFF));
+-	  grub_strncat (device, tmp, 256);
++	  grub_strncat (device, tmp, sizeof (device));
+ 	}
+-      grub_strncat (device, ")", 256);
++      grub_strncat (device, ")", sizeof (device));
+     }
+   
+   int embed_stage1_5 (char *stage1_5, int drive, int partition)
+--- a/stage1/Makefile.am
++++ b/stage1/Makefile.am
+@@ -5,7 +5,7 @@ CLEANFILES = $(nodist_pkglib_DATA)
+ 
+ # We can't use builtins or standard includes.
+ AM_CCASFLAGS = $(STAGE1_CFLAGS) -fno-builtin -nostdinc
+-LDFLAGS = -nostdlib -Wl,-N,-Ttext,7C00
++stage1_exec_LDFLAGS = -nostdlib -Wl,-N,-Ttext,7C00
+ 
+ noinst_PROGRAMS = stage1.exec
+ stage1_exec_SOURCES = stage1.S stage1.h
 --- a/util/mkbimage
 +++ b/util/mkbimage
 @@ -1,7 +1,7 @@
@@ -1559,7 +1964,7 @@
  # Inc.; 59 Temple Place, Suite 330; Boston, MA 02111-1307, USA.
  
 -# $Id: mkbimage,v 1.19 2004/07/21 14:43:04 robertmh Exp $
-+# $Id: mkbimage,v 1.20 2007/02/22 16:01:03 robertmh Exp $
++# $Id$
  
  # Global variables
  tarfile=
@@ -1568,7 +1973,7 @@
  # Name by which this script was invoked.
  program=`echo "$0" | sed -e 's/[^\/]*\///g'`
 -version_number='$Revision: 1.19 $'
-+version_number='$Revision: 1.20 $'
++version_number='$Revision$'
  
  usage="
  Usage: $program [-hVF] [-t TYPE] [-d DIRECTORY] [-s FS_TYPE] -f TAR_FILE
@@ -1589,3 +1994,16 @@
  
  This is free software under the GPL version 2 or later; see the source for 
  copying conditions.  There is NO warranty, not even for MERCHANTABILITY or 
+--- a/util/grub-install.in
++++ b/util/grub-install.in
+@@ -112,8 +112,8 @@ convert () {
+ 	tmp_disk=`echo "$1" | sed 's%\([sh]d[0-9]*\).*%\1%'`
+ 	tmp_part=`echo "$1" | sed "s%$tmp_disk%%"` ;;
+     freebsd* | kfreebsd*-gnu)
+-	tmp_disk=`echo "$1" | sed 's%r\{0,1\}\([saw]d[0-9]*\).*$%r\1%' \
+-			    | sed 's%r\{0,1\}\(da[0-9]*\).*$%r\1%'`
++	tmp_disk=`echo "$1" | sed 's%r\{0,1\}\([saw]d[0-9]*\).*$%\1%' \
++			    | sed 's%r\{0,1\}\(da[0-9]*\).*$%\1%'`
+ 	tmp_part=`echo "$1" \
+ 	    | sed "s%.*/r\{0,1\}[saw]d[0-9]\(s[0-9]*[a-h]\)%\1%" \
+        	    | sed "s%.*/r\{0,1\}da[0-9]\(s[0-9]*[a-h]\)%\1%"`

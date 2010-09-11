@@ -97,10 +97,15 @@
 -  if (logical_block < EXT2_NDIR_BLOCKS)
 +  if (!(INODE->i_flags & EXT4_EXTENTS_FL))
      {
--#ifdef E2DEBUG
++      /* if it is directly pointed to by the inode, return that physical addr */
++      if (logical_block < EXT2_NDIR_BLOCKS)
++        {
+ #ifdef E2DEBUG
 -      printf ("returning %d\n", (unsigned char *) (INODE->i_block[logical_block]));
 -      printf ("returning %d\n", INODE->i_block[logical_block]);
--#endif /* E2DEBUG */
++          printf ("returning %d\n", (unsigned char *) (INODE->i_block[logical_block]));
++          printf ("returning %d\n", INODE->i_block[logical_block]);
+ #endif /* E2DEBUG */
 -      return INODE->i_block[logical_block];
 -    }
 -  /* else */
@@ -139,13 +144,6 @@
 -	  return -1;
 -	}
 -      mapblock2 = bnum;
-+      /* if it is directly pointed to by the inode, return that physical addr */
-+      if (logical_block < EXT2_NDIR_BLOCKS)
-+        {
-+#ifdef E2DEBUG
-+          printf ("returning %d\n", (unsigned char *) (INODE->i_block[logical_block]));
-+          printf ("returning %d\n", INODE->i_block[logical_block]);
-+#endif /* E2DEBUG */
 +          return INODE->i_block[logical_block];
 +        }
 +      /* else */

@@ -1,8 +1,17 @@
-grub-gfxboot (0.97-49) UNRELEASED; urgency=low
+grub-gfxboot (0.97-49) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * bump standards version to 3.9.1, no changes necessary.
+  * sync with Debian grub-legacy 0.97-61:
+    [ Felix Zielcke ]
+    - Use /usr/lib/grub-legacy/grub-set-default if it exists in
+      update-grub, in preparation for GRUB 2's grub-set-default.
+      [ for grub-gfxboot this is a no-op, as
+        /usr/lib/grub-legacy/grub-set-default cannot coexist ]
+    - Fix FTBFS due to texi2html change in default output directory.
+    [ Robert Millan ]
+    - Remove patches/cvs-sync.patch.  We use Bazaar branching now.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 08 Dec 2009 18:49:21 +0100
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 03 Aug 2010 19:33:18 +0200
 
 grub-gfxboot (0.97-48) unstable; urgency=low
 

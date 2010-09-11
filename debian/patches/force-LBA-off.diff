@@ -25,7 +25,7 @@
  grub shell, if you cannot unmount the filesystem where your stage2 file
 --- a/stage1/stage1.S
 +++ b/stage1/stage1.S
-@@ -177,7 +177,11 @@ real_start:	
+@@ -177,7 +177,11 @@ real_start:
  	/* check if AH=0x42 is supported if FORCE_LBA is zero */
  	MOV_MEM_TO_AL(ABS(force_lba))	/* movb	ABS(force_lba), %al */
  	testb	%al, %al

@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 7),
  libncurses5-dev | libncurses-dev,
  lib32ncurses5-dev [amd64],
  gcc-multilib [amd64]
-Standards-Version: 3.8.3
+Standards-Version: 3.9.1
 Vcs-Svn: svn://svn.berlios.de/fullstory/grub-gfxboot/trunk
 Vcs-Browser: http://svn.berlios.de/wsvn/fullstory/grub-gfxboot/trunk/
 Homepage: http://www.gnu.org/software/grub/
@@ -20,7 +20,7 @@ Architecture: i386 hurd-i386 amd64
 Depends: ${misc:Depends},
  ${shlibs:Depends},
  grub-common
-Suggests: multiboot-doc,
+Suggests: multiboot,
  mdadm,
  gfxboot
 Provides: grub,

@@ -81,6 +81,8 @@ build-arch-stamp: configure-stamp
 	# Add here commands to compile the package.
 	$(MAKE)
 	
+	chmod +x docs/help2man
+	
 	## the creation of these manpages here is temporary,
 	## when building grub-gfxboot finally works with the version
 	## of autoconf in debian we can use MAINTAINER_MODE_TRUE
@@ -210,16 +212,6 @@ binary-common:
 # Build architecture dependant packages using the common target.
 binary-arch: build-arch install-arch
 	$(MAKE) -f debian/rules DH_OPTIONS=-a binary-common
-
-# Grab fixes from SVN using our version as reference.
-svn-sync:
-	svn co svn://svn.sv.gnu.org/grub/trunk/grub grub-svn grub; \
-	UVERSION=$$(dpkg-parsechangelog | grep Version | sed 's,Version: ,,g;s,-[0-9]*$$,,g;s,\.,_,g'); \
-	cd grub-svn && \
-	svn diff -uN -x configure -x Makefile.in -r release_$$UVERSION -r HEAD \
-			| sed 's,^\(---\|+++\) \(.*\)$$,\1 foo/\2,g' \
-			| filterdiff -x '*/.cvsignore' -x '*/docs/version.texi' -x '*/docs/stamp-vti' > ../debian/patches/svn-sync.patch; \
-	cd .. && rm -rf grub-svn
 
 binary: binary-arch
 .PHONY: build clean binary-arch binary install install-arch configure

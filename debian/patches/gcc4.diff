@@ -78,7 +78,7 @@
  #endif /* E2DEBUG */
 --- a/stage2/fsys_fat.c
 +++ b/stage2/fsys_fat.c
-@@ -55,7 +55,7 @@ struct fat_superblock 
+@@ -55,7 +55,7 @@ struct fat_superblock
  #define FAT_CACHE_SIZE 2048
  
  static __inline__ unsigned long
