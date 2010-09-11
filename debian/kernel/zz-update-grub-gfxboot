@@ -1,6 +1,15 @@
 #! /bin/sh
 set -e
 
+# bail out early, if grub-gfxboot has been removed and left this hook as a
+# stale config file.
+if [ ! -e /usr/sbin/update-grub ] || [ -e /usr/sbin/update-grub2 ]; then
+	echo 'Removing grub-gfxboot has left stale config files behind.' >&2
+	echo 'Please purge grub-gfxboot to remove' >&2
+	echo '/etc/kernel/post{inst,rm}.d/zz-update-grub-gfxboot.' >&2
+	exit 0
+fi
+
 set -- $DEB_MAINT_PARAMS
 mode="${1#'}"
 mode="${mode%'}"

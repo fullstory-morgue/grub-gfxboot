@@ -1,3 +1,17 @@
+grub-gfxboot (0.97-51) unstable; urgency=low
+
+  grub-gfxboot/ grub-legacy is deprecated and will not be developed any further.
+
+  Support for new filesystems, like btrs, or use cases (harddisks exceeding
+  2 TB in size) will not be supported. Likewise compatibility patches for ext4
+  are not backed upstream and may be fragile.
+
+  Please consider switching to other bootloaders like grub2 or extlinux
+  at your earliest convenience instead. Installations of grub-gfxboot/
+  grub-legacy on new systems will no longer be supported.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Wed, 04 Aug 2010 17:15:34 +0200
+
 grub-gfxboot (0.97-32) unstable; urgency=low
 
   Versions of the kernel Linux newer than 2.6.23, like the ones included in

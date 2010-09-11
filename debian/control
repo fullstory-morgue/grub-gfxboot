@@ -33,3 +33,7 @@ Description: GRand Unified Bootloader
  Linux kernel, it implements the Multiboot standard, which allows for 
  flexible loading of multiple boot images (needed for modular kernels such as 
  the GNU Hurd).
+ .
+ grub-gfxboot/ grub-legacy is deprecated and will not be developed any further,
+ please install grub2 instead. Disks exceeding 2 TB are not supported by this
+ bootloader.
